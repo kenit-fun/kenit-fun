@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary SEO Meta Tags -->
+    <title>The Typewriter Simulator - Classic Mechanical Typing | KenitFun</title>
+    <meta name="title" content="The Typewriter Simulator - Classic Mechanical Typing | KenitFun">
+    <meta name="description" content="Experience realistic mechanical typewriter typing online with authentic key clicks, carriage return bell sounds, and multi-color ink ribbons on KenitFun.">
+    <meta name="keywords" content="typewriter simulator, vintage typewriter online, mechanical keyboard sounds, retro typing app, multi color ribbon typewriter, kenitfun typewriter">
+    <meta name="robots" content="index, follow">
+
+    <!-- JSON-LD FAQ Schema for Search Engines -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "How does the virtual Typewriter simulator work?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Simply tap or click on the paper deck to start typing. The simulator uses the Web Audio API to generate authentic mechanical key strike sounds and a classic carriage return bell when you press Enter."
+        }
+      }, {
+        "@type": "Question",
+        "name": "How do I switch ink ribbon colors?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Click on any color spool in the top header menu to switch between Black, Crimson Red, Navy Blue, Forest Green, and Royal Purple ink."
+        }
+      }, {
+        "@type": "Question",
+        "name": "Can I save or clear my typed document?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "You can clear your sheet at any time using the 'New Sheet' button. To save your typed work, you can copy the text directly off the paper deck."
+        }
+      }]
+    }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Special+Elite&display=swap');
+
+        :root {
+            --bg-color: #0b0e14;
+            --paper-bg: #fbf8ee;
+            --paper-border: #2a3441;
+            --border-glow: rgba(249, 115, 22, 0.3);
+            --ink-black: #18181b;
+            --ink-red: #b91c1c;
+            --ink-blue: #1e3a8a;
+            --ink-green: #14532d;
+            --ink-purple: #581c87;
+            --accent-orange: #f97316;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(249, 115, 22, 0.08) 0%, transparent 45%),
+                radial-gradient(circle at 90% 80%, rgba(251, 191, 36, 0.06) 0%, transparent 45%),
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 28px 28px, 28px 28px;
+            font-family: 'Special Elite', cursive, serif;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+            user-select: none;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 820px;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .back-btn, .action-btn {
+            background: rgba(18, 24, 34, 0.85);
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            padding: 0.65rem 1.2rem;
+            color: var(--text-main);
+            text-decoration: none;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            backdrop-filter: blur(8px);
+        }
+
+        .back-btn:hover, .action-btn:hover {
+            background: var(--accent-orange);
+            color: #080b10;
+            border-color: var(--accent-orange);
+            box-shadow: 0 0 16px rgba(249, 115, 22, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        /* Ribbon Color Picker Spools */
+        .color-palette {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(18, 24, 34, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 5px 10px;
+            border-radius: 10px;
+            backdrop-filter: blur(8px);
+        }
+
+        .color-palette-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-right: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .color-spool {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid rgba(255,255,255,0.2);
+            transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .color-spool:hover {
+            transform: scale(1.2);
+        }
+
+        .color-spool.active {
+            border-color: #ffffff;
+            box-shadow: 0 0 8px currentColor;
+            transform: scale(1.15);
+        }
+
+        .spool-black { background: var(--ink-black); color: rgba(255,255,255,0.8); }
+        .spool-red { background: var(--ink-red); color: var(--ink-red); }
+        .spool-blue { background: var(--ink-blue); color: var(--ink-blue); }
+        .spool-green { background: var(--ink-green); color: var(--ink-green); }
+        .spool-purple { background: var(--ink-purple); color: var(--ink-purple); }
+
+        /* Typewriter Paper Roll Deck */
+        .paper-deck {
+            background: var(--paper-bg);
+            width: 100%;
+            max-width: 820px;
+            min-height: 540px;
+            border: 2px solid var(--paper-border);
+            border-radius: 12px;
+            box-shadow: 
+                0 25px 50px -12px rgba(0, 0, 0, 0.8),
+                0 0 30px rgba(249, 115, 22, 0.1);
+            padding: 3.5rem 4.5rem;
+            position: relative;
+            cursor: text;
+            overflow: hidden;
+            transition: border-color 0.3s ease;
+        }
+
+        .paper-deck:focus-within {
+            border-color: rgba(249, 115, 22, 0.5);
+        }
+
+        /* Paper texture lines */
+        .paper-deck::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(
+                transparent,
+                transparent 31px,
+                rgba(148, 163, 184, 0.15) 31px,
+                rgba(148, 163, 184, 0.15) 32px
+            );
+            pointer-events: none;
+        }
+
+        #paperArea {
+            outline: none;
+            font-size: 1.4rem;
+            line-height: 32px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            min-height: 420px;
+            color: var(--ink-black);
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Ribbon Indicator Badge */
+        .ribbon-indicator {
+            position: absolute;
+            bottom: 14px;
+            right: 20px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: #475569;
+            background: rgba(0, 0, 0, 0.05);
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            text-transform: uppercase;
+        }
+
+        /* Dark Workshop Popup FAQ Modal */
+        .faq-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(7, 10, 15, 0.82);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 1rem;
+        }
+
+        .faq-modal.active {
+            display: flex;
+        }
+
+        .faq-card {
+            background: #101622;
+            border: 1px solid var(--border-glow);
+            border-radius: 16px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.9);
+            padding: 2.2rem;
+            width: 100%;
+            max-width: 580px;
+            color: var(--text-main);
+            position: relative;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .faq-card h3 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: 1.2rem;
+            color: var(--accent-orange);
+            text-align: center;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
+            padding-bottom: 0.6rem;
+        }
+
+        .faq-item {
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding-bottom: 0.8rem;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .faq-item h4 {
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+            color: #f8fafc;
+        }
+
+        .faq-item p {
+            font-size: 0.9rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+        }
+
+        .close-faq-btn {
+            margin-top: 1.2rem;
+            width: 100%;
+        }
+
+        @media only screen and (max-width: 640px) {
+            header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+            .controls {
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+            .color-palette {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .paper-deck {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../../index.html" class="back-btn">&larr; KENITFUN</a>
+        
+        <div class="controls">
+            <!-- Vintage Multi-Color Ribbon Palette -->
+            <div class="color-palette">
+                <span class="color-palette-title">Ribbon:</span>
+                <div class="color-spool spool-black active" data-color="#18181b" data-name="BLACK" title="Carbon Black"></div>
+                <div class="color-spool spool-red" data-color="#b91c1c" data-name="CRIMSON RED" title="Crimson Red"></div>
+                <div class="color-spool spool-blue" data-color="#1e3a8a" data-name="NAVY BLUE" title="Navy Blue"></div>
+                <div class="color-spool spool-green" data-color="#14532d" data-name="FOREST GREEN" title="Forest Green"></div>
+                <div class="color-spool spool-purple" data-color="#581c87" data-name="ROYAL PURPLE" title="Royal Purple"></div>
+            </div>
+
+            <button class="action-btn" id="clearBtn">📄 New Sheet</button>
+            <button class="action-btn" id="faqBtn">❓ FAQ</button>
+        </div>
+    </header>
+
+    <div class="paper-deck" onclick="document.getElementById('paperArea').focus()">
+        <div id="paperArea" contenteditable="true" spellcheck="false" autofocus></div>
+        <div class="ribbon-indicator" id="status">BLACK RIBBON ACTIVE</div>
+    </div>
+
+    <!-- Dark Workshop Popup FAQ Modal -->
+    <div class="faq-modal" id="faqModal">
+        <div class="faq-card">
+            <h3>📜 TYPEWRITER FAQ</h3>
+            <div class="faq-item">
+                <h4>⌨️ How do I type on the paper?</h4>
+                <p>Click or tap anywhere inside the cream-colored paper deck and start typing on your keyboard to produce mechanical sounds and vintage typewriter characters.</p>
+            </div>
+            <div class="faq-item">
+                <h4>🎨 How do I switch ink ribbon color?</h4>
+                <p>Click any color spool at the top menu to instantly switch between <strong>Carbon Black, Crimson Red, Navy Blue, Forest Green,</strong> and <strong>Royal Purple</strong> ink.</p>
+            </div>
+            <div class="faq-item">
+                <h4>🔔 What is that bell sound on Enter?</h4>
+                <p>The bell signifies a carriage return, mimicking the mechanical margin bell that warned writers they reached the end of a line.</p>
+            </div>
+            <button class="action-btn close-faq-btn" id="closeFaqBtn">Close FAQ</button>
+        </div>
+    </div>
+
+    <script>
+        // --- Web Audio API Mechanical Typewriter Sounds ---
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+            }
+        }
+
+        function playKeyClick() {
+            initAudio();
+            if (!audioCtx) return;
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            // Randomize pitch slightly for organic key hits
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(300 + Math.random() * 400, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.04);
+
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.04);
+        }
+
+        function playCarriageReturn() {
+            initAudio();
+            if (!audioCtx) return;
+
+            // Bell ding sound on enter/newline
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(1400, audioCtx.currentTime);
+
+            gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.4);
+        }
+
+        // --- Interaction Logic ---
+        const paperArea = document.getElementById('paperArea');
+        const status = document.getElementById('status');
+        const clearBtn = document.getElementById('clearBtn');
+        const spools = document.querySelectorAll('.color-spool');
+
+        // Multi-Color Ribbon Switching Engine
+        spools.forEach(spool => {
+            spool.addEventListener('click', (e) => {
+                spools.forEach(s => s.classList.remove('active'));
+                
+                const selectedColor = spool.getAttribute('data-color');
+                const colorName = spool.getAttribute('data-name');
+                
+                spool.classList.add('active');
+                document.execCommand('foreColor', false, selectedColor);
+                
+                status.innerText = `${colorName} RIBBON ACTIVE`;
+                status.style.color = selectedColor;
+                paperArea.focus();
+            });
+        });
+
+        clearBtn.addEventListener('click', () => {
+            paperArea.innerHTML = '';
+            paperArea.focus();
+            playCarriageReturn();
+        });
+
+        paperArea.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                playCarriageReturn();
+            } else if (e.key.length === 1 || e.key === 'Backspace') {
+                playKeyClick();
+            }
+        });
+
+        // Popup FAQ Modal Logic
+        const faqModal = document.getElementById('faqModal');
+        document.getElementById('faqBtn').addEventListener('click', () => {
+            faqModal.classList.add('active');
+        });
+        document.getElementById('closeFaqBtn').addEventListener('click', () => {
+            faqModal.classList.remove('active');
+        });
+        window.addEventListener('click', (e) => {
+            if (e.target === faqModal) faqModal.classList.remove('active');
+        });
+    </script>
+</body>
+</html>

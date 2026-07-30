@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary SEO Meta Tags -->
+    <title>Retro Trivia - Classic History & Pop-Culture Quiz | KenitFun</title>
+    <meta name="title" content="Retro Trivia - Classic History & Pop-Culture Quiz | KenitFun">
+    <meta name="description" content="Test your vintage knowledge with 50 classic questions spanning retro video games, historic inventions, pop culture, and 20th-century milestones on KenitFun.">
+    <meta name="keywords" content="retro trivia, vintage trivia game, history quiz, 80s pop culture quiz, classic trivia questions, online web trivia">
+    <meta name="robots" content="index, follow">
+
+    <!-- JSON-LD FAQ Schema for Search Engines -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "How does Retro Trivia work?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Retro Trivia presents a pool of 50 vintage and historic questions. Every time you play, questions are shuffled randomly to test your classic knowledge."
+        }
+      }, {
+        "@type": "Question",
+        "name": "What topics are covered in the quiz?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Questions cover 20th-century history, early video games (Atari, NES, Arcade), classic inventions (typewriter, telephone, phonograph), pop culture, music, and iconic cinema."
+        }
+      }, {
+        "@type": "Question",
+        "name": "Can I replay to get a higher score?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! At the end of 50 questions, you can restart the quiz to receive a freshly randomized order of questions and improve your total score."
+        }
+      }]
+    }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+        :root { 
+            --bg: #f4ecd8; 
+            --paper: #fbf7ed; 
+            --ink: #2b221e; 
+            --accent: #8c4a32; 
+            --border: #5c4738; 
+            --correct: #2e6f40; 
+            --wrong: #a12b2b; 
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            background: var(--bg); 
+            font-family: 'Special Elite', cursive, serif; 
+            color: var(--ink); 
+            padding: 2rem 1rem; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh; 
+        }
+        header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            width: 100%; 
+            max-width: 650px; 
+            margin-bottom: 2rem; 
+        }
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .back-btn, .faq-btn { 
+            background: #fffdf9; 
+            border: 2px solid var(--border); 
+            padding: 0.5rem 1rem; 
+            color: var(--ink); 
+            text-decoration: none; 
+            font-weight: bold; 
+            box-shadow: 3px 3px 0px var(--border); 
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .back-btn:hover, .faq-btn:hover { background: #f0e6d2; }
+        .card { 
+            background: var(--paper); 
+            border: 3px solid var(--border); 
+            box-shadow: 8px 8px 0px rgba(0,0,0,0.15); 
+            width: 100%; 
+            max-width: 650px; 
+            padding: 2rem; 
+        }
+        .q-title { font-size: 1.2rem; margin-bottom: 1.5rem; line-height: 1.5; font-weight: bold; }
+        .options-grid { display: flex; flex-direction: column; gap: 0.8rem; }
+        .opt-btn { 
+            background: #fffdf9; 
+            border: 2px solid var(--border); 
+            padding: 0.8rem 1rem; 
+            font-family: inherit; 
+            font-size: 1rem; 
+            text-align: left; 
+            cursor: pointer; 
+            transition: all 0.15s ease; 
+            box-shadow: 2px 2px 0px var(--border); 
+        }
+        .opt-btn:hover:not(:disabled) { background: var(--accent); color: #fff; }
+        .opt-btn.correct-ans { background: var(--correct) !important; color: #fff !important; border-color: #1a4225 !important; }
+        .opt-btn.wrong-ans { background: var(--wrong) !important; color: #fff !important; border-color: #591616 !important; }
+        .score-bar { margin-top: 1.5rem; display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 1.1rem; color: var(--accent); }
+        .restart-btn { 
+            background: #fffdf9; 
+            border: 2px solid var(--border); 
+            padding: 0.8rem 1.5rem; 
+            font-family: inherit; 
+            font-size: 1.1rem; 
+            cursor: pointer; 
+            font-weight: bold; 
+            box-shadow: 3px 3px 0px var(--border); 
+            margin-top: 1rem; 
+        }
+        .restart-btn:hover { background: var(--accent); color: #fff; }
+
+        /* Vintage Styled Popup FAQ Modal */
+        .faq-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(43, 34, 30, 0.65);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 1rem;
+        }
+
+        .faq-modal.active {
+            display: flex;
+        }
+
+        .faq-card {
+            background: var(--paper);
+            border: 3px solid var(--border);
+            box-shadow: 10px 10px 0px var(--ink);
+            padding: 2rem;
+            width: 100%;
+            max-width: 550px;
+            color: var(--ink);
+            position: relative;
+        }
+
+        .faq-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 1.2rem;
+            color: var(--accent);
+            text-align: center;
+            border-bottom: 2px dashed var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .faq-item {
+            margin-bottom: 1rem;
+            border-bottom: 1px dotted var(--border);
+            padding-bottom: 0.8rem;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .faq-item h4 {
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+            color: var(--ink);
+        }
+
+        .faq-item p {
+            font-size: 0.9rem;
+            line-height: 1.4;
+            color: #4a3d35;
+        }
+
+        .close-faq-btn {
+            margin-top: 1.2rem;
+            width: 100%;
+        }
+
+        @media only screen and (max-width: 640px) {
+            header { flex-direction: column; gap: 10px; text-align: center; }
+            header h2 { margin-top: 5px; }
+            .card { padding: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="../../index.html" class="back-btn">&larr; KENITFUN</a>
+        <h2>VINTAGE TRIVIA</h2>
+        <div class="header-actions">
+            <button class="faq-btn" id="faqBtn">❓ FAQ</button>
+        </div>
+    </header>
+
+    <div class="card">
+        <div class="q-title" id="qText">Question loading...</div>
+        <div class="options-grid" id="optsBox"></div>
+        <div class="score-bar">
+            <span id="progressDisplay">Q: 1/50</span>
+            <span id="scoreDisplay">Score: 0</span>
+        </div>
+    </div>
+
+    <!-- Vintage Popup FAQ Modal -->
+    <div class="faq-modal" id="faqModal">
+        <div class="faq-card">
+            <h3>📜 RETRO TRIVIA FAQ</h3>
+            <div class="faq-item">
+                <h4>🎯 How do I play?</h4>
+                <p>Read each retro question and click/tap on the correct option. Your score updates in real-time!</p>
+            </div>
+            <div class="faq-item">
+                <h4>🔀 Are the questions randomized?</h4>
+                <p>Yes, all 50 questions are shuffled automatically using the Fisher-Yates algorithm every time you start or restart the game.</p>
+            </div>
+            <div class="faq-item">
+                <h4>🏆 What topics are included?</h4>
+                <p>Enjoy historic breakthroughs, retro arcade games, vintage inventions, 20th-century pop culture, and classic cinema trivia.</p>
+            </div>
+            <button class="restart-btn close-faq-btn" id="closeFaqBtn">Close FAQ</button>
+        </div>
+    </div>
+
+    <script>
+        // Pool of 50 Classic Vintage, Retro, History & Pop-Culture Trivia Questions
+        const questionsPool = [
+            { q: "In what year was the first commercial telephone call made by Alexander Graham Bell?", opts: ["1876", "1901", "1852", "1910"], correct: 0 },
+            { q: "Which legendary video game character first appeared in 1981's 'Donkey Kong'?", opts: ["Pac-Man", "Jumpman (Mario)", "Sonic", "Mega Man"], correct: 1 },
+            { q: "What was the primary power source for early 19th-century industrial factories?", opts: ["Electricity", "Steam Engine", "Solar", "Nuclear"], correct: 1 },
+            { q: "In what year did the Titanic sink after hitting an iceberg?", opts: ["1912", "1905", "1920", "1898"], correct: 0 },
+            { q: "Which music storage format was introduced by Philips in 1962?", opts: ["Vinyl Record", "Compact Cassette Tape", "CD", "8-Track Tape"], correct: 1 },
+            { q: "Who patented the world's first practical typewriter in 1868?", opts: ["Christopher Latham Sholes", "Thomas Edison", "Nikola Tesla", "Henry Ford"], correct: 0 },
+            { q: "Which iconic car model was manufactured by Ford starting in 1908?", opts: ["Model T", "Mustang", "Chevrolet Bel Air", "Cadillac Eldorado"], correct: 0 },
+            { q: "In which decade was the first successful human organ transplant performed?", opts: ["1930s", "1950s", "1970s", "1910s"], correct: 1 },
+            { q: "What was the name of the first artificial satellite launched into space in 1957?", opts: ["Apollo 11", "Sputnik 1", "Explorer 1", "Voyager 1"], correct: 1 },
+            { q: "Which company released the iconic Atari 2600 home video game console in 1977?", opts: ["Nintendo", "Atari", "Sega", "Sony"], correct: 1 },
+            { q: "What year did Apollo 11 land the first humans on the Moon?", opts: ["1969", "1972", "1965", "1959"], correct: 0 },
+            { q: "Which classic film won the very first Academy Award for Best Picture in 1929?", opts: ["Wings", "Metropolis", "Casablanca", "Gone with the Wind"], correct: 0 },
+            { q: "Before smartphones and modern computers, what device was widely used in offices to send electronic text messages over telephone wires?", opts: ["Fax Machine / Telex", "Gramophone", "Pager", "Walkman"], correct: 0 },
+            { q: "Who invented the phonograph (gramophone) in 1877?", opts: ["Thomas Edison", "Alexander Graham Bell", "Guglielmo Marconi", "Samuel Morse"], correct: 0 },
+            { q: "Which famous arcade game released in 1980 was inspired by the shape of a pizza missing a slice?", opts: ["Galaga", "Pac-Man", "Space Invaders", "Asteroids"], correct: 1 },
+            { q: "In what year was the worldwide famous Coca-Cola formula created?", opts: ["1886", "1905", "1920", "1850"], correct: 0 },
+            { q: "Which retro home computer launched in 1982 became the best-selling single computer model of all time?", opts: ["Apple II", "Commodore 64", "ZX Spectrum", "IBM PC"], correct: 1 },
+            { q: "What year did the Wright brothers achieve the first powered, controlled airplane flight?", opts: ["1903", "1895", "1914", "1921"], correct: 0 },
+            { q: "Which popular Portable Music Player was introduced by Sony in 1979?", opts: ["iPod", "Walkman", "Discman", "Boombox"], correct: 1 },
+            { q: "What code system invented in the 1830s uses dots and dashes to transmit text?", opts: ["Binary Code", "Morse Code", "Baudot Code", "ASCII"], correct: 1 },
+            { q: "Which handheld gaming console with a monochrome screen was released by Nintendo in 1989?", opts: ["Game Boy", "Game & Watch", "Atari Lynx", "Sega Game Gear"], correct: 0 },
+            { q: "In what year was the first commercial radio broadcast transmitted in the United States?", opts: ["1920", "1890", "1935", "1950"], correct: 0 },
+            { q: "Which legendary band released the album 'Abbey Road' in 1969?", opts: ["The Rolling Stones", "The Beatles", "Led Zeppelin", "Pink Floyd"], correct: 1 },
+            { q: "What retro gaming arcade title introduced the world to space shooting in 1978?", opts: ["Space Invaders", "Defender", "Galaxian", "Centipede"], correct: 0 },
+            { q: "In which decade did black-and-white television broadcasts first become widely available to the public?", opts: ["1920s", "1930s-1940s", "1960s", "1970s"], correct: 1 },
+            { q: "Who invented the polio vaccine in 1953?", opts: ["Jonas Salk", "Louis Pasteur", "Alexander Fleming", "Edward Jenner"], correct: 0 },
+            { q: "Which luxury ocean liner set sail on her maiden voyage in 1936 and is now a hotel in Long Beach, California?", opts: ["RMS Queen Mary", "Lusitania", "Titanic", "Britannic"], correct: 0 },
+            { q: "What year did the Berlin Wall fall, marking a pivotal moment in modern history?", opts: ["1989", "1975", "1991", "1981"], correct: 0 },
+            { q: "Which famous physicist published his Special Theory of Relativity in 1905?", opts: ["Albert Einstein", "Isaac Newton", "Niels Bohr", "Max Planck"], correct: 0 },
+            { q: "What was the name of the first animated cartoon featuring Mickey Mouse with synchronized sound (1928)?", opts: ["Steamboat Willie", "Fantasia", "Plane Crazy", "The Karnival Kid"], correct: 0 },
+            { q: "Which classic camera brand introduced the 'Instamatic' cartridge film camera in 1963?", opts: ["Kodak", "Fujifilm", "Leica", "Canon"], correct: 0 },
+            { q: "In what year did World War II officially end?", opts: ["1945", "1939", "1950", "1918"], correct: 0 },
+            { q: "Which famous board game was published by Parker Brothers in 1935 during the Great Depression?", opts: ["Monopoly", "Scrabble", "Clue", "Risk"], correct: 0 },
+            { q: "What color was the original NES (Nintendo Entertainment System) console in North America?", opts: ["Grey and Red", "Black and Blue", "White and Yellow", "Silver"], correct: 0 },
+            { q: "Who discovered penicillin in 1928, revolutionizing medicine?", opts: ["Alexander Fleming", "Louis Pasteur", "Robert Koch", "Joseph Lister"], correct: 0 },
+            { q: "Which famous motorcycle brand was founded in Milwaukee, Wisconsin in 1903?", opts: ["Harley-Davidson", "Indian Motorcycle", "Triumph", "Royal Enfield"], correct: 0 },
+            { q: "What year was the first IBM Personal Computer (IBM PC) released?", opts: ["1981", "1975", "1988", "1990"], correct: 0 },
+            { q: "Which retro sci-fi movie featuring a time-traveling DeLorean was released in 1985?", opts: ["Back to the Future", "Blade Runner", "E.T.", "TRON"], correct: 0 },
+            { q: "Who painted the famous masterpiece 'Mona Lisa' in the early 16th century?", opts: ["Leonardo da Vinci", "Michelangelo", "Raphael", "Vincent van Gogh"], correct: 0 },
+            { q: "In what year did the first supersonic passenger airliner, Concorde, make its commercial debut?", opts: ["1976", "1965", "1982", "1990"], correct: 0 },
+            { q: "Which famous 3D puzzle toy was invented by Ernő Rubik in 1974?", opts: ["Rubik's Cube", "Perplexus", "Etch A Sketch", "Slinky"], correct: 0 },
+            { q: "What year did the First World War begin?", opts: ["1914", "1918", "1939", "1905"], correct: 0 },
+            { q: "Which classic soda drink was originally advertised as a brain tonic and nerve remedy?", opts: ["Coca-Cola", "Pepsi", "Dr Pepper", "7 Up"], correct: 0 },
+            { q: "Which iconic guitar model was introduced by Fender in 1954?", opts: ["Stratocaster", "Les Paul", "SG", "Telecaster"], correct: 0 },
+            { q: "What was the title of Michael Jackson's best-selling album released in 1982?", opts: ["Thriller", "Bad", "Off the Wall", "Dangerous"], correct: 0 },
+            { q: "Which company introduced the Floppy Disk in 1971?", opts: ["IBM", "Apple", "Microsoft", "Intel"], correct: 0 },
+            { q: "In what year was the Empire State Building completed in New York City?", opts: ["1931", "1920", "1945", "1952"], correct: 0 },
+            { q: "Who performed the famous '1968 Comeback Special' on television?", opts: ["Elvis Presley", "Frank Sinatra", "Chuck Berry", "Johnny Cash"], correct: 0 },
+            { q: "Which popular toy consisting of a helical spring was invented in the early 1940s?", opts: ["Slinky", "Yo-Yo", "Lego", "Tamagotchi"], correct: 0 },
+            { q: "What year was the original 'Star Wars: Episode IV - A New Hope' released in theaters?", opts: ["1977", "1980", "1973", "1983"], correct: 0 }
+        ];
+
+        let questions = [];
+        let qIndex = 0;
+        let score = 0;
+        let acceptsInput = true;
+
+        // Shuffle function (Fisher-Yates) for random questions on every game session
+        function shuffleArray(array) {
+            let shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function initQuiz() {
+            questions = shuffleArray(questionsPool);
+            qIndex = 0;
+            score = 0;
+            acceptsInput = true;
+            document.getElementById('scoreDisplay').innerText = `Score: 0`;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            acceptsInput = true;
+
+            if (qIndex >= questions.length) {
+                document.getElementById('qText').innerText = `🏆 Quiz Completed! Final Score: ${score}/${questions.length}`;
+                document.getElementById('optsBox').innerHTML = `<button class="restart-btn" onclick="initQuiz()">🔄 Play Again (New Order)</button>`;
+                document.getElementById('progressDisplay').innerText = `Finished!`;
+                return;
+            }
+
+            const q = questions[qIndex];
+            document.getElementById('qText').innerText = `Q${qIndex + 1}: ${q.q}`;
+            document.getElementById('progressDisplay').innerText = `Q: ${qIndex + 1}/${questions.length}`;
+            
+            const optsBox = document.getElementById('optsBox');
+            optsBox.innerHTML = '';
+
+            q.opts.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'opt-btn';
+                btn.innerText = opt;
+                btn.onclick = () => handleAnswer(idx, btn);
+                optsBox.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(selectedIdx, selectedBtn) {
+            if (!acceptsInput) return;
+            acceptsInput = false;
+
+            const q = questions[qIndex];
+            const allBtns = document.querySelectorAll('.opt-btn');
+
+            if (selectedIdx === q.correct) {
+                score++;
+                selectedBtn.classList.add('correct-ans');
+                selectedBtn.innerText += "  ✔";
+            } else {
+                selectedBtn.classList.add('wrong-ans');
+                selectedBtn.innerText += "  ✖";
+                // Show correct answer in green
+                allBtns[q.correct].classList.add('correct-ans');
+                allBtns[q.correct].innerText += "  ✔";
+            }
+
+            document.getElementById('scoreDisplay').innerText = `Score: ${score}`;
+
+            // Small delay to let the player view the result
+            setTimeout(() => {
+                qIndex++;
+                loadQuestion();
+            }, 1200);
+        }
+
+        // Popup FAQ Modal Logic
+        const faqModal = document.getElementById('faqModal');
+        document.getElementById('faqBtn').addEventListener('click', () => {
+            faqModal.classList.add('active');
+        });
+        document.getElementById('closeFaqBtn').addEventListener('click', () => {
+            faqModal.classList.remove('active');
+        });
+
+        // Start Quiz Session
+        initQuiz();
+    </script>
+</body>
+</html>

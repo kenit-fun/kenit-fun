@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Triple Threat - Word Puzzle Game | KenitFun</title>
+<meta name="title" content="Triple Threat - Word Puzzle Game | KenitFun">
+<meta name="description" content="Play Triple Threat on KenitFun! Test your vocabulary by guessing the single missing word that completes three different sentences. 50 free homonym word puzzles!">
+<meta name="keywords" content="triple threat game, word puzzles, homonyms game, english vocabulary game, kenitfun games, brain teasers, missing word puzzle">
+<meta name="robots" content="index, follow">
+<meta name="author" content="KenitFun">
+<link rel="canonical" href="https://kenitfun.com/games/triple-threat/">
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kenitfun.com/games/triple-threat/">
+<meta property="og:title" content="Triple Threat - Word Puzzle Game | KenitFun">
+<meta property="og:description" content="Can you guess 1 word that fits 3 different sentences? Challenge your English vocabulary with 50 handcrafted Triple Threat puzzles.">
+<meta property="og:image" content="https://kenitfun.com/assets/images/triple-threat-cover.jpg">
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="https://kenitfun.com/games/triple-threat/">
+<meta property="twitter:title" content="Triple Threat - Word Puzzle Game | KenitFun">
+<meta property="twitter:description" content="Can you guess 1 word that fits 3 different sentences? Challenge your English vocabulary with 50 handcrafted Triple Threat puzzles.">
+<meta property="twitter:image" content="https://kenitfun.com/assets/images/triple-threat-cover.jpg">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do you play Triple Threat on KenitFun?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "In Triple Threat, you are given a single sentence or context where three blanks appear. You must figure out the exact ONE word that correctly fills all three blanks, despite having different meanings in each context (homonyms)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What are the score penalties for using hints/clues?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Using a Letter Clue costs -2 points, a Meaning Clue costs -3 points, and using the Reveal Word option costs -15 points from your overall score."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Triple Threat free to play?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Triple Threat on KenitFun is 100% free to play directly in your web browser with no download or sign-up required."
+      }
+    }
+  ]
+}
+</script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap');
+
+:root {
+  --bg: #f4ecd8;
+  --paper: #fbf7ed;
+  --paper-subtle: #f2e9d2;
+  --ink: #2b221e;
+  --ink-light: #5c4738;
+  --accent: #8c4a32;
+  --accent-glow: #d97724;
+  --border: #4a382c;
+  --correct: #2e6f40;
+  --correct-bg: #e2f0e5;
+  --wrong: #a12b2b;
+  --wrong-bg: #fbe8e8;
+  --clue-bg: #ebdcc3;
+  --shadow-color: rgba(43, 34, 30, 0.18);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  background-image: 
+    radial-gradient(var(--border) 0.75px, transparent 0.75px), 
+    radial-gradient(var(--border) 0.75px, var(--bg) 0.75px);
+  background-size: 30px 30px;
+  background-position: 0 0, 15px 15px;
+  font-family: 'Special Elite', 'Courier New', monospace, serif;
+  color: var(--ink);
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+#fxCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 999;
+}
+
+/* --- HEADER UI --- */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 720px;
+  margin-bottom: 1.8rem;
+}
+
+header h2 {
+  font-size: 1.8rem;
+  letter-spacing: 2px;
+  color: var(--ink);
+  text-transform: uppercase;
+  text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.8);
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+/* --- BUTTONS --- */
+.back-btn, .action-btn, .clue-btn, .faq-trigger-btn {
+  background: var(--paper);
+  border: 2px solid var(--border);
+  padding: 0.6rem 1.2rem;
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 0.95rem;
+  box-shadow: 4px 4px 0px var(--border);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.back-btn:hover, .action-btn:hover, .clue-btn:hover, .faq-trigger-btn:hover {
+  background: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 6px 6px 0px var(--border);
+}
+
+.back-btn:active, .action-btn:active, .clue-btn:active, .faq-trigger-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0px var(--border);
+}
+
+/* Primary Action Accent Styling */
+#submitBtn {
+  background: var(--accent);
+  color: #fffdf9;
+  border-color: var(--border);
+}
+
+#submitBtn:hover {
+  background: var(--accent-glow);
+  color: #fff;
+}
+
+/* --- MAIN CONTAINER CARD --- */
+.card {
+  background: var(--paper);
+  border: 3.5px solid var(--border);
+  box-shadow: 10px 10px 0px var(--shadow-color);
+  width: 100%;
+  max-width: 720px;
+  padding: 2.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: relative;
+  z-index: 10;
+  border-radius: 2px;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  right: 6px;
+  bottom: 6px;
+  border: 1px dashed rgba(92, 71, 56, 0.3);
+  pointer-events: none;
+}
+
+/* --- META BAR --- */
+.meta-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  color: var(--accent);
+  font-size: 1.15rem;
+  border-bottom: 2px dashed var(--border);
+  padding-bottom: 0.9rem;
+  letter-spacing: 0.5px;
+}
+
+/* --- SENTENCE DISPLAY AREA --- */
+.sentence-box {
+  background: var(--paper-subtle);
+  border: 2px solid var(--border);
+  padding: 1.8rem;
+  font-size: 1.35rem;
+  line-height: 1.8;
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  box-shadow: inset 2px 2px 5px rgba(0,0,0,0.05);
+}
+
+.blank-space {
+  background: #ffffff;
+  border: 2px dashed var(--accent-glow);
+  color: var(--accent-glow);
+  padding: 0.2rem 0.8rem;
+  margin: 0 0.3rem;
+  font-weight: bold;
+  border-radius: 4px;
+  letter-spacing: 3px;
+  display: inline-block;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 2px 2px 0px rgba(0,0,0,0.05);
+}
+
+.blank-space.revealed {
+  background: var(--correct);
+  color: #ffffff;
+  border-style: solid;
+  border-color: #1a4225;
+  box-shadow: 3px 3px 0px var(--border);
+  animation: popIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.7); opacity: 0.5; }
+  60% { transform: scale(1.1); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* --- CLUES SECTION --- */
+.clues-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  background: var(--clue-bg);
+  border: 2px dashed var(--border);
+  padding: 1.2rem;
+  border-radius: 2px;
+}
+
+.hint-text {
+  font-size: 1rem;
+  color: var(--ink-light);
+  font-style: italic;
+  text-align: center;
+  line-height: 1.4;
+}
+
+.meaning-pills {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.meaning-pill {
+  background: var(--paper);
+  border: 1.5px solid var(--border);
+  padding: 0.3rem 0.8rem;
+  font-size: 0.85rem;
+  border-radius: 14px;
+  box-shadow: 2px 2px 0px var(--border);
+  font-weight: bold;
+}
+
+.clue-buttons-row {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.clue-btn {
+  font-size: 0.85rem;
+  padding: 0.5rem 0.9rem;
+  background: var(--paper);
+}
+
+.clue-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: 1px 1px 0px var(--border) !important;
+  background: #e2d8c3;
+}
+
+/* --- INPUT SECTION --- */
+.input-group {
+  display: flex;
+  gap: 0.6rem;
+}
+
+input[type="text"] {
+  flex: 1;
+  padding: 0.85rem 1rem;
+  border: 2.5px solid var(--border);
+  font-family: inherit;
+  font-size: 1.2rem;
+  background: #ffffff;
+  color: var(--ink);
+  text-transform: lowercase;
+  outline: none;
+  box-shadow: inset 2px 2px 4px rgba(0,0,0,0.06);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input[type="text"]:focus {
+  border-color: var(--accent-glow);
+  box-shadow: 0 0 0 3px rgba(217, 119, 36, 0.2);
+}
+
+.status-msg {
+  font-weight: bold;
+  text-align: center;
+  min-height: 1.6rem;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+}
+
+.status-msg.correct { color: var(--correct); }
+.status-msg.wrong { color: var(--wrong); }
+
+/* --- CONTROLS --- */
+.controls {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  border-top: 2px dashed var(--border);
+  padding-top: 1.2rem;
+}
+
+/* --- MODAL FAQ OVERLAY --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(43, 34, 30, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease-in-out;
+  padding: 1rem;
+}
+
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.faq-modal {
+  background: var(--paper);
+  border: 3.5px solid var(--border);
+  box-shadow: 12px 12px 0px rgba(0, 0, 0, 0.35);
+  width: 100%;
+  max-width: 620px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 2rem;
+  position: relative;
+  transform: translateY(-20px);
+  transition: transform 0.25s ease-in-out;
+}
+
+.modal-overlay.open .faq-modal {
+  transform: translateY(0);
+}
+
+.faq-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px dashed var(--border);
+  padding-bottom: 0.9rem;
+  margin-bottom: 1.2rem;
+}
+
+.faq-header h3 {
+  font-size: 1.45rem;
+  color: var(--accent);
+}
+
+.close-modal-btn {
+  background: transparent;
+  border: none;
+  font-size: 1.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  color: var(--ink);
+  font-family: inherit;
+  line-height: 1;
+}
+
+.faq-item {
+  border-bottom: 1px dashed var(--border);
+  padding: 1rem 0;
+}
+
+.faq-item:last-child {
+  border-bottom: none;
+}
+
+.faq-question {
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+}
+
+.faq-answer {
+  font-size: 0.95rem;
+  color: var(--ink-light);
+  line-height: 1.6;
+  margin-top: 0.6rem;
+  display: none;
+}
+
+.faq-item.active .faq-answer {
+  display: block;
+}
+
+.faq-toggle {
+  font-weight: bold;
+  font-size: 1.3rem;
+  color: var(--accent);
+}
+
+/* --- RESPONSIVE ADAPTABILITY --- */
+@media only screen and (max-width: 640px) {
+  body {
+    padding: 1rem 0.6rem;
+  }
+  
+  header {
+    flex-direction: column;
+    gap: 12px;
+    text-align: center;
+  }
+  
+  header h2 {
+    font-size: 1.5rem;
+  }
+
+  .card {
+    padding: 1.4rem;
+    gap: 1.1rem;
+  }
+
+  .sentence-box {
+    font-size: 1.15rem;
+    padding: 1.2rem;
+  }
+
+  .input-group {
+    flex-direction: column;
+  }
+
+  .action-btn {
+    width: 100%;
+  }
+
+  .controls {
+    flex-direction: column;
+  }
+}
+</style>
+</head>
+<body>
+
+<canvas id="fxCanvas"></canvas>
+
+<header>
+  <a href="../../index.html" class="back-btn">&larr; KENITFUN</a>
+  <h2>TRIPLE THREAT</h2>
+  <div class="header-actions">
+    <button class="faq-trigger-btn" id="openFaqBtn">❓ FAQ</button>
+  </div>
+</header>
+
+<div class="card">
+  <div class="meta-bar">
+    <span id="levelDisplay">Puzzle: 1/50</span>
+    <span id="scoreDisplay">Score: 0 | Streak: 🔥 0</span>
+  </div>
+
+  <div class="sentence-box" id="sentenceDisplay">
+    Loading challenge...
+  </div>
+
+  <div class="clues-container">
+    <div class="hint-text" id="hintDisplay">Hint: Loading...</div>
+    <div class="meaning-pills" id="meaningPills"></div>
+    <div class="clue-buttons-row">
+      <button class="clue-btn" id="letterClueBtn">💡 Reveal Letter (-2 pts)</button>
+      <button class="clue-btn" id="meaningClueBtn">📖 Meaning Clue (-3 pts)</button>
+      <button class="clue-btn" id="revealWordBtn">🔑 Reveal Word (-15 pts)</button>
+    </div>
+  </div>
+
+  <div class="status-msg" id="statusMsg"></div>
+
+  <div class="input-group">
+    <input type="text" id="userInput" placeholder="Guess the 1 missing word..." autofocus autocomplete="off">
+    <button class="action-btn" id="submitBtn">Submit Word</button>
+  </div>
+
+  <div class="controls">
+    <button class="action-btn" id="skipBtn">⏭️ Skip Puzzle</button>
+    <button class="action-btn" id="restartBtn">🔄 Reset Game</button>
+  </div>
+</div>
+
+<div class="modal-overlay" id="faqModalOverlay">
+  <div class="faq-modal">
+    <div class="faq-header">
+      <h3>❓ Frequently Asked Questions</h3>
+      <button class="close-modal-btn" id="closeFaqBtn">&times;</button>
+    </div>
+    
+    <div class="faq-item">
+      <div class="faq-question">What is Triple Threat? <span class="faq-toggle">+</span></div>
+      <div class="faq-answer">Triple Threat is a word puzzle game where one single English word fits into three different blanks in a sentence. It tests your vocabulary and mastery over homonyms (words with multiple meanings).</div>
+    </div>
+    
+    <div class="faq-item">
+      <div class="faq-question">How does scoring work? <span class="faq-toggle">+</span></div>
+      <div class="faq-answer">Each correct guess gives you +10 points plus a streak bonus! However, using hints deducts points: Letter Clue (-2 pts), Meaning Clue (-3 pts), and Reveal Word (-15 pts).</div>
+    </div>
+    
+    <div class="faq-item">
+      <div class="faq-question">Are there more puzzles available? <span class="faq-toggle">+</span></div>
+      <div class="faq-answer">Yes, this game contains 50 handcrafted puzzles that are shuffled randomly every time you start or restart a session!</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const puzzlesPool = [
+  { s: "The ___ flew so fast that it landed near the ___ of the page, where I wanted to ___ down my thoughts.", word: "fly", hint: "It can be an insect, movement, or writing motion", meanings: ["An insect", "To travel in air", "A fast writing motion"] },
+  { s: "She decided to ___ a cake, then went to the ___ to get money, and sat on the river ___ to relax.", word: "bank", hint: "A financial place, river edge, or tilt action", meanings: ["Financial institute", "River border", "Tilt to one side"] },
+  { s: "He took a ___ to show respect, placed his arrows in his ___, and walked to the ___ of the ship.", word: "bow", hint: "Bend body, weapon component, or front of ship", meanings: ["Bend forward", "Weapon for arrows", "Front of a ship"] },
+  { s: "I need to ___ the clock, buy a complete ___ of tools, and ___ the table for dinner.", word: "set", hint: "Adjust, collection, or arrange", meanings: ["Adjust/configure", "A complete collection", "Arrange or put in place"] },
+  { s: "Please ___ the door, take a step ___ to me, and keep your mouth ___ during the exam.", word: "close", hint: "Shut, near, or tight", meanings: ["To shut", "Near distance", "Tightly shut"] },
+  { s: "He made a ___ decision to drink ___ coffee while listening to the ___ winter wind.", word: "bitter", hint: "Harsh feeling, taste, or cold weather", meanings: ["Resentful feeling", "Unsweetened taste", "Biting cold"] },
+  { s: "The ___ was so bright that I could not see the ___ weight, but I decided to ___ my load.", word: "light", hint: "Illumination, low weight, or make easier", meanings: ["Illumination", "Not heavy", "To make easier"] },
+  { s: "They sat on a ___ bench, drank a ___ juice, and had a ___ talk about their future.", word: "sweet", hint: "Pleasant, sugary, or gentle", meanings: ["Pleasant/charming", "Sugary taste", "Gentle or kind"] },
+  { s: "The ___ of the company decided to ___ the team through a ___ pipe into the mine.", word: "lead", hint: "Head person, direct, or heavy metal element", meanings: ["Principal leader", "To direct or guide", "A heavy metal"] },
+  { s: "I saw a ___ in the sky, heard the dog ___ at the stranger, and peeled the tree ___.", word: "bark", hint: "Tree outer layer or dog noise", meanings: ["Sailing vessel", "Dog sound", "Outer layer of tree"] },
+  { s: "He tried to ___ the ball, but it hit the ___ of his hand and fell into the ___ tree.", word: "palm", hint: "Hand surface, tree type, or catch action", meanings: ["Conceal/catch", "Inner hand surface", "Tropical tree type"] },
+  { s: "The ___ was wearing a ___ suit as he walked down the ___ corridor.", word: "fine", hint: "Penalty fee, high quality, or delicate", meanings: ["Person penalized", "High quality", "Delicate or thin"] },
+  { s: "Don't ___ your time, clean up the ___ on the floor, and recycle this ___ paper.", word: "waste", hint: "Squander, garbage, or unwanted material", meanings: ["Squander or misuse", "Garbage/rubbish", "Unwanted leftover"] },
+  { s: "She bought a ___ ring, placed it in a ___ box, and listened to the ___ sound of music.", word: "match", hint: "Equal pair, game, or fire starter", meanings: ["Equal pair", "Fire starter box", "Harmonious fit"] },
+  { s: "The chef used a ___ of garlic, gave a ___ to his assistant, and felt a ___ of pain in his arm.", word: "pinch", hint: "Small amount, squeeze, or tight spot", meanings: ["Tiny amount", "Squeeze action", "Sudden sharp pain"] },
+  { s: "It was a ___ day, so we went to the ___ market to buy a ___ jacket.", word: "fair", hint: "Equal/just, carnival/market, or light condition", meanings: ["Pleasant weather", "Carnival or market", "Light in tone"] },
+  { s: "He was on ___ for his crime, decided to ___ his luck, and walked down the mountain ___.", word: "trial", hint: "Court test, experiment, or path", meanings: ["Court case", "Test or experiment", "Rough path/trail"] },
+  { s: "She gave a ___ smile, spoke in a ___ voice, and drank from a ___ cup.", word: "soft", hint: "Gentle, quiet, or non-hard", meanings: ["Gentle/tender", "Quiet volume", "Non-rigid texture"] },
+  { s: "The ___ of the kingdom decided to ___ the army and ___ new laws.", word: "head", hint: "Leader, top part, or direct forward", meanings: ["Leader or ruler", "Direct or command", "Formulate at front"] },
+  { s: "A ___ breeze blew as the ___ boy sat near the ___ stream.", word: "cool", hint: "Chilly temperature, stylish, or calm", meanings: ["Chilly temperature", "Stylish/popular", "Calm and refreshed"] },
+  { s: "He had a ___ on his face, decided to ___ the document, and left the ___ on the desk.", word: "mark", hint: "Spot/symbol, grade, or target person", meanings: ["Visible spot", "Grade or evaluate", "Target symbol"] },
+  { s: "You must ___ your shoes, tie the knot with a ___, and do not ___ in the game.", word: "lace", hint: "Shoe string, pattern fabric, or entangle", meanings: ["Fasten with string", "Delicate fabric", "Entangle or mix"] },
+  { s: "The actor stepped on ___, reached stage ___ of his career, and entered the final ___.", word: "stage", hint: "Performance platform or phase", meanings: ["Performance platform", "Career period", "Phase or level"] },
+  { s: "They took a ___ to the mountains, stumbled over a tree ___, and had a pleasant ___.", word: "trip", hint: "Journey, stumble/fall, or short error", meanings: ["Journey or outing", "Stumble/fall over", "Short excursion"] },
+  { s: "He put a ___ in his pocket, checked the ___ on the wall, and gave his child a ___.", word: "watch", hint: "Timepiece, look carefully, or guard duty", meanings: ["Pocket timepiece", "Wall clock", "Careful check"] },
+  { s: "The ___ of the tree was deep, so we took a new ___ to solve the problem from its ___.", word: "root", hint: "Plant base, core origin, or cheer on", meanings: ["Plant base", "Course or path", "Core origin"] },
+  { s: "She wanted to ___ her dress, sit on the ___ of the sofa, and live on the ___ of town.", word: "edge", hint: "Border, sharpness, or margin", meanings: ["Trim/border", "Outer side", "Outer margin"] },
+  { s: "He gave a ___ answer, walked straight ___ into the room, and made a ___ point.", word: "direct", hint: "Straightforward, guide, or non-stop", meanings: ["Straightforward", "Uninterrupted", "Clear and explicit"] },
+  { s: "The king wore a heavy ___, drank from a golden ___, and decided to ___ his prince.", word: "crown", hint: "Royal headpiece, top part, or honor", meanings: ["Royal headpiece", "Top part of vessel", "Honor or invest"] },
+  { s: "She used a ___ to seal the letter, sat on a ___ in the park, and stamped her ___.", word: "seal", hint: "Close tightly, sea animal, or official mark", meanings: ["Closing stamp", "Sea mammal", "Official mark"] },
+  { s: "He threw a ___ into the lake, listened to a ___ rock song, and felt his heart turn to ___.", word: "stone", hint: "Rock, gem, or harden", meanings: ["Small rock", "Heavy/solid genre", "Hard unfeeling substance"] },
+  { s: "The ___ was blowing hard, so he had to ___ up the string and ___ the clock.", word: "wind", hint: "Air movement, turn mechanism, or coil around", meanings: ["Air movement", "Coil or wrap", "Turn mechanism"] },
+  { s: "He left a ___ on the table, decided to ___ his friend, and answered the phone ___.", word: "note", hint: "Written message, musical tone, or observe", meanings: ["Written message", "Observe or notice", "Musical tone"] },
+  { s: "She sat on the ___ floor, felt a ___ chill in the room, and drank ___ water.", word: "cold", hint: "Low temperature, unemotional, or illness", meanings: ["Unheated/chilly", "Unfeeling thrill", "Refrigerated water"] },
+  { s: "He bought a ___ of land, plotted a secret ___ in the story, and put a ___ on the graph.", word: "plot", hint: "Land area, story line, or chart point", meanings: ["Parceled land", "Story storyline", "Data chart point"] },
+  { s: "The soldier took a ___, fired at the ___, and took a ___ of water.", word: "shot", hint: "Gunfire, attempt, or small drink", meanings: ["Gunfire/attempt", "Target point", "Small drink portion"] },
+  { s: "She used a ___ of paper, wrote a short ___ on it, and placed it on the ___.", word: "sheet", hint: "Flat layer, bed covering, or piece of paper", meanings: ["Flat paper piece", "Layer of text", "Bed covering"] },
+  { s: "The bird has a broken ___, lives in the east ___ of the castle, and tried to ___ its way out.", word: "wing", hint: "Feathered limb, building section, or fly", meanings: ["Feathered limb", "Building section", "Fly away"] },
+  { s: "He gave a ___ answer, made a ___ turn, and checked the ___ side of the road.", word: "right", hint: "Correct, opposite of left, or legal claim", meanings: ["Correct answer", "Opposite of left", "Proper/legal side"] },
+  { s: "She turned off the ___, felt a ___ breeze, and made the burden ___ for her brother.", word: "light", hint: "Glow, gentle, or weightless", meanings: ["Glow source", "Gentle/soft", "Weightless/easier"] },
+  { s: "He held a ___ in his hand, decided to ___ the candle, and felt a perfect ___.", word: "match", hint: "Fire stick, competition, or twin pair", meanings: ["Ignition stick", "Light up", "Identical pair"] },
+  { s: "The fisherman caught a ___ on his ___, then tied the ___ around his waist.", word: "line", hint: "Rope/string, row of text, or boundary", meanings: ["Fish string", "Fishing cord", "Fastening rope"] },
+  { s: "He fell into a deep ___, drank from the water ___, and felt ___ after sleeping.", word: "well", hint: "Water pit, good health, or satisfactory", meanings: ["Water pit", "Spring pit", "Healthy and fine"] },
+  { s: "She held a ___ in his hand, had a ___ of cards, and decided to ___ her bags.", word: "pack", hint: "Bundle, deck of cards, or store items", meanings: ["Carrying bundle", "Deck of cards", "Store away items"] },
+  { s: "He took a long ___, walked up the ___ of the hill, and made a ___ decision.", word: "step", hint: "Pace, staircase level, or action phase", meanings: ["Foot stride", "Incline tier", "Action stage"] },
+  { s: "She placed the ___ on the table, opened a fresh ___ of juice, and looked at the ___.", word: "glass", hint: "Container, transparent material, or mirror", meanings: ["Drinking cup", "Transparent bottle", "Mirror glass"] },
+  { s: "The cat sat on a ___, gave a ___ pat, and slept on the floor ___.", word: "mat", hint: "Floor rug, tangled hair, or dull surface", meanings: ["Floor rug", "Soft/flat", "Rough padding"] },
+  { s: "He wore a black ___, took off his ___, and hung the ___ on the door.", word: "coat", hint: "Jacket, paint layer, or animal fur", meanings: ["Outer jacket", "Heavy jacket", "Garment layer"] },
+  { s: "She threw a ___ into the air, played a ___ game, and danced at the grand ___.", word: "ball", hint: "Sphere toy, formal dance, or round shape", meanings: ["Sphere toy", "Round sport", "Formal dance event"] },
+  { s: "He had a ___ attitude, ate a ___ meal, and stood in a ___ line.", word: "square", hint: "Four-sided shape, honest/fair, or city plaza", meanings: ["Honest/fair", "Substantial/full", "Straight/orderly"] }
+];
+
+let puzzles = [];
+let pIndex = 0;
+let score = 0;
+let streak = 0;
+let revealedIndexes = [];
+let revealedMeaningsCount = 0;
+
+const sentenceDisplay = document.getElementById('sentenceDisplay');
+const hintDisplay = document.getElementById('hintDisplay');
+const meaningPills = document.getElementById('meaningPills');
+const userInput = document.getElementById('userInput');
+const submitBtn = document.getElementById('submitBtn');
+const skipBtn = document.getElementById('skipBtn');
+const restartBtn = document.getElementById('restartBtn');
+const statusMsg = document.getElementById('statusMsg');
+const levelDisplay = document.getElementById('levelDisplay');
+const scoreDisplay = document.getElementById('scoreDisplay');
+const letterClueBtn = document.getElementById('letterClueBtn');
+const meaningClueBtn = document.getElementById('meaningClueBtn');
+const revealWordBtn = document.getElementById('revealWordBtn');
+
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playSound(type) {
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+
+  const now = audioCtx.currentTime;
+
+  if (type === 'correct') {
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(523.25, now);
+    osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.1);
+    osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.2);
+    gain.gain.setValueAtTime(0.2, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+    osc.start(now);
+    osc.stop(now + 0.4);
+  } else if (type === 'wrong') {
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(180, now);
+    osc.frequency.exponentialRampToValueAtTime(110, now + 0.2);
+    gain.gain.setValueAtTime(0.2, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+    osc.start(now);
+    osc.stop(now + 0.25);
+  } else if (type === 'click') {
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(400, now);
+    gain.gain.setValueAtTime(0.05, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+    osc.start(now);
+    osc.stop(now + 0.05);
+  } else if (type === 'win') {
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(440, now);
+    osc.frequency.exponentialRampToValueAtTime(880, now + 0.5);
+    gain.gain.setValueAtTime(0.25, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
+    osc.start(now);
+    osc.stop(now + 0.6);
+  }
+}
+
+const canvas = document.getElementById('fxCanvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+function triggerBurst() {
+  const colors = ['#d97724', '#2e6f40', '#8c4a32', '#f0e6d2', '#5c4738'];
+  for (let i = 0; i < 40; i++) {
+    particles.push({
+      x: canvas.width / 2,
+      y: canvas.height / 3,
+      vx: (Math.random() - 0.5) * 12,
+      vy: (Math.random() - 0.7) * 12,
+      size: Math.random() * 6 + 3,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      life: 1
+    });
+  }
+}
+
+function renderParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach((p, index) => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.25;
+    p.life -= 0.02;
+    if (p.life <= 0) {
+      particles.splice(index, 1);
+    } else {
+      ctx.globalAlpha = p.life;
+      ctx.fillStyle = p.color;
+      ctx.fillRect(p.x, p.y, p.size, p.size);
+    }
+  });
+  requestAnimationFrame(renderParticles);
+}
+renderParticles();
+
+function shuffle(arr) {
+  let res = [...arr];
+  for (let i = res.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [res[i], res[j]] = [res[j], res[i]];
+  }
+  return res;
+}
+
+function initGame() {
+  puzzles = shuffle(puzzlesPool);
+  pIndex = 0;
+  score = 0;
+  streak = 0;
+  updateMeta();
+  loadPuzzle();
+}
+
+function updateMeta() {
+  levelDisplay.innerText = `Puzzle: ${pIndex + 1}/${puzzles.length}`;
+  scoreDisplay.innerText = `Score: ${score} | Streak: 🔥 ${streak}`;
+}
+
+function renderBlanks() {
+  const current = puzzles[pIndex];
+  const wordArr = current.word.toLowerCase().split('');
+  let placeholderStr = wordArr.map((char, i) => {
+    return revealedIndexes.includes(i) ? char.toUpperCase() : '_';
+  }).join(' ');
+  
+  const blankHTML = `<span class="blank-space">${placeholderStr}</span>`;
+  sentenceDisplay.innerHTML = current.s.replaceAll('___', blankHTML);
+}
+
+function loadPuzzle() {
+  if (pIndex >= puzzles.length) {
+    sentenceDisplay.innerHTML = `🏆 <b>GAME COMPLETED!</b><br>You solved all puzzles with a total score of <b>${score}</b>!`;
+    hintDisplay.innerText = "";
+    meaningPills.innerHTML = "";
+    statusMsg.innerText = "";
+    userInput.style.display = "none";
+    submitBtn.style.display = "none";
+    skipBtn.style.display = "none";
+    document.querySelectorAll('.clue-btn').forEach(b => b.style.display = "none");
+    playSound('win');
+    triggerBurst();
+    return;
+  }
+
+  revealedIndexes = [];
+  revealedMeaningsCount = 0;
+  userInput.style.display = "block";
+  submitBtn.style.display = "block";
+  skipBtn.style.display = "block";
+  userInput.value = "";
+  statusMsg.innerText = "";
+  statusMsg.className = "status-msg";
+  letterClueBtn.disabled = false;
+  meaningClueBtn.disabled = false;
+  revealWordBtn.disabled = false;
+
+  const current = puzzles[pIndex];
+  renderBlanks();
+  hintDisplay.innerText = `Hint: ${current.hint} (${current.word.length} letters)`;
+  meaningPills.innerHTML = '';
+  updateMeta();
+  userInput.focus();
+}
+
+function giveLetterClue() {
+  playSound('click');
+  const current = puzzles[pIndex];
+  const wordLen = current.word.length;
+  let unrevealed = [];
+  for (let i = 0; i < wordLen; i++) {
+    if (!revealedIndexes.includes(i)) unrevealed.push(i);
+  }
+
+  if (unrevealed.length > 1) {
+    const randomIndex = unrevealed[Math.floor(Math.random() * unrevealed.length)];
+    revealedIndexes.push(randomIndex);
+    score = Math.max(0, score - 2);
+    updateMeta();
+    renderBlanks();
+    if (revealedIndexes.length >= wordLen - 1) {
+      letterClueBtn.disabled = true;
+    }
+  } else {
+    letterClueBtn.disabled = true;
+  }
+}
+
+function giveMeaningClue() {
+  playSound('click');
+  const current = puzzles[pIndex];
+  if (current.meanings && revealedMeaningsCount < current.meanings.length) {
+    const pill = document.createElement('span');
+    pill.className = 'meaning-pill';
+    pill.innerText = `📌 ${current.meanings[revealedMeaningsCount]}`;
+    meaningPills.appendChild(pill);
+    revealedMeaningsCount++;
+    score = Math.max(0, score - 3);
+    updateMeta();
+    if (revealedMeaningsCount >= current.meanings.length) {
+      meaningClueBtn.disabled = true;
+    }
+  } else {
+    meaningClueBtn.disabled = true;
+  }
+}
+
+function revealWord() {
+  playSound('click');
+  const current = puzzles[pIndex];
+  score = Math.max(0, score - 15);
+  streak = 0;
+  updateMeta();
+
+  statusMsg.innerText = `Word revealed: "${current.word.toUpperCase()}"`;
+  statusMsg.className = "status-msg wrong";
+
+  const revealedHTML = `<span class="blank-space revealed">${current.word.toUpperCase()}</span>`;
+  sentenceDisplay.innerHTML = current.s.replaceAll('___', revealedHTML);
+
+  letterClueBtn.disabled = true;
+  meaningClueBtn.disabled = true;
+  revealWordBtn.disabled = true;
+
+  setTimeout(() => {
+    pIndex++;
+    loadPuzzle();
+  }, 1800);
+}
+
+function checkAnswer() {
+  const guess = userInput.value.trim().toLowerCase();
+  const current = puzzles[pIndex];
+
+  if (!guess) return;
+
+  if (guess === current.word.toLowerCase()) {
+    playSound('correct');
+    triggerBurst();
+    score += 10 + (streak * 2);
+    streak++;
+    statusMsg.innerText = "🎉 BINGO! Perfectly Matched!";
+    statusMsg.className = "status-msg correct";
+
+    const revealedHTML = `<span class="blank-space revealed">${current.word.toUpperCase()}</span>`;
+    sentenceDisplay.innerHTML = current.s.replaceAll('___', revealedHTML);
+
+    setTimeout(() => {
+      pIndex++;
+      loadPuzzle();
+    }, 1400);
+  } else {
+    playSound('wrong');
+    streak = 0;
+    statusMsg.innerText = "❌ Incorrect word! Try again.";
+    statusMsg.className = "status-msg wrong";
+    updateMeta();
+  }
+}
+
+function skipPuzzle() {
+  playSound('click');
+  const current = puzzles[pIndex];
+  streak = 0;
+  statusMsg.innerText = `Skipped! The word was: "${current.word.toUpperCase()}"`;
+  statusMsg.className = "status-msg wrong";
+
+  const revealedHTML = `<span class="blank-space revealed">${current.word.toUpperCase()}</span>`;
+  sentenceDisplay.innerHTML = current.s.replaceAll('___', revealedHTML);
+
+  setTimeout(() => {
+    pIndex++;
+    loadPuzzle();
+  }, 1800);
+}
+
+// Modal FAQ Control
+const faqOverlay = document.getElementById('faqModalOverlay');
+const openFaqBtn = document.getElementById('openFaqBtn');
+const closeFaqBtn = document.getElementById('closeFaqBtn');
+
+openFaqBtn.addEventListener('click', () => {
+  playSound('click');
+  faqOverlay.classList.add('open');
+});
+
+closeFaqBtn.addEventListener('click', () => {
+  playSound('click');
+  faqOverlay.classList.remove('open');
+});
+
+faqOverlay.addEventListener('click', (e) => {
+  if (e.target === faqOverlay) {
+    faqOverlay.classList.remove('open');
+  }
+});
+
+// Accordion functionality inside FAQ Modal
+document.querySelectorAll('.faq-question').forEach(q => {
+  q.addEventListener('click', () => {
+    const item = q.parentElement;
+    item.classList.toggle('active');
+    const toggle = q.querySelector('.faq-toggle');
+    toggle.innerText = item.classList.contains('active') ? '-' : '+';
+  });
+});
+
+// Event Listeners
+submitBtn.addEventListener('click', checkAnswer);
+skipBtn.addEventListener('click', skipPuzzle);
+restartBtn.addEventListener('click', () => {
+  playSound('click');
+  initGame();
+});
+
+letterClueBtn.addEventListener('click', giveLetterClue);
+meaningClueBtn.addEventListener('click', giveMeaningClue);
+revealWordBtn.addEventListener('click', revealWord);
+
+userInput.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') checkAnswer();
+});
+
+initGame();
+</script>
+</body>
+</html>

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Antiquarian's Safe - KenitFun</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+
+        :root {
+            --bg-color: #f4ecd8;
+            --paper-texture: #e9dec3;
+            --ink-color: #2b221e;
+            --accent-color: #8c4a32;
+            --border-color: #5c4738;
+            --brass: #b8860b;
+            --iron: #343434;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: radial-gradient(var(--paper-texture) 15%, transparent 16%), radial-gradient(var(--paper-texture) 15%, transparent 16%);
+            background-size: 60px 60px;
+            background-position: 0 0, 30px 30px;
+            color: var(--ink-color);
+            font-family: 'Special Elite', cursive, serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+            user-select: none;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 700px;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn {
+            background: #fffdf9;
+            border: 2px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            color: var(--ink-color);
+            text-decoration: none;
+            font-weight: bold;
+            box-shadow: 3px 3px 0px var(--border-color);
+            transition: all 0.1s ease;
+        }
+
+        .back-btn:hover {
+            box-shadow: 4px 4px 0px var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        /* Safe Cabinet Visual Structure */
+        .safe-container {
+            background: radial-gradient(circle, #4a4a4a 0%, #1a1a1a 100%);
+            width: 100%;
+            max-width: 480px;
+            height: 520px;
+            border: 12px solid #2b2b2b;
+            border-radius: 12px;
+            box-shadow: 12px 12px 0px var(--border-color), inset 0 0 25px #000;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Rivets on Safe Door */
+        .rivet {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: radial-gradient(circle at 30% 30%, #777, #111);
+            border-radius: 50%;
+            box-shadow: 1px 1px 2px #000;
+        }
+
+        /* Safe Lock Mechanism */
+        .dial-housing {
+            width: 240px;
+            height: 240px;
+            background: radial-gradient(circle, #d4af37 0%, #8b6508 80%, #4a3500 100%);
+            border-radius: 50%;
+            border: 6px solid #222;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.8), inset 0 0 10px rgba(255,255,255,0.4);
+            cursor: grab;
+        }
+
+        .dial-housing:active {
+            cursor: grabbing;
+        }
+
+        .dial-ring {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: #222;
+            border: 3px solid #d4af37;
+            position: relative;
+            transition: transform 0.05s ease-out;
+        }
+
+        .dial-center {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            background: radial-gradient(circle at 30% 30%, #f3e5ab, #8b6508);
+            border-radius: 50%;
+            border: 3px solid #111;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.6);
+        }
+
+        /* Dial Numbers & Markers */
+        .marker-notch {
+            position: absolute;
+            top: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 16px solid #d4af37;
+            z-index: 10;
+        }
+
+        .dial-number {
+            position: absolute;
+            color: #d4af37;
+            font-size: 0.85rem;
+            font-weight: bold;
+            transform-origin: center 90px;
+            left: 92px;
+            top: 10px;
+        }
+
+        /* Handle Lever */
+        .handle-bar {
+            width: 180px;
+            height: 24px;
+            background: linear-gradient(180deg, #d4af37, #574000);
+            border: 2px solid #111;
+            border-radius: 12px;
+            margin-top: 2.5rem;
+            cursor: pointer;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.7);
+            transition: transform 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 2px #000;
+        }
+
+        .handle-bar:active {
+            transform: translateY(4px);
+        }
+
+        /* Secret Compartment Overlay */
+        .vault-contents {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: #120e0b;
+            color: #f4ecd8;
+            padding: 2.5rem;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            z-index: 20;
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .relic-card {
+            border: 2px dashed #b8860b;
+            padding: 1.5rem;
+            background: #1c1612;
+            box-shadow: 0 0 15px rgba(184, 134, 11, 0.2);
+            margin-top: 1rem;
+        }
+
+        .status-text {
+            margin-top: 1.5rem;
+            font-size: 1.1rem;
+            color: var(--ink-color);
+            text-align: center;
+            min-height: 2rem;
+        }
+		@media only screen and (max-width: 640px) {
+			
+			header {
+			 flex-direction: column
+			}
+			header h2 {
+				margin-top: 30px;
+				}
+		}
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../../index.html" class="back-btn">&larr; KENITFUN</a>
+        <h2>THE ANTIQUARIAN'S SAFE</h2>
+    </header>
+
+    <div class="safe-container">
+        <!-- Corner Rivets -->
+        <div class="rivet" style="top: 15px; left: 15px;"></div>
+        <div class="rivet" style="top: 15px; right: 15px;"></div>
+        <div class="rivet" style="bottom: 15px; left: 15px;"></div>
+        <div class="rivet" style="bottom: 15px; right: 15px;"></div>
+
+        <div class="marker-notch"></div>
+
+        <!-- Rotating Dial -->
+        <div class="dial-housing" id="dialHousing">
+            <div class="dial-ring" id="dialRing"></div>
+            <div class="dial-center"></div>
+        </div>
+
+        <!-- Safe Release Handle -->
+        <div class="handle-bar" id="safeHandle">PULL HANDLE</div>
+
+        <!-- Vault Relic Reveal Modal -->
+        <div class="vault-contents" id="vaultModal">
+            <h3 style="color: #d4af37; font-size: 1.8rem; margin-bottom: 0.5rem;">VAULT UNLOCKED</h3>
+            <p style="font-size: 0.95rem; opacity: 0.8;">Inside lies an old leather-bound journal entry...</p>
+            <div class="relic-card">
+                <p style="font-style: italic; font-size: 1.05rem; line-height: 1.5;">
+                    "July 14th, 1888 — The secrets of the universe aren't hidden in stars, but in quiet moments spent crafting simple things."
+                </p>
+            </div>
+            <button class="back-btn" onclick="location.reload()" style="margin-top: 1.5rem;">Lock Safe Again</button>
+        </div>
+    </div>
+
+    <div class="status-text" id="statusLog">
+        Listen closely to the tumblers... Rotate the dial with mouse wheel or dragging.
+    </div>
+
+    <script>
+        // --- Web Audio Engine ---
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+            }
+        }
+
+        function playClickSound(pitch = 1) {
+            initAudio();
+            if (!audioCtx) return;
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(150 * pitch + Math.random() * 20, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(20, audioCtx.currentTime + 0.03);
+
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.03);
+        }
+
+        function playClunkSound() {
+            initAudio();
+            if (!audioCtx) return;
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(80, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(10, audioCtx.currentTime + 0.25);
+
+            gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.25);
+        }
+
+        // --- Safe Combination Logic ---
+        // Secret combination: 25 -> 60 -> 10
+        const targetCombo = [25, 60, 10];
+        let comboStage = 0;
+
+        const dialRing = document.getElementById('dialRing');
+        const dialHousing = document.getElementById('dialHousing');
+        const safeHandle = document.getElementById('safeHandle');
+        const statusLog = document.getElementById('statusLog');
+        const vaultModal = document.getElementById('vaultModal');
+
+        // Populate Dial Numbers (0 to 90)
+        for (let i = 0; i < 10; i++) {
+            const num = document.createElement('div');
+            num.className = 'dial-number';
+            num.innerText = i * 10;
+            num.style.transform = `rotate(${i * 36}deg)`;
+            dialRing.appendChild(num);
+        }
+
+        let currentAngle = 0;
+        let lastValue = 0;
+
+        function rotateDial(delta) {
+            currentAngle += delta;
+            if (currentAngle < 0) currentAngle += 360;
+            currentAngle %= 360;
+
+            dialRing.style.transform = `rotate(${currentAngle}deg)`;
+
+            // Convert angle to value 0..100
+            const currentValue = Math.round(( (360 - currentAngle) % 360 ) / 3.6);
+
+            if (currentValue !== lastValue) {
+                lastValue = currentValue;
+                
+                // Tumbler lock audio cue - distinct pitch when near correct combination mark
+                const isNearSecret = Math.abs(currentValue - targetCombo[comboStage]) <= 2;
+                playClickSound(isNearSecret ? 2.5 : 1.0);
+
+                // Check stage progression
+                if (currentValue === targetCombo[comboStage]) {
+                    comboStage++;
+                    if (comboStage < 3) {
+                        statusLog.innerText = `⚙️ Tumbler #${comboStage} engaged with a heavy click!`;
+                    } else {
+                        statusLog.innerText = `🔓 All tumblers aligned! Try pulling the handle now.`;
+                    }
+                }
+            }
+        }
+
+        // Mouse Wheel Control
+        window.addEventListener('wheel', (e) => {
+            rotateDial(e.deltaY > 0 ? 3.6 : -3.6);
+        });
+
+        // Mouse Drag Control
+        let isDragging = false;
+        let lastMouseX = 0;
+
+        dialHousing.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            lastMouseX = e.clientX;
+        });
+
+        window.addEventListener('mouseup', () => isDragging = false);
+
+        window.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const deltaX = e.clientX - lastMouseX;
+            lastMouseX = e.clientX;
+            rotateDial(deltaX * 0.8);
+        });
+
+        // Handle Pull Check
+        safeHandle.addEventListener('click', () => {
+            playClunkSound();
+            if (comboStage >= 3) {
+                vaultModal.style.display = 'flex';
+            } else {
+                statusLog.innerText = "❌ Lock remains frozen shut. Check combination alignment!";
+            }
+        });
+    </script>
+</body>
+</html>

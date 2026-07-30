@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Primary SEO Meta Tags -->
+    <title>Zen Stone Balancer - Relaxing River Stone Pair Match | KenitFun</title>
+    <meta name="title" content="Zen Stone Balancer - Relaxing River Stone Pair Match | KenitFun">
+    <meta name="description" content="Unwind with Zen Stone Balancer! Match organic river stones, practice mindfulness, and enjoy calm audio synthesis feedback on KenitFun.">
+    <meta name="keywords" content="zen stone balancer, relaxing card game, river stone match, memory puzzle online, zen brain game, kenitfun game">
+    <meta name="robots" content="index, follow">
+
+    <!-- JSON-LD FAQ Schema for Search Engines -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "How do you play Zen Stone Balancer?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Reveal pairs of natural river stones and symbols. Find and balance all identical pairs in the fewest moves and calmest rhythm possible!"
+        }
+      }, {
+        "@type": "Question",
+        "name": "Are the stone positions randomized every game?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! Every time you start a new session or click Reset, the stones are shuffled randomly using the Fisher-Yates algorithm."
+        }
+      }, {
+        "@type": "Question",
+        "name": "Does the game work on mobile devices?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, the tactile grid layout dynamically adapts to smartphones, tablets, and desktop displays."
+        }
+      }]
+    }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
+
+        :root {
+            --bg-color: #0f172a;
+            --surface: #1e293b;
+            --surface-hover: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-glow: #38bdf8;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --matched-bg: rgba(56, 189, 248, 0.15);
+            --matched-border: #38bdf8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.08) 0%, transparent 60%),
+                radial-gradient(circle at 80% 80%, rgba(30, 41, 59, 0.5) 0%, transparent 50%);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+            user-select: none;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 650px;
+            margin-bottom: 1.5rem;
+        }
+
+        header h2 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            color: var(--text-main);
+        }
+
+        .back-btn, .action-btn {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            color: var(--text-main);
+            text-decoration: none;
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-radius: 10px;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            transition: all 0.25s ease;
+        }
+
+        .back-btn:hover, .action-btn:hover {
+            background: var(--surface-hover);
+            border-color: rgba(56, 189, 248, 0.4);
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.2);
+            color: var(--accent-glow);
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+        }
+
+        /* Game Dashboard & Scoreboard */
+        .dashboard {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(12px);
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 650px;
+            padding: 0.9rem 1.5rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text-muted);
+        }
+
+        .dash-item span {
+            color: var(--accent-glow);
+            font-weight: 700;
+        }
+
+        /* Cards Grid */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            width: 100%;
+            max-width: 650px;
+            perspective: 1000px;
+        }
+
+        .card {
+            background: transparent;
+            height: 110px;
+            cursor: pointer;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card.flipped, .card.matched {
+            transform: rotateY(180deg);
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.25);
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        /* Front / Cover of Card (Smooth Pebble Graphic) */
+        .card-front {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+        }
+
+        .card-front::after {
+            content: "🪨";
+            font-size: 1.8rem;
+            opacity: 0.4;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .card:hover .card-front {
+            border-color: rgba(56, 189, 248, 0.3);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.15);
+        }
+
+        .card:hover .card-front::after {
+            opacity: 0.8;
+            transform: scale(1.1);
+        }
+
+        /* Back / Revealed Symbol */
+        .card-back {
+            background: #1e293b;
+            transform: rotateY(180deg);
+            font-size: 2.8rem;
+        }
+
+        .card.matched .card-back {
+            background: var(--matched-bg);
+            border-color: var(--matched-border);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.25);
+        }
+
+        /* Zen Popup FAQ Modal */
+        .faq-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 1rem;
+        }
+
+        .faq-modal.active {
+            display: flex;
+        }
+
+        .faq-card {
+            background: var(--surface);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            border-radius: 20px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 550px;
+            color: var(--text-main);
+            position: relative;
+        }
+
+        .faq-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.2rem;
+            color: var(--accent-glow);
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.8rem;
+        }
+
+        .faq-item {
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 0.8rem;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .faq-item h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.3rem;
+            color: var(--text-main);
+        }
+
+        .faq-item p {
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+        }
+
+        .close-faq-btn {
+            margin-top: 1.2rem;
+            width: 100%;
+            text-align: center;
+        }
+
+        @media only screen and (max-width: 640px) {
+            header {
+                flex-direction: column;
+                gap: 12px;
+            }
+            .grid-container {
+                gap: 8px;
+            }
+            .card {
+                height: 85px;
+            }
+            .card-back {
+                font-size: 2rem;
+            }
+            .dashboard {
+                font-size: 0.875rem;
+                padding: 0.7rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../../index.html" class="back-btn">&larr; KENITFUN</a>
+        <h2>ZEN BALANCER</h2>
+        <div class="controls">
+            <button class="action-btn" id="restartBtn">🔄 Reset</button>
+            <button class="action-btn" id="faqBtn">❓ Guide</button>
+        </div>
+    </header>
+
+    <div class="dashboard">
+        <div class="dash-item">Moves: <span id="movesCount">0</span></div>
+        <div class="dash-item">Balanced: <span id="pairsCount">0/8</span></div>
+        <div class="dash-item">Time: <span id="timerDisplay">00:00</span></div>
+    </div>
+
+    <div class="grid-container" id="grid"></div>
+
+    <!-- Zen Popup FAQ Modal -->
+    <div class="faq-modal" id="faqModal">
+        <div class="faq-card">
+            <h3>🧘 ZEN BALANCER GUIDE</h3>
+            <div class="faq-item">
+                <h4>🪨 How do I play?</h4>
+                <p>Select two river stones at a time. Match identical natural elements to balance them! Clear all 8 pairs to complete the stack.</p>
+            </div>
+            <div class="faq-item">
+                <h4>🎯 What is the goal?</h4>
+                <p>Maintain a rhythmic, mindful pace while matching all pairs in the fewest moves possible.</p>
+            </div>
+            <div class="faq-item">
+                <h4>🔀 Can I start over?</h4>
+                <p>Click <strong>Reset</strong> anytime to reshuffle the stones and restart your timer.</p>
+            </div>
+            <button class="action-btn close-faq-btn" id="closeFaqBtn">Close Guide</button>
+        </div>
+    </div>
+
+    <script>
+        // Zen & River Stone Symbols (8 Pairs = 16 Cards)
+        const symbols = ['🪨', '🌿', '🪵', '💧', '🪷', '🍃', '🌊', '☀️'];
+        let cardsData = [];
+        let flippedCards = [];
+        let matchedPairs = 0;
+        let moves = 0;
+        let timerSeconds = 0;
+        let timerInterval = null;
+        let isBoardLocked = false;
+
+        // --- Web Audio API Soft Sound Effects ---
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+            }
+        }
+
+        function playSound(type) {
+            initAudio();
+            if (!audioCtx) return;
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            const now = audioCtx.currentTime;
+
+            if (type === 'flip') {
+                // Soft stone click
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(280, now);
+                osc.frequency.exponentialRampToValueAtTime(140, now + 0.06);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.06);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(now + 0.06);
+            } else if (type === 'match') {
+                // Soft ambient chime (E5 -> B5)
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(659.25, now); 
+                osc.frequency.setValueAtTime(987.77, now + 0.12); 
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(now + 0.35);
+            } else if (type === 'mismatch') {
+                // Soft muted thud
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(90, now + 0.12);
+                gain.gain.setValueAtTime(0.12, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(now + 0.12);
+            } else if (type === 'win') {
+                // Harmonic Pentatonic Soundscape
+                const notes = [523.25, 659.25, 783.99, 987.77, 1046.50];
+                notes.forEach((freq, idx) => {
+                    const noteOsc = audioCtx.createOscillator();
+                    const noteGain = audioCtx.createGain();
+                    noteOsc.type = 'sine';
+                    noteOsc.frequency.setValueAtTime(freq, now + idx * 0.14);
+                    noteGain.gain.setValueAtTime(0.25, now + idx * 0.14);
+                    noteGain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.14 + 0.4);
+                    noteOsc.connect(noteGain);
+                    noteGain.connect(audioCtx.destination);
+                    noteOsc.start(now + idx * 0.14);
+                    noteOsc.stop(now + idx * 0.14 + 0.4);
+                });
+            }
+        }
+
+        // Shuffle Array (Fisher-Yates)
+        function shuffle(array) {
+            let arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // Timer Functions
+        function startTimer() {
+            stopTimer();
+            timerSeconds = 0;
+            updateTimerDisplay();
+            timerInterval = setInterval(() => {
+                timerSeconds++;
+                updateTimerDisplay();
+            }, 1000);
+        }
+
+        function stopTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+        }
+
+        function updateTimerDisplay() {
+            const mins = Math.floor(timerSeconds / 60).toString().padStart(2, '0');
+            const secs = (timerSeconds % 60).toString().padStart(2, '0');
+            document.getElementById('timerDisplay').innerText = `${mins}:${secs}`;
+        }
+
+        // Game Initialization
+        function initGame() {
+            stopTimer();
+            moves = 0;
+            matchedPairs = 0;
+            flippedCards = [];
+            isBoardLocked = false;
+
+            document.getElementById('movesCount').innerText = moves;
+            document.getElementById('pairsCount').innerText = `${matchedPairs}/8`;
+            document.getElementById('timerDisplay').innerText = "00:00";
+
+            cardsData = shuffle([...symbols, ...symbols]);
+
+            const grid = document.getElementById('grid');
+            grid.innerHTML = '';
+
+            cardsData.forEach((symbol, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.index = index;
+                card.dataset.symbol = symbol;
+
+                card.innerHTML = `
+                    <div class="card-face card-front"></div>
+                    <div class="card-face card-back">${symbol}</div>
+                `;
+
+                card.addEventListener('click', () => handleCardClick(card));
+                grid.appendChild(card);
+            });
+        }
+
+        function handleCardClick(card) {
+            if (isBoardLocked) return;
+            if (card.classList.contains('flipped') || card.classList.contains('matched')) return;
+
+            if (moves === 0 && flippedCards.length === 0 && timerSeconds === 0) {
+                startTimer();
+            }
+
+            playSound('flip');
+            card.classList.add('flipped');
+            flippedCards.push(card);
+
+            if (flippedCards.length === 2) {
+                moves++;
+                document.getElementById('movesCount').innerText = moves;
+                checkMatch();
+            }
+        }
+
+        function checkMatch() {
+            isBoardLocked = true;
+            const [card1, card2] = flippedCards;
+
+            if (card1.dataset.symbol === card2.dataset.symbol) {
+                setTimeout(() => {
+                    playSound('match');
+                    card1.classList.add('matched');
+                    card2.classList.add('matched');
+                    matchedPairs++;
+                    document.getElementById('pairsCount').innerText = `${matchedPairs}/8`;
+                    flippedCards = [];
+                    isBoardLocked = false;
+
+                    if (matchedPairs === symbols.length) {
+                        stopTimer();
+                        setTimeout(() => {
+                            playSound('win');
+                            alert(`🧘 Perfect Balance Achieved! You matched all pairs in ${moves} moves and ${document.getElementById('timerDisplay').innerText}!`);
+                        }, 300);
+                    }
+                }, 300);
+            } else {
+                setTimeout(() => {
+                    playSound('mismatch');
+                    card1.classList.remove('flipped');
+                    card2.classList.remove('flipped');
+                    flippedCards = [];
+                    isBoardLocked = false;
+                }, 850);
+            }
+        }
+
+        // Modal Controls
+        const faqModal = document.getElementById('faqModal');
+        document.getElementById('faqBtn').addEventListener('click', () => faqModal.classList.add('active'));
+        document.getElementById('closeFaqBtn').addEventListener('click', () => faqModal.classList.remove('active'));
+        document.getElementById('restartBtn').addEventListener('click', initGame);
+
+        // Start Game on Load
+        initGame();
+    </script>
+</body>
+</html>

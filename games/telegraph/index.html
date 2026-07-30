@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>The Morse Telegraph - 19th-Century Audio Code Game | KenitFun</title>
+    <meta name="title" content="The Morse Telegraph - 19th-Century Audio Code Game | KenitFun">
+    <meta name="description" content="Step back into the 1800s as a Vintage Telegraph Operator! Transmit and decipher real Morse Code signals using audio telegraph tones on KenitFun.">
+    <meta name="keywords" content="morse code game, telegraph simulator, vintage audio puzzle, Morse decipher online, 19th century telegraph, kenitfun web games">
+    <meta name="robots" content="index, follow">
+
+       <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Press+Start+2P&family=Rajdhani:wght@500;600;700&display=swap');
+
+    :root {
+        --bg-color: #0b0c10;
+        --panel-bg: rgba(20, 24, 33, 0.9);
+        --panel-inner: rgba(12, 15, 23, 0.95);
+        --text-primary: #e0e6ed;
+        --text-secondary: #9daaf2;
+        --neon-cyan: #00f3ff;
+        --neon-magenta: #ff0055;
+        --border-color: #1f293d;
+        --glow-cyan: rgba(0, 243, 255, 0.4);
+        --glow-magenta: rgba(255, 0, 85, 0.5);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+        background-color: var(--bg-color);
+        /* Cyber grid pattern background */
+        background-image: 
+            linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+        background-size: 40px 40px;
+        background-position: center center;
+        font-family: 'Rajdhani', sans-serif;
+        color: var(--text-primary);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem 1rem;
+        user-select: none;
+    }
+
+    /* HEADER STYLES */
+    header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        max-width: 750px;
+        margin-bottom: 1.5rem;
+        border-bottom: 2px solid var(--neon-cyan);
+        padding-bottom: 1rem;
+        box-shadow: 0 4px 15px -5px var(--glow-cyan);
+    }
+
+    header h2 {
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 900;
+        letter-spacing: 3px;
+        color: #fff;
+        text-shadow: 0 0 10px var(--neon-cyan), 2px 2px 0px var(--neon-magenta);
+    }
+
+    .back-btn, .action-btn {
+        background: transparent;
+        border: 1px solid var(--neon-cyan);
+        padding: 0.5rem 1rem;
+        color: var(--neon-cyan);
+        text-decoration: none;
+        font-family: 'Press Start 2P', cursive;
+        font-size: 0.65rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+    }
+
+    .back-btn:hover, .action-btn:hover {
+        background: var(--neon-cyan);
+        color: #000;
+        font-weight: bold;
+        box-shadow: 0 0 12px var(--neon-cyan);
+    }
+
+    .controls { display: flex; gap: 0.8rem; align-items: center; }
+
+    /* MAIN GAME HUD CONTAINER */
+    .deck {
+        background: var(--panel-bg);
+        border: 1px solid var(--border-color);
+        clip-path: polygon(
+            0 0, 
+            calc(100% - 20px) 0, 
+            100% 20px, 
+            100% 100%, 
+            20px 100%, 
+            0 calc(100% - 20px)
+        );
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        backdrop-filter: blur(10px);
+        width: 100%;
+        max-width: 750px;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+    }
+
+    .deck::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 3px;
+        background: linear-gradient(90deg, var(--neon-cyan), var(--neon-magenta));
+    }
+
+    /* MISSION / TARGET WORD PANEL */
+    .mission-box {
+        width: 100%;
+        background: var(--panel-inner);
+        border: 1px solid var(--neon-magenta);
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        font-family: 'Press Start 2P', cursive;
+        font-size: 0.75rem;
+        color: var(--neon-magenta);
+        box-shadow: 0 0 10px rgba(255, 0, 85, 0.15);
+    }
+
+    .target-word {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 2.2rem;
+        font-weight: 900;
+        color: #fff;
+        letter-spacing: 5px;
+        margin-top: 8px;
+        text-shadow: 0 0 10px var(--neon-magenta);
+    }
+
+    /* LIVE SIGNAL & DECODED TEXT DISPLAY */
+    .signal-display {
+        width: 100%;
+        background: var(--panel-inner);
+        border: 1px solid var(--border-color);
+        min-height: 100px;
+        padding: 1.2rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+    }
+
+    .morse-symbols {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.6rem;
+        letter-spacing: 6px;
+        color: var(--neon-cyan);
+        min-height: 32px;
+        text-shadow: 0 0 8px var(--glow-cyan);
+    }
+
+    .translated-text {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.5rem;
+        color: #fff;
+        font-weight: 700;
+        letter-spacing: 4px;
+        margin-top: 6px;
+    }
+
+    /* TELEGRAPH KEY / INTERACTION AREA */
+    .key-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .telegraph-key {
+        width: 140px;
+        height: 140px;
+        background: radial-gradient(circle, rgba(0, 243, 255, 0.15) 0%, rgba(11, 12, 16, 0.9) 100%);
+        border: 2px solid var(--neon-cyan);
+        border-radius: 50%;
+        box-shadow: 0 0 15px var(--glow-cyan), inset 0 0 15px var(--glow-cyan);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        transition: all 0.05s ease;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .telegraph-key:active, .telegraph-key.pressed {
+        transform: scale(0.94);
+        background: radial-gradient(circle, rgba(255, 0, 85, 0.4) 0%, rgba(11, 12, 16, 0.9) 100%);
+        border-color: var(--neon-magenta);
+        box-shadow: 0 0 25px var(--neon-magenta), inset 0 0 20px var(--neon-magenta);
+        color: var(--neon-magenta);
+    }
+
+    .key-hint {
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        text-align: center;
+        line-height: 1.5;
+        font-weight: 500;
+    }
+
+    .key-hint strong {
+        color: var(--neon-cyan);
+    }
+
+    /* CHEAT SHEET GRID */
+    .cheat-sheet {
+        width: 100%;
+        background: var(--panel-inner);
+        border: 1px solid var(--border-color);
+        padding: 1rem;
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 0.95rem;
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 8px;
+        text-align: center;
+        max-height: 160px;
+        overflow-y: auto;
+    }
+
+    .cheat-item {
+        color: var(--text-secondary);
+    }
+
+    .cheat-item strong { 
+        color: var(--neon-cyan); 
+        font-family: 'Orbitron', sans-serif;
+    }
+
+    /* MODAL OVERLAYS (FAQ & SUCCESS) */
+    .modal-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(5, 6, 8, 0.85);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        padding: 1rem;
+        backdrop-filter: blur(5px);
+    }
+
+    .modal-overlay.active { display: flex; }
+
+    .faq-card {
+        background: var(--panel-bg);
+        border: 1px solid var(--neon-cyan);
+        box-shadow: 0 0 25px var(--glow-cyan);
+        padding: 2rem;
+        width: 100%;
+        max-width: 550px;
+        color: var(--text-primary);
+        clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+    }
+
+    .faq-card h3 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.3rem;
+        margin-bottom: 1.2rem;
+        color: var(--neon-cyan);
+        text-align: center;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 0.5rem;
+    }
+
+    .faq-item {
+        margin-bottom: 1rem;
+        border-bottom: 1px rgba(255,255,255,0.05) solid;
+        padding-bottom: 0.8rem;
+    }
+
+    .faq-item h4 { 
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 1.1rem; 
+        margin-bottom: 0.3rem; 
+        color: #fff;
+    }
+    
+    .faq-item p { 
+        font-size: 0.95rem; 
+        line-height: 1.4; 
+        color: var(--text-secondary); 
+    }
+
+    /* CYBER TELEGRAM / DISPATCH SUCCESS POPUP */
+    .telegram-paper {
+        background: var(--panel-inner);
+        border: 1px solid var(--neon-cyan);
+        box-shadow: 0 0 35px var(--glow-cyan);
+        padding: 2rem;
+        width: 100%;
+        max-width: 480px;
+        position: relative;
+        animation: popIn 0.25s ease-out;
+        clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+    }
+
+    @keyframes popIn {
+        0% { transform: scale(0.8); opacity: 0; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    .telegram-header {
+        text-align: center;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 0.8rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .telegram-header h3 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.4rem;
+        letter-spacing: 2px;
+        color: #fff;
+    }
+
+    .telegram-sub {
+        font-family: 'Press Start 2P', cursive;
+        font-size: 0.65rem;
+        color: var(--neon-cyan);
+        margin-top: 6px;
+    }
+
+    .telegram-body {
+        background: rgba(20, 24, 33, 0.5);
+        border: 1px solid var(--border-color);
+        padding: 1.2rem;
+        text-align: center;
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .telegram-msg {
+        font-size: 0.95rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.6rem;
+    }
+
+    .telegram-word {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 2.2rem;
+        font-weight: 900;
+        color: var(--neon-cyan);
+        letter-spacing: 4px;
+        border-top: 1px dashed var(--border-color);
+        border-bottom: 1px dashed var(--border-color);
+        padding: 0.5rem 0;
+        margin: 0.5rem 0;
+        word-break: break-all;
+        text-shadow: 0 0 10px var(--glow-cyan);
+    }
+
+    .vintage-stamp {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        border: 2px solid var(--neon-magenta);
+        color: var(--neon-magenta);
+        padding: 0.2rem 0.6rem;
+        font-family: 'Press Start 2P', cursive;
+        font-size: 0.6rem;
+        transform: rotate(12deg);
+        opacity: 0.9;
+        box-shadow: 0 0 8px var(--glow-magenta);
+        pointer-events: none;
+    }
+
+    .next-btn {
+        width: 100%;
+        padding: 0.9rem;
+        font-family: 'Press Start 2P', cursive;
+        font-size: 0.75rem;
+        background: var(--neon-cyan);
+        color: #000;
+        border: none;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.2s ease;
+        box-shadow: 0 0 15px var(--glow-cyan);
+        clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+    }
+
+    .next-btn:hover {
+        background: #fff;
+        box-shadow: 0 0 25px var(--neon-cyan);
+    }
+
+    .next-btn:active {
+        transform: scale(0.97);
+    }
+
+    /* RESPONSIVE DESIGN */
+    @media only screen and (max-width: 640px) {
+        header { flex-direction: column; gap: 12px; }
+        .cheat-sheet { grid-template-columns: repeat(3, 1fr); }
+        .deck { padding: 1.2rem 1rem; }
+        .telegram-paper { padding: 1.2rem; }
+        .telegram-word { font-size: 1.6rem; }
+    }
+</style>
+</head>
+<body>
+
+    <header>
+        <a href="../../index.html" class="back-btn">&larr; KENITFUN</a>
+        <h2>THE TELEGRAPH</h2>
+        <div class="controls">
+            <button class="action-btn" id="clearBtn">🧹 Clear</button>
+            <button class="action-btn" id="faqBtn">❓ FAQ</button>
+        </div>
+    </header>
+
+    <div class="deck">
+        <div class="mission-box">
+            <div>MISSION: TRANSMIT THE CODE</div>
+            <div class="target-word" id="targetWord">---</div>
+        </div>
+
+        <div class="signal-display">
+            <div class="morse-symbols" id="morseDisplay">Waiting for input...</div>
+            <div class="translated-text" id="translatedDisplay">---</div>
+        </div>
+
+        <div class="key-container">
+            <button class="telegraph-key" id="keyBtn">PRESS KEY</button>
+            <div class="key-hint">Tap fast for Dot (•) | Hold for Dash (—)<br><strong>Wait 1 second</strong> after a letter to commit it!</div>
+        </div>
+
+        <div class="cheat-sheet" id="cheatSheet"></div>
+    </div>
+
+    <!-- FAQ Modal -->
+    <div class="modal-overlay" id="faqModal">
+        <div class="faq-card">
+            <h3>📜 TELEGRAPH FAQ</h3>
+            <div class="faq-item">
+                <h4>📡 How do I enter multi-tap letters like S (• • •)?</h4>
+                <p>Tap three times quickly. The game gives you 1 second gap after your last tap to finish building the letter pattern before committing it!</p>
+            </div>
+            <div class="faq-item">
+                <h4>⌨️ Can I use keyboard controls?</h4>
+                <p>Yes, hold and release the <strong>Spacebar</strong> just like the telegraph key.</p>
+            </div>
+            <button class="action-btn" style="width:100%; margin-top:1rem;" id="closeFaqBtn">Close FAQ</button>
+        </div>
+    </div>
+
+    <!-- VINTAGE TELEGRAM SUCCESS POPUP -->
+    <div class="modal-overlay" id="successModal">
+        <div class="telegram-paper">
+            <div class="vintage-stamp">DELIVERED</div>
+            <div class="telegram-header">
+                <h3>WESTERN TELEGRAPH CO.</h3>
+                <div class="telegram-sub">Official Emergency Dispatch • 1888</div>
+            </div>
+            <div class="telegram-body">
+                <div class="telegram-msg">MESSAGE TRANSMITTED SUCCESSFULLY:</div>
+                <div class="telegram-word" id="successWord">---</div>
+                <div class="telegram-msg" style="font-size: 0.8rem; opacity: 0.8;">STATUS: CLEAR TO PROCEED TO NEXT STATION</div>
+            </div>
+            <button class="next-btn" id="nextMissionBtn">NEXT TRANSMISSION &rarr;</button>
+        </div>
+    </div>
+
+    <script>
+        const MORSE_MAP = {
+            'A': '•—',    'B': '—•••',  'C': '—•—•',  'D': '—••',   'E': '•',
+            'F': '••—•',  'G': '——•',   'H': '••••',  'I': '••',    'J': '•———',
+            'K': '—•—',   'L': '•—••',  'M': '——',    'N': '—•',    'O': '———',
+            'P': '•——•',  'Q': '——•—',  'R': '•—•',   'S': '•••',   'T': '—',
+            'U': '••—',   'V': '•••—',  'W': '•——',   'X': '—••—',  'Y': '—•——',
+            'Z': '——••'
+        };
+
+        const REVERSE_MORSE = Object.fromEntries(Object.entries(MORSE_MAP).map(([k, v]) => [v, k]));
+
+        // 500+ Words Dictionary Array
+        const WORD_BANK = [
+            "SOS", "RADIO", "RETRO", "TRAIN", "STEAM", "TELEGRAPH", "SIGNAL", "CABLE", "POST", "RAIL",
+            "VALVE", "COPPER", "BRASS", "CLOCK", "GEAR", "ENGINE", "SPEED", "TOWER", "POWER", "WIRE",
+            "PULSE", "BEACON", "BRIDGE", "TUNNEL", "DOCK", "HARBOR", "SHIP", "CARGO", "OCEAN", "STORM",
+            "NORTH", "SOUTH", "EAST", "WEST", "MAP", "COMPASS", "GUIDE", "PILOT", "SCOUT", "GUARD",
+            "ALERT", "RESCUE", "DANGER", "SAFE", "VAULT", "SECRET", "CIPHER", "KEY", "LOCK", "AGENT",
+            "PATROL", "BORDER", "FLAG", "MARCH", "HONOR", "BRAVE", "VALOR", "STRIKE", "TARGET", "SCOUT",
+            "DESERT", "JUNGLE", "FOREST", "RIVER", "VALLEY", "CANYON", "PEAK", "MOUNTAIN", "ISLAND", "COAST",
+            "BEACH", "WAVE", "TIDE", "WINDS", "CLOUD", "THUNDER", "LIGHT", "DARK", "SHADOW", "FLAME",
+            "SMOKE", "SPARK", "COAL", "STEEL", "IRON", "GOLD", "SILVER", "STONE", "BRICK", "TIMBER",
+            "GRAIN", "WHEAT", "HARVEST", "FIELD", "FARM", "RANCH", "HORSE", "RIDER", "STAGE", "COACH",
+            "TRACK", "STATION", "DEPOT", "FREIGHT", "EXPRESS", "MAIL", "POSTAL", "LETTER", "DISPATCH", "REPORT",
+            "NEWS", "PAPER", "PRESS", "PRINT", "TYPE", "INK", "STAMP", "SEAL", "BOND", "PROOF",
+            "TRUST", "TRUTH", "FAITH", "GLORY", "VICTORY", "PEACE", "TREATY", "UNION", "STATE", "NATION",
+            "CROWN", "KING", "QUEEN", "ROYAL", "DUKE", "BARON", "KNIGHT", "CASTLE", "TOWER", "MANOR",
+            "TOWN", "CITY", "VILLAGE", "PORT", "CAPITAL", "MARKET", "TRADE", "STORE", "BANK", "COIN",
+            "PRICE", "COST", "VALUE", "GOLD", "WEALTH", "ASSET", "BONUS", "CHECK", "BILL", "DRAFT",
+            "AUDIT", "LEGAL", "CLAIM", "RIGHT", "LAW", "RULE", "COURT", "JUDGE", "JURY", "ORDER",
+            "GRANT", "PERMIT", "ENTRY", "PASS", "ROUTE", "PATH", "ROAD", "STREET", "AVENUE", "LANE",
+            "PLAZA", "SQUARE", "PARK", "GARDEN", "YARD", "FENCE", "GATE", "DOOR", "WALL", "ROOF",
+            "BEAM", "ARCH", "PILLAR", "VAULT", "HALL", "ROOM", "DESK", "TABLE", "CHAIR", "LAMP",
+            "GLASS", "BOTTLE", "FLASK", "BARREL", "CRATE", "BOX", "PACK", "BAG", "CHEST", "TRUNK",
+            "ROPE", "CHAIN", "ANCHOR", "HOOK", "NAIL", "SCREW", "BOLT", "WRENCH", "HAMMER", "AXE",
+            "BLADE", "KNIFE", "SWORD", "SHIELD", "ARMOR", "HELMET", "UNIFORM", "BOOTS", "COAT", "BELT",
+            "RING", "WATCH", "CLOCK", "DIAL", "GAUGE", "METER", "VALVE", "PUMP", "PIPE", "TANK",
+            "BOILER", "MOTOR", "ROTOR", "TURBINE", "PISTON", "WHEEL", "AXLE", "LEVER", "PEDAL", "KEY",
+            "TAPE", "DISK", "CARD", "BOOK", "PAGE", "NOTE", "LIST", "FILE", "DATA", "CODE",
+            "LINE", "NODE", "LINK", "BAND", "WAVE", "FREQ", "AUDIO", "SOUND", "TONE", "ECHO",
+            "CALL", "VOICE", "SPEECH", "WORD", "NAME", "TITLE", "LABEL", "TAG", "MARK", "SIGN",
+            "SYMBOL", "CHART", "GRAPH", "PLAN", "DRAFT", "SKETCH", "MODEL", "BUILD", "MAKE", "FORM",
+            "CRAFT", "WORK", "JOB", "TASK", "DUTY", "ROLE", "TEAM", "CREW", "UNIT", "CORPS",
+            "SQUAD", "FORCE", "ARMY", "NAVY", "FLEET", "WING", "BASE", "CAMP", "FORT", "POST",
+            "OUTPOST", "BUNKER", "TRENCH", "FRONT", "ZONE", "SECTOR", "GRID", "BLOCK", "SITE", "SPOT",
+            "POINT", "PLACE", "AREA", "REGION", "REALM", "DOMAIN", "WORLD", "GLOBE", "SPACE", "ORBIT",
+            "SOLAR", "LUNAR", "STAR", "COMET", "METEOR", "PLANET", "GALAXY", "COSMOS", "SKY", "AIR",
+            "WIND", "GALE", "STORM", "BLIZZARD", "FOG", "MIST", "HAZE", "RAIN", "SNOW", "ICE",
+            "FROST", "COLD", "HEAT", "FIRE", "EMBER", "ASH", "DUST", "SAND", "MUD", "CLAY",
+            "ROCK", "PEBBLE", "MINE", "ORE", "METAL", "ALLOY", "STEEL", "COPPER", "ZINC", "TIN",
+            "LEAD", "BRONZE", "SILVER", "GOLD", "RUBY", "PEARL", "AMBER", "JADE", "OPAL", "GEM",
+            "APPLE", "BERRY", "LEMON", "LIME", "PEACH", "PLUM", "GRAPE", "GRAIN", "BREAD", "MEAT",
+            "SALT", "SUGAR", "SPICE", "TEA", "COFFEE", "MILK", "WATER", "WINE", "BEER", "JUICE",
+            "SWEET", "BITTER", "ACID", "FRESH", "RAW", "RIPE", "COOK", "BAKE", "ROAST", "BOIL",
+            "SOUP", "DISH", "MEAL", "FEAST", "CHEF", "COOK", "OVEN", "STOVE", "POT", "PAN",
+            "BOWL", "PLATE", "CUP", "MUG", "FORK", "SPOON", "KNIFE", "TRAY", "RACK", "SHELF",
+            "CABINET", "DRAWER", "DESK", "CHAIR", "BENCH", "COUCH", "BED", "MATTRESS", "PILLOW", "BLANKET",
+            "SHEET", "TOWEL", "SOAP", "BRUSH", "COMB", "MIRROR", "CLOCK", "WATCH", "RING", "CHAIN",
+            "COIN", "MONEY", "CASH", "BANK", "VAULT", "SAFE", "LOCK", "KEY", "RING", "SEAL",
+            "STAMP", "TICKET", "TOKEN", "PASS", "CARD", "NOTE", "LETTER", "PAPER", "BOOK", "ALBUM",
+            "PHOTO", "IMAGE", "PICTURE", "PAINT", "DRAW", "SKETCH", "FRAME", "CANVAS", "BRUSH", "INK",
+            "PEN", "PENCIL", "CHALK", "BOARD", "SLATE", "DESK", "CLASS", "SCHOOL", "LEARN", "STUDY",
+            "TEACH", "GUIDE", "TRAIN", "COACH", "TEST", "EXAM", "SCORE", "GRADE", "RANK", "LEVEL",
+            "STAGE", "PHASE", "STEP", "PACE", "SPEED", "RATE", "TIME", "HOUR", "MINUTE", "SECOND",
+            "DAY", "NIGHT", "DAWN", "DUSK", "NOON", "WEEK", "MONTH", "YEAR", "DECADE", "CENTURY",
+            "SPRING", "SUMMER", "AUTUMN", "WINTER", "SEASON", "CLIMATE", "WEATHER", "TEMPO", "RHYTHM", "BEAT",
+            "MUSIC", "SONG", "TUNE", "NOTE", "CHORD", "BAND", "SOLO", "DUET", "CHOIR", "DRUM",
+            "FLUTE", "HORN", "BELL", "WHISTLE", "SIREN", "ALARM", "ALERT", "SIGNAL", "BEACON", "PULSE"
+        ];
+
+        let shuffledPlaylist = [];
+        let currentMissionIdx = 0;
+
+        // Fisher-Yates Array Shuffle Logic
+        function shuffleArray(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        // Initialize Shuffled Words on Every Page Load/Refresh
+        function initWordList() {
+            shuffledPlaylist = shuffleArray(WORD_BANK);
+            currentMissionIdx = 0;
+            document.getElementById('targetWord').innerText = shuffledPlaylist[currentMissionIdx];
+        }
+
+        let currentLetterSymbols = "";
+        let decodedWord = "";
+        let letterTimer = null;
+        let pressStartTime = 0;
+        let isKeyDown = false;
+
+        // Web Audio API
+        let audioCtx = null;
+        let osc = null;
+        let gain = null;
+
+        function startTone() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            osc = audioCtx.createOscillator();
+            gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(750, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+        }
+
+        function stopTone() {
+            if (osc && gain) {
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.02);
+                setTimeout(() => {
+                    try { osc.stop(); osc.disconnect(); } catch(e){}
+                }, 20);
+            }
+        }
+
+        // Render All A-Z Cheat Sheet
+        const cheatSheet = document.getElementById('cheatSheet');
+        Object.entries(MORSE_MAP).forEach(([letter, code]) => {
+            const div = document.createElement('div');
+            div.className = 'cheat-item';
+            div.innerHTML = `<strong>${letter}</strong>: ${code}`;
+            cheatSheet.appendChild(div);
+        });
+
+        const keyBtn = document.getElementById('keyBtn');
+
+        function handlePressStart(e) {
+            if (e) e.preventDefault();
+            if (isKeyDown) return;
+            isKeyDown = true;
+            pressStartTime = Date.now();
+            keyBtn.classList.add('pressed');
+            
+            if (letterTimer) clearTimeout(letterTimer);
+            startTone();
+        }
+
+        function handlePressEnd(e) {
+            if (e) e.preventDefault();
+            if (!isKeyDown) return;
+            isKeyDown = false;
+            keyBtn.classList.remove('pressed');
+            stopTone();
+
+            const duration = Date.now() - pressStartTime;
+            if (duration < 170) {
+                currentLetterSymbols += "•";
+            } else {
+                currentLetterSymbols += "—";
+            }
+
+            renderLiveDisplay();
+            letterTimer = setTimeout(commitLetter, 1000);
+        }
+
+        function renderLiveDisplay() {
+            const tempLetter = REVERSE_MORSE[currentLetterSymbols] || "?";
+            document.getElementById('morseDisplay').innerText = `${decodedWord} [ ${currentLetterSymbols} ]`;
+            document.getElementById('translatedDisplay').innerText = decodedWord + (currentLetterSymbols ? tempLetter : "");
+        }
+
+        function commitLetter() {
+            const matchedLetter = REVERSE_MORSE[currentLetterSymbols] || "";
+            if (matchedLetter) {
+                decodedWord += matchedLetter;
+            }
+            currentLetterSymbols = "";
+            
+            document.getElementById('morseDisplay').innerText = decodedWord || "Waiting for input...";
+            document.getElementById('translatedDisplay').innerText = decodedWord || "---";
+
+            // Check Mission Victory
+            const target = shuffledPlaylist[currentMissionIdx];
+            if (decodedWord === target) {
+                setTimeout(() => {
+                    showSuccessModal(target);
+                }, 150);
+            }
+        }
+
+        function showSuccessModal(word) {
+            document.getElementById('successWord').innerText = word;
+            document.getElementById('successModal').classList.add('active');
+        }
+
+        function hideSuccessModal() {
+            document.getElementById('successModal').classList.remove('active');
+            
+            // Go to next random word in playlist
+            currentMissionIdx++;
+            if (currentMissionIdx >= shuffledPlaylist.length) {
+                shuffledPlaylist = shuffleArray(WORD_BANK);
+                currentMissionIdx = 0;
+            }
+            
+            document.getElementById('targetWord').innerText = shuffledPlaylist[currentMissionIdx];
+            clearSignal();
+        }
+
+        function clearSignal() {
+            if (letterTimer) clearTimeout(letterTimer);
+            currentLetterSymbols = "";
+            decodedWord = "";
+            document.getElementById('morseDisplay').innerText = "Waiting for input...";
+            document.getElementById('translatedDisplay').innerText = "---";
+        }
+
+        // Event Listeners
+        keyBtn.addEventListener('mousedown', handlePressStart);
+        keyBtn.addEventListener('mouseup', handlePressEnd);
+        keyBtn.addEventListener('touchstart', handlePressStart, {passive: false});
+        keyBtn.addEventListener('touchend', handlePressEnd, {passive: false});
+
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') handlePressStart(e);
+        });
+        window.addEventListener('keyup', (e) => {
+            if (e.code === 'Space') handlePressEnd(e);
+        });
+
+        document.getElementById('clearBtn').addEventListener('click', clearSignal);
+        document.getElementById('nextMissionBtn').addEventListener('click', hideSuccessModal);
+
+        // FAQ Modal
+        const faqModal = document.getElementById('faqModal');
+        document.getElementById('faqBtn').addEventListener('click', () => faqModal.classList.add('active'));
+        document.getElementById('closeFaqBtn').addEventListener('click', () => faqModal.classList.remove('active'));
+
+        // Initialize game word bank
+        initWordList();
+    </script>
+</body>
+</html>

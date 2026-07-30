@@ -1,0 +1,1125 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Press+Start+2P&family=Rajdhani:wght@500;600;700&display=swap');
+
+:root {
+    --bg-color: #0b0c10;
+    --panel-bg: rgba(20, 24, 33, 0.85);
+    --text-primary: #e0e6ed;
+    --text-secondary: #9daaf2;
+    --neon-cyan: #00f3ff;
+    --neon-magenta: #ff0055;
+    --border-color: #1f293d;
+    --glow-cyan: rgba(0, 243, 255, 0.4);
+    --glow-magenta: rgba(255, 0, 85, 0.5);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color);
+    /* Cyber grid pattern background */
+    background-image: 
+        linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    background-position: center center;
+    color: var(--text-primary);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 3rem;
+    border-bottom: 2px solid var(--neon-cyan);
+    box-shadow: 0 4px 20px -5px var(--glow-cyan);
+    padding-bottom: 1.5rem;
+    width: 100%;
+    max-width: 900px;
+}
+
+h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 900;
+    font-size: 3.5rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #fff;
+    text-shadow: 
+        0 0 10px var(--neon-cyan),
+        0 0 20px var(--neon-cyan),
+        2px 2px 0px var(--neon-magenta);
+}
+
+p.subtitle {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.85rem;
+    margin-top: 1rem;
+    color: var(--neon-magenta);
+    text-shadow: 0 0 8px var(--glow-magenta);
+    letter-spacing: 1px;
+}
+
+.arcade-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+    width: 100%;
+    max-width: 900px;
+}
+
+.game-card {
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    /* Chamfered gaming UI corners */
+    clip-path: polygon(
+        0 0, 
+        calc(100% - 15px) 0, 
+        100% 15px, 
+        100% 100%, 
+        15px 100%, 
+        0 calc(100% - 15px)
+    );
+    padding: 1.5rem;
+    text-decoration: none;
+    color: var(--text-primary);
+    backdrop-filter: blur(8px);
+    transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+}
+
+/* Accent top bar on cards */
+.game-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--border-color);
+    transition: background 0.25s ease;
+}
+
+.game-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--neon-cyan);
+    box-shadow: 0 10px 25px -5px var(--glow-cyan);
+}
+
+.game-card:hover::before {
+    background: var(--neon-cyan);
+}
+
+.game-card h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: #fff;
+    letter-spacing: 1px;
+    transition: color 0.2s ease;
+}
+
+.game-card:hover h3 {
+    color: var(--neon-cyan);
+    text-shadow: 0 0 8px var(--glow-cyan);
+}
+
+.game-card p {
+    font-size: 1.05rem;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.play-btn {
+    align-self: flex-start;
+    background: transparent;
+    color: var(--neon-cyan);
+    padding: 0.6rem 1.4rem;
+    border: 1px solid var(--neon-cyan);
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.7rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+    /* Chamfered button style */
+    clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+}
+
+.game-card:hover .play-btn {
+    background: var(--neon-cyan);
+    color: #000;
+    font-weight: bold;
+    box-shadow: 0 0 15px var(--neon-cyan);
+}
+
+.play-btn:active {
+    transform: scale(0.95);
+}
+
+footer {
+    margin-top: auto;
+    padding-top: 3rem;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+    opacity: 0.6;
+    letter-spacing: 1px;
+}
+footer a {
+    color: #fff;
+    margin-top: 10px;
+}
+
+/* GAME CARD: THE MORSE TELEGRAPH SPECIAL STYLE */
+.game-card.telegraph-card {
+    position: relative;
+    overflow: hidden;
+    background: #0b0c10;
+    border: 1px solid rgba(0, 243, 255, 0.3);
+    border-radius: 8px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    min-height: 220px;
+}
+
+/* Subtle Sci-Fi Grid Background */
+.game-card.telegraph-card .card-bg-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: 
+        radial-gradient(circle at 80% 20%, rgba(255, 0, 85, 0.15) 0%, transparent 40%),
+        linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+    background-size: 100% 100%, 20px 20px, 20px 20px;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.game-card.telegraph-card .card-content {
+    position: relative;
+    z-index: 2;
+}
+
+/* Card Tagline */
+.game-card.telegraph-card .card-tag {
+    font-family: 'Press Start 2P', monospace, sans-serif;
+    font-size: 0.6rem;
+    color: #ff0055;
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+}
+
+/* Title & Description */
+.game-card.telegraph-card h3 {
+    font-family: 'Orbitron', sans-serif;
+    color: #ffffff;
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 8px rgba(0, 243, 255, 0.3);
+}
+
+.game-card.telegraph-card p {
+    color: #9daaf2;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    margin-bottom: 1rem;
+}
+
+/* Simulated Live Morse Signal Preview Inside Card */
+.game-card.telegraph-card .card-signal-preview {
+    background: rgba(12, 15, 23, 0.85);
+    border: 1px solid rgba(0, 243, 255, 0.2);
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Orbitron', monospace;
+    font-weight: bold;
+}
+
+.card-signal-preview .dot, 
+.card-signal-preview .dash {
+    color: #00f3ff;
+    font-size: 1.2rem;
+    text-shadow: 0 0 6px #00f3ff;
+}
+
+.card-signal-preview .signal-text {
+    font-size: 0.65rem;
+    color: #ff0055;
+    margin-left: auto;
+    letter-spacing: 1px;
+}
+
+/* Play Button Accent */
+.game-card.telegraph-card .play-btn {
+    position: relative;
+    z-index: 2;
+    align-self: flex-start;
+    margin-top: 1rem;
+    font-family: 'Press Start 2P', monospace, sans-serif;
+    font-size: 0.7rem;
+    color: #00f3ff;
+    transition: all 0.2s ease;
+}
+
+/* Hover States for Interactive Feel */
+.game-card.telegraph-card:hover {
+    border-color: #00f3ff;
+    box-shadow: 0 0 20px rgba(0, 243, 255, 0.25);
+    transform: translateY(-3px);
+}
+
+.game-card.telegraph-card:hover .card-bg-overlay {
+    opacity: 1;
+}
+
+.game-card.telegraph-card:hover .play-btn {
+    color: #ff0055;
+    text-shadow: 0 0 8px rgba(255, 0, 85, 0.6);
+}
+
+/* --- ONE WORD GAME CARD (UNIQUE CLASS) --- */
+/* ========================================================
+   GAME CARD: ONE WORD GUESS (UNIQUE DARK THEME)
+   ======================================================== */
+.game-card.oneword-card {
+    position: relative;
+    overflow: hidden;
+    background: #0d0e12;
+    border: 1px solid rgba(245, 158, 11, 0.35); /* Warm Amber Glow Border */
+    border-radius: 8px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    min-height: 230px;
+}
+
+/* Subtle Warm Amber / Gold Neon Grid Background */
+.game-card.oneword-card .ow-bg-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-image: 
+        radial-gradient(circle at 85% 15%, rgba(245, 158, 11, 0.15) 0%, transparent 45%),
+        radial-gradient(circle at 15% 85%, rgba(217, 119, 6, 0.1) 0%, transparent 40%),
+        linear-gradient(rgba(245, 158, 11, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(245, 158, 11, 0.04) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 20px 20px, 20px 20px;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.game-card.oneword-card .ow-card-content {
+    position: relative;
+    z-index: 2;
+}
+
+/* Card Tag Header */
+.game-card.oneword-card .ow-card-tag {
+    font-family: 'Press Start 2P', monospace, sans-serif;
+    font-size: 0.6rem;
+    color: #f59e0b; /* Amber Accent */
+    letter-spacing: 1px;
+    margin-bottom: 0.5rem;
+}
+
+/* Card Title */
+.game-card.oneword-card h3 {
+    font-family: 'Orbitron', sans-serif;
+    color: #ffffff;
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+}
+
+/* Description Text */
+.game-card.oneword-card p {
+    color: #a3a3a3;
+    font-size: 0.88rem;
+    line-height: 1.45;
+    margin-bottom: 1rem;
+}
+
+/* Mini Game Preview HUD (Simulating the 3 connected words) */
+.game-card.oneword-card .ow-game-preview {
+    background: rgba(18, 20, 29, 0.9);
+    border: 1px dashed rgba(245, 158, 11, 0.3);
+    padding: 0.5rem 0.8rem;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Special Elite', 'Courier New', monospace;
+    font-size: 0.75rem;
+    color: #d1d5db;
+    margin-top: 0.2rem;
+    flex-wrap: wrap;
+}
+
+.ow-game-preview .word-node {
+    color: #fef08a;
+    background: rgba(245, 158, 11, 0.12);
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.ow-game-preview .link-symbol {
+    color: #f59e0b;
+    font-weight: bold;
+}
+
+/* Play Button Accent */
+.game-card.oneword-card .ow-play-btn {
+    position: relative;
+    z-index: 2;
+    align-self: flex-start;
+    margin-top: 1.2rem;
+    font-family: 'Press Start 2P', monospace, sans-serif;
+    font-size: 0.7rem;
+    color: #f59e0b;
+    transition: all 0.2s ease;
+}
+
+/* Card Hover States */
+.game-card.oneword-card:hover {
+    border-color: #f59e0b;
+    box-shadow: 0 0 22px rgba(245, 158, 11, 0.25);
+    transform: translateY(-3px);
+}
+
+.game-card.oneword-card:hover .ow-bg-overlay {
+    opacity: 1;
+}
+
+.game-card.oneword-card:hover .ow-play-btn {
+    color: #ffffff;
+    text-shadow: 0 0 8px rgba(245, 158, 11, 0.8);
+}/* --- Zen Game Card Theme --- */
+.game-card.zen-theme {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-decoration: none;
+    position: relative;
+    padding: 1.5rem;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.85));
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    color: #e2e8f0;
+    overflow: hidden;
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
+}
+
+/* Hover & Active Effects */
+.game-card.zen-theme:hover {
+    transform: translateY(-6px);
+    border-color: rgba(56, 189, 248, 0.4); /* subtle sky-blue glow */
+    box-shadow: 0 12px 30px -4px rgba(0, 0, 0, 0.5), 
+                0 0 20px 0 rgba(56, 189, 248, 0.15);
+}
+
+/* Subtle background accent glow */
+.game-card.zen-theme::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.08) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+}
+
+.game-card.zen-theme:hover::before {
+    opacity: 1;
+}
+
+/* Badge Styling */
+.card-badge {
+    align-self: flex-start;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: rgba(56, 189, 248, 0.12);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    margin-bottom: 1rem;
+}
+
+/* Typography */
+.game-card .card-content h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: #f8fafc;
+    letter-spacing: -0.01em;
+}
+
+.game-card .card-content p {
+    margin: 0 0 1.5rem 0;
+    font-size: 0.925rem;
+    line-height: 1.55;
+    color: #94a3b8;
+}
+
+/* Action Button & Arrow Animation */
+.card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.play-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: #38bdf8;
+    transition: color 0.3s ease;
+}
+
+.arrow-icon {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.game-card.zen-theme:hover .play-btn {
+    color: #7dd3fc;
+}
+
+.game-card.zen-theme:hover .arrow-icon {
+    transform: translateX(5px);
+}/* --- Additional Modifier Class for Vintage Artifacts Card --- */
+.game-card.vintage-card {
+    border-color: rgba(245, 158, 11, 0.2); /* Amber tint border */
+}
+
+/* Custom Amber/Warm Retro Glow */
+.game-card.vintage-card .card-glow {
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.18) 0%, transparent 70%);
+}
+
+/* Custom Tag Accent */
+.game-card.vintage-card .card-tag {
+    background: rgba(245, 158, 11, 0.12);
+    color: #f59e0b;
+    border-color: rgba(245, 158, 11, 0.25);
+}
+
+.game-card.vintage-card .play-btn {
+    color: #f59e0b;
+}
+
+/* Hover Overrides for Vintage Accent */
+.game-card.vintage-card:hover {
+    border-color: rgba(245, 158, 11, 0.45);
+    box-shadow: 0 16px 35px -8px rgba(0, 0, 0, 0.5), 
+                0 0 22px 0 rgba(245, 158, 11, 0.2);
+}
+
+.game-card.vintage-card:hover .card-glow {
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.28) 0%, transparent 70%);
+}
+
+.game-card.vintage-card:hover .play-btn {
+    color: #fbbf24;
+}/* ==========================================================================
+   Vault Puzzle Card (Deep Emerald & Mint Cyan Cyber-Vault Palette)
+   ========================================================================== */
+
+.game-card.vault-card-item {
+    position: relative;
+    overflow: hidden;
+    background: #091312;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    border-radius: 16px;
+    z-index: 1;
+}
+
+/* Background Composite Layers */
+.game-card.vault-card-item .card-bg-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+}
+
+/* 1. Deep Emerald & Cyan Mesh Gradient */
+.game-card.vault-card-item .bg-gradient-mesh {
+    position: absolute;
+    inset: 0;
+    background: 
+        radial-gradient(circle at 85% 15%, rgba(16, 185, 129, 0.18) 0%, transparent 55%),
+        radial-gradient(circle at 15% 85%, rgba(6, 182, 212, 0.15) 0%, transparent 60%),
+        linear-gradient(135deg, #0f1f1d 0%, #080e0e 100%);
+    transition: all 0.4s ease;
+}
+
+/* 2. Cyber Security Matrix Grid */
+.game-card.vault-card-item .bg-grid-pattern {
+    position: absolute;
+    inset: 0;
+    background-image: 
+        linear-gradient(rgba(16, 185, 129, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(16, 185, 129, 0.05) 1px, transparent 1px);
+    background-size: 24px 24px;
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    opacity: 0.75;
+}
+
+/* 3. Circular Vault Dial Ring Graphic */
+.game-card.vault-card-item .bg-vault-dial-graphic {
+    position: absolute;
+    right: -40px;
+    bottom: -40px;
+    width: 180px;
+    height: 180px;
+    border: 2px dashed rgba(16, 185, 129, 0.2);
+    border-radius: 50%;
+    box-shadow: 0 0 0 12px rgba(6, 182, 212, 0.04);
+    transition: transform 0.6s ease, border-color 0.4s ease;
+}
+
+/* Typography & Accent Overrides */
+.game-card.vault-card-item .card-tag {
+    background: rgba(16, 185, 129, 0.12);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.game-card.vault-card-item h3 {
+    color: #f8fafc;
+}
+
+.game-card.vault-card-item .play-btn {
+    color: #10b981;
+}
+
+/* Hover Interaction Effects */
+.game-card.vault-card-item:hover {
+    border-color: rgba(16, 185, 129, 0.6);
+    box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.8), 
+                0 0 25px 0 rgba(16, 185, 129, 0.25);
+    transform: translateY(-3px);
+}
+
+.game-card.vault-card-item:hover .bg-gradient-mesh {
+    background: 
+        radial-gradient(circle at 85% 15%, rgba(16, 185, 129, 0.32) 0%, transparent 60%),
+        radial-gradient(circle at 15% 85%, rgba(6, 182, 212, 0.25) 0%, transparent 65%),
+        linear-gradient(135deg, #142a27 0%, #080e0e 100%);
+}
+
+.game-card.vault-card-item:hover .bg-vault-dial-graphic {
+    transform: rotate(45deg) scale(1.1);
+    border-color: rgba(16, 185, 129, 0.45);
+}
+
+.game-card.vault-card-item:hover .play-btn {
+    color: #34d399;
+}
+
+/* ==========================================================================
+   The Mystery Challenge Card (Noir Detective & Cyan/Gold Accent)
+   ========================================================================== */
+
+.game-card.mystery-card-item {
+    position: relative;
+    overflow: hidden;
+    background: #0b0f19;
+    border: 1px solid rgba(6, 182, 212, 0.25);
+    border-radius: 16px;
+    z-index: 1;
+}
+
+/* Background Layers */
+.game-card.mystery-card-item .card-bg-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+}
+
+/* 1. Deep Indigo & Cyan Mesh Gradient */
+.game-card.mystery-card-item .bg-gradient-mesh {
+    position: absolute;
+    inset: 0;
+    background: 
+        radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.18) 0%, transparent 55%),
+        radial-gradient(circle at 20% 80%, rgba(245, 158, 11, 0.12) 0%, transparent 60%),
+        linear-gradient(135deg, #101726 0%, #070a10 100%);
+    transition: all 0.4s ease;
+}
+
+/* 2. Tactical Investigation Grid Pattern */
+.game-card.mystery-card-item .bg-grid-pattern {
+    position: absolute;
+    inset: 0;
+    background-image: 
+        linear-gradient(rgba(6, 182, 212, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(6, 182, 212, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    opacity: 0.7;
+}
+
+/* 3. Magnifying Lens/Target Ring Graphic */
+.game-card.mystery-card-item .bg-detective-lens-graphic {
+    position: absolute;
+    right: -30px;
+    bottom: -30px;
+    width: 170px;
+    height: 170px;
+    border: 2px solid rgba(6, 182, 212, 0.2);
+    border-radius: 50%;
+    box-shadow: 0 0 0 14px rgba(245, 158, 11, 0.03);
+    transition: transform 0.6s ease, border-color 0.4s ease;
+}
+
+/* Typography & Badges */
+.game-card.mystery-card-item .card-tag {
+    background: rgba(6, 182, 212, 0.12);
+    color: #06b6d4;
+    border: 1px solid rgba(6, 182, 212, 0.35);
+}
+
+.game-card.mystery-card-item h3 {
+    color: #f8fafc;
+}
+
+.game-card.mystery-card-item .play-btn {
+    color: #06b6d4;
+}
+
+/* Hover State Animations */
+.game-card.mystery-card-item:hover {
+    border-color: rgba(6, 182, 212, 0.6);
+    box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.8), 
+                0 0 25px 0 rgba(6, 182, 212, 0.25);
+    transform: translateY(-3px);
+}
+
+.game-card.mystery-card-item:hover .bg-gradient-mesh {
+    background: 
+        radial-gradient(circle at 80% 20%, rgba(6, 182, 212, 0.3) 0%, transparent 60%),
+        radial-gradient(circle at 20% 80%, rgba(245, 158, 11, 0.2) 0%, transparent 65%),
+        linear-gradient(135deg, #162035 0%, #070a10 100%);
+}
+
+.game-card.mystery-card-item:hover .bg-detective-lens-graphic {
+    transform: scale(1.12) rotate(15deg);
+    border-color: rgba(6, 182, 212, 0.45);
+}
+
+.game-card.mystery-card-item:hover .play-btn {
+    color: #38bdf8;
+}
+
+/* ==========================================================================
+   The Riddle Vault Card (Ancient Arcane & Emerald/Gold Theme)
+   ========================================================================== */
+
+.game-card.riddle-vault-card-item {
+    position: relative;
+    overflow: hidden;
+    background: #06110d;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    border-radius: 16px;
+    z-index: 1;
+}
+
+/* Background Layers */
+.game-card.riddle-vault-card-item .card-bg-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+}
+
+/* 1. Deep Emerald & Amber Arcane Mesh Gradient */
+.game-card.riddle-vault-card-item .bg-gradient-mesh {
+    position: absolute;
+    inset: 0;
+    background: 
+        radial-gradient(circle at 85% 25%, rgba(16, 185, 129, 0.18) 0%, transparent 55%),
+        radial-gradient(circle at 15% 85%, rgba(245, 158, 11, 0.14) 0%, transparent 60%),
+        linear-gradient(135deg, #091a13 0%, #040806 100%);
+    transition: all 0.4s ease;
+}
+
+/* 2. Cryptic Puzzle Grid Pattern */
+.game-card.riddle-vault-card-item .bg-grid-pattern {
+    position: absolute;
+    inset: 0;
+    background-image: 
+        linear-gradient(rgba(16, 185, 129, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(16, 185, 129, 0.05) 1px, transparent 1px);
+    background-size: 24px 24px;
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    opacity: 0.6;
+}
+
+/* 3. Vault Gear / Keyhole Wheel Graphic */
+.game-card.riddle-vault-card-item .bg-vault-gear-graphic {
+    position: absolute;
+    right: -35px;
+    bottom: -35px;
+    width: 180px;
+    height: 180px;
+    border: 2px dashed rgba(16, 185, 129, 0.25);
+    border-radius: 50%;
+    box-shadow: 0 0 0 12px rgba(245, 158, 11, 0.03);
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
+}
+
+/* Typography & Badges */
+.game-card.riddle-vault-card-item .card-tag {
+    background: rgba(16, 185, 129, 0.12);
+    color: #10b981;
+    border: 1px solid rgba(16, 185, 129, 0.35);
+}
+
+.game-card.riddle-vault-card-item h3 {
+    color: #f8fafc;
+}
+
+.game-card.riddle-vault-card-item .play-btn {
+    color: #10b981;
+}
+
+/* Hover State Animations */
+.game-card.riddle-vault-card-item:hover {
+    border-color: rgba(16, 185, 129, 0.6);
+    box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.85), 
+                0 0 25px 0 rgba(16, 185, 129, 0.22);
+    transform: translateY(-3px);
+}
+
+.game-card.riddle-vault-card-item:hover .bg-gradient-mesh {
+    background: 
+        radial-gradient(circle at 85% 25%, rgba(16, 185, 129, 0.28) 0%, transparent 60%),
+        radial-gradient(circle at 15% 85%, rgba(245, 158, 11, 0.22) 0%, transparent 65%),
+        linear-gradient(135deg, #0d261b 0%, #040806 100%);
+}
+
+.game-card.riddle-vault-card-item:hover .bg-vault-gear-graphic {
+    transform: rotate(45deg) scale(1.1);
+    border-color: rgba(16, 185, 129, 0.5);
+}
+
+.game-card.riddle-vault-card-item:hover .play-btn {
+    color: #34d399;
+}
+
+/* ==========================================================================
+   Retro Trivia Card (Synthwave Arcade & Neon Violet/Magenta Theme)
+   ========================================================================== */
+
+.game-card.retro-trivia-card-item {
+    position: relative;
+    overflow: hidden;
+    background: #0d0914;
+    border: 1px solid rgba(168, 85, 247, 0.28);
+    border-radius: 16px;
+    z-index: 1;
+}
+
+/* Background Layers */
+.game-card.retro-trivia-card-item .card-bg-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+}
+
+/* 1. Deep Neon Violet & Magenta Mesh Gradient */
+.game-card.retro-trivia-card-item .bg-gradient-mesh {
+    position: absolute;
+    inset: 0;
+    background: 
+        radial-gradient(circle at 85% 20%, rgba(236, 72, 153, 0.22) 0%, transparent 55%),
+        radial-gradient(circle at 15% 85%, rgba(168, 85, 247, 0.18) 0%, transparent 60%),
+        linear-gradient(135deg, #150a21 0%, #06030a 100%);
+    transition: all 0.4s ease;
+}
+
+/* 2. Synthwave Perspective Grid Pattern */
+.game-card.retro-trivia-card-item .bg-grid-pattern {
+    position: absolute;
+    inset: 0;
+    background-image: 
+        linear-gradient(rgba(168, 85, 247, 0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(168, 85, 247, 0.06) 1px, transparent 1px);
+    background-size: 22px 22px;
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    opacity: 0.7;
+}
+
+/* 3. Retro Starburst / Arcade Ring Graphic */
+.game-card.retro-trivia-card-item .bg-retro-sun-graphic {
+    position: absolute;
+    right: -30px;
+    bottom: -30px;
+    width: 175px;
+    height: 175px;
+    border: 2px dashed rgba(236, 72, 153, 0.3);
+    border-radius: 50%;
+    box-shadow: 0 0 0 14px rgba(168, 85, 247, 0.04);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
+}
+
+/* Typography & Badges */
+.game-card.retro-trivia-card-item .card-tag {
+    background: rgba(168, 85, 247, 0.15);
+    color: #c084fc;
+    border: 1px solid rgba(168, 85, 247, 0.35);
+}
+
+.game-card.retro-trivia-card-item h3 {
+    color: #f8fafc;
+}
+
+.game-card.retro-trivia-card-item .play-btn {
+    color: #c084fc;
+}
+
+/* Hover State Animations */
+.game-card.retro-trivia-card-item:hover {
+    border-color: rgba(168, 85, 247, 0.6);
+    box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.85), 
+                0 0 25px 0 rgba(168, 85, 247, 0.25);
+    transform: translateY(-3px);
+}
+
+.game-card.retro-trivia-card-item:hover .bg-gradient-mesh {
+    background: 
+        radial-gradient(circle at 85% 20%, rgba(236, 72, 153, 0.32) 0%, transparent 60%),
+        radial-gradient(circle at 15% 85%, rgba(168, 85, 247, 0.28) 0%, transparent 65%),
+        linear-gradient(135deg, #1f0e33 0%, #06030a 100%);
+}
+
+.game-card.retro-trivia-card-item:hover .bg-retro-sun-graphic {
+    transform: rotate(-30deg) scale(1.12);
+    border-color: rgba(236, 72, 153, 0.55);
+}
+
+.game-card.retro-trivia-card-item:hover .play-btn {
+    color: #f472b6;
+}
+
+/* ==========================================================================
+   1. The Typewriter Card (Cast-Iron & Warm Ink Accent)
+   ========================================================================== */
+
+.game-card.typewriter-card-item {
+    position: relative;
+    overflow: hidden;
+    background: #0f1319;
+    border: 1px solid rgba(249, 115, 22, 0.28);
+    border-radius: 16px;
+    z-index: 1;
+}
+
+.game-card.typewriter-card-item .card-bg-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+}
+
+/* Cast-Iron & Warm Ribbon Mesh */
+.game-card.typewriter-card-item .bg-gradient-mesh {
+    position: absolute;
+    inset: 0;
+    background: 
+        radial-gradient(circle at 85% 20%, rgba(249, 115, 22, 0.18) 0%, transparent 55%),
+        radial-gradient(circle at 15% 85%, rgba(226, 232, 240, 0.1) 0%, transparent 60%),
+        linear-gradient(135deg, #181d26 0%, #080a0e 100%);
+    transition: all 0.4s ease;
+}
+
+/* Mechanical Grid */
+.game-card.typewriter-card-item .bg-grid-pattern {
+    position: absolute;
+    inset: 0;
+    background-image: 
+        linear-gradient(rgba(249, 115, 22, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(249, 115, 22, 0.05) 1px, transparent 1px);
+    background-size: 22px 22px;
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    opacity: 0.65;
+}
+
+/* Typewriter Key Cap Graphic */
+.game-card.typewriter-card-item .bg-typewriter-key-graphic {
+    position: absolute;
+    right: -30px;
+    bottom: -30px;
+    width: 170px;
+    height: 170px;
+    border: 3px double rgba(249, 115, 22, 0.3);
+    border-radius: 50%;
+    box-shadow: 0 0 0 12px rgba(226, 232, 240, 0.03);
+    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
+}
+
+.game-card.typewriter-card-item .card-tag {
+    background: rgba(249, 115, 22, 0.14);
+    color: #fb923c;
+    border: 1px solid rgba(249, 115, 22, 0.35);
+}
+
+.game-card.typewriter-card-item h3 { color: #f8fafc; }
+.game-card.typewriter-card-item .play-btn { color: #fb923c; }
+
+.game-card.typewriter-card-item:hover {
+    border-color: rgba(249, 115, 22, 0.6);
+    box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.85), 
+                0 0 25px 0 rgba(249, 115, 22, 0.22);
+    transform: translateY(-3px);
+}
+
+.game-card.typewriter-card-item:hover .bg-gradient-mesh {
+    background: 
+        radial-gradient(circle at 85% 20%, rgba(249, 115, 22, 0.28) 0%, transparent 60%),
+        radial-gradient(circle at 15% 85%, rgba(226, 232, 240, 0.18) 0%, transparent 65%),
+        linear-gradient(135deg, #222a38 0%, #080a0e 100%);
+}
+
+.game-card.typewriter-card-item:hover .bg-typewriter-key-graphic {
+    transform: scale(1.12) rotate(-15deg);
+    border-color: rgba(249, 115, 22, 0.55);
+}
+
+.game-card.typewriter-card-item:hover .play-btn { color: #fdba74; }
+
+
+/* ==========================================================================
+   2. The Rotary Phone Card (Vintage Bakelite & Teal/Amber Accent)
+   ========================================================================== */
+
+.game-card.rotary-card-item {
+    position: relative;
+    overflow: hidden;
+    background: #081214;
+    border: 1px solid rgba(20, 184, 166, 0.28);
+    border-radius: 16px;
+    z-index: 1;
+}
+
+.game-card.rotary-card-item .card-bg-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+}
+
+/* Vintage Bakelite & Copper/Teal Mesh */
+.game-card.rotary-card-item .bg-gradient-mesh {
+    position: absolute;
+    inset: 0;
+    background: 
+        radial-gradient(circle at 85% 25%, rgba(20, 184, 166, 0.2) 0%, transparent 55%),
+        radial-gradient(circle at 15% 85%, rgba(245, 158, 11, 0.14) 0%, transparent 60%),
+        linear-gradient(135deg, #0f1f22 0%, #030809 100%);
+    transition: all 0.4s ease;
+}
+
+/* Acoustic Wave Matrix */
+.game-card.rotary-card-item .bg-grid-pattern {
+    position: absolute;
+    inset: 0;
+    background-image: 
+        linear-gradient(rgba(20, 184, 166, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(20, 184, 166, 0.05) 1px, transparent 1px);
+    background-size: 24px 24px;
+    mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    opacity: 0.7;
+}
+
+/* Rotary Finger Wheel Graphic */
+.game-card.rotary-card-item .bg-rotary-dial-graphic {
+    position: absolute;
+    right: -35px;
+    bottom: -35px;
+    width: 180px;
+    height: 180px;
+    border: 2px dashed rgba(20, 184, 166, 0.3);
+    border-radius: 50%;
+    box-shadow: 0 0 0 14px rgba(245, 158, 11, 0.04);
+    transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
+}
+
+.game-card.rotary-card-item .card-tag {
+    background: rgba(20, 184, 166, 0.15);
+    color: #2dd4bf;
+    border: 1px solid rgba(20, 184, 166, 0.35);
+}
+
+.game-card.rotary-card-item h3 { color: #f8fafc; }
+.game-card.rotary-card-item .play-btn { color: #2dd4bf; }
+
+.game-card.rotary-card-item:hover {
+    border-color: rgba(20, 184, 166, 0.6);
+    box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.85), 
+                0 0 25px 0 rgba(20, 184, 166, 0.25);
+    transform: translateY(-3px);
+}
+
+.game-card.rotary-card-item:hover .bg-gradient-mesh {
+    background: 
+        radial-gradient(circle at 85% 25%, rgba(20, 184, 166, 0.3) 0%, transparent 60%),
+        radial-gradient(circle at 15% 85%, rgba(245, 158, 11, 0.22) 0%, transparent 65%),
+        linear-gradient(135deg, #172f34 0%, #030809 100%);
+}
+
+.game-card.rotary-card-item:hover .bg-rotary-dial-graphic {
+    transform: rotate(60deg) scale(1.12);
+    border-color: rgba(20, 184, 166, 0.55);
+}
+
+.game-card.rotary-card-item:hover .play-btn { color: #5eead4; }
