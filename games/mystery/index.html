@@ -1,514 +1,259 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctypehtml>
+<html lang=en>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Primary SEO Meta Tags -->
-    <title>The Mystery Challenge - Online 20 Questions Word Guessing Game | KenitFun</title>
-    <meta name="description" content="Play The Mystery Challenge online! Test your deduction skills in this classic 20 Questions mystery word guessing game. Guess retro vehicles, superheroes, foods, and space objects.">
-    <meta name="keywords" content="mystery challenge game, 20 questions game online, word guessing game, mystery item puzzle, trivia game online, kenitfun games">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://kenitfun.com/games/mystery-challenge/">
-
-    <!-- Open Graph / Social Media -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="The Mystery Challenge - Free Online Word Guessing Game">
-    <meta property="og:description" content="Can you guess the secret mystery item in 20 questions or less? Play now across various categories!">
-    <meta property="og:site_name" content="KenitFun">
-
-    <!-- Structured Data (Schema.org) for Google -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "The Mystery Challenge",
-      "operatingSystem": "All",
-      "applicationCategory": "GameApplication",
-      "genre": "Puzzle Game",
-      "description": "An interactive 20-questions style word guessing puzzle game.",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      }
-    }
-    </script>
-
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-        
-        :root { 
-            --bg-main: #0a0d12;
-            --card-bg: rgba(18, 24, 34, 0.92);
-            --card-border: rgba(6, 182, 212, 0.3);
-            --accent-cyan: #06b6d4;
-            --accent-cyan-glow: rgba(6, 182, 212, 0.25);
-            --accent-gold: #f59e0b;
-            --text-primary: #f1f5f9;
-            --text-secondary: #94a3b8;
-            --log-bg: #0d131d;
-            --user-msg-bg: rgba(6, 182, 212, 0.12);
-            --game-msg-bg: rgba(245, 158, 11, 0.1);
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body { 
-            background-color: var(--bg-main); 
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(245, 158, 11, 0.06) 0%, transparent 40%),
-                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-            background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            color: var(--text-primary); 
-            padding: 2rem 1rem; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            min-height: 100vh; 
-        }
-
-        header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            width: 100%; 
-            max-width: 720px; 
-            margin-bottom: 1.5rem; 
-        }
-
-        header h2 {
-            font-size: 1.4rem;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            background: linear-gradient(135deg, #ffffff 0%, var(--accent-cyan) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 800;
-        }
-
-        .back-btn, .action-btn { 
-            background: rgba(18, 24, 34, 0.8); 
-            border: 1px solid var(--card-border); 
-            padding: 0.65rem 1.2rem; 
-            color: var(--text-primary); 
-            text-decoration: none; 
-            font-weight: 700; 
-            border-radius: 8px;
-            cursor: pointer; 
-            font-family: inherit; 
-            font-size: 0.9rem;
-            transition: all 0.25s ease;
-            backdrop-filter: blur(8px);
-        }
-
-        .back-btn:hover, .action-btn:hover { 
-            background: var(--accent-cyan); 
-            color: #04080e;
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 15px var(--accent-cyan-glow);
-            transform: translateY(-2px);
-        }
-
-        .card { 
-            background: var(--card-bg); 
-            border: 1px solid var(--card-border); 
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(6, 182, 212, 0.1); 
-            border-radius: 16px;
-            width: 100%; 
-            max-width: 720px; 
-            padding: 2rem; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 1.2rem; 
-            backdrop-filter: blur(12px);
-        }
-
-        #categoryPrompt {
-            font-size: 1.1rem;
-            color: #e2e8f0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .counter { 
-            font-size: 1rem; 
-            color: var(--accent-gold); 
-            font-weight: 700; 
-            background: rgba(245, 158, 11, 0.1);
-            padding: 6px 14px;
-            border-radius: 20px;
-            border: 1px solid rgba(245, 158, 11, 0.25);
-        }
-
-        .log-box { 
-            background: var(--log-bg); 
-            border: 1px solid rgba(255, 255, 255, 0.08); 
-            border-radius: 12px;
-            height: 280px; 
-            overflow-y: auto; 
-            padding: 1.2rem; 
-            font-size: 0.95rem; 
-            line-height: 1.6; 
-            display: flex;
-            flex-direction: column;
-            gap: 0.8rem;
-        }
-
-        .log-box div {
-            padding: 8px 12px;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.02);
-            border-left: 3px solid var(--accent-cyan);
-        }
-
-        .input-group { display: flex; gap: 0.75rem; }
-
-        input[type="text"] { 
-            flex: 1; 
-            padding: 0.85rem 1rem; 
-            border: 1px solid rgba(255, 255, 255, 0.15); 
-            border-radius: 8px;
-            font-family: inherit; 
-            font-size: 0.95rem; 
-            background: #090d14; 
-            color: #fff;
-            outline: none;
-            transition: all 0.25s ease;
-        }
-
-        input[type="text"]:focus {
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 12px var(--accent-cyan-glow);
-        }
-
-        .controls { display: flex; gap: 0.8rem; flex-wrap: wrap; justify-content: space-between; }
-
-        .category-badge { 
-            background: rgba(6, 182, 212, 0.15); 
-            color: var(--accent-cyan); 
-            padding: 4px 12px; 
-            border-radius: 20px; 
-            font-size: 0.85rem; 
-            font-weight: 700; 
-            border: 1px solid var(--card-border);
-            display: inline-block; 
-        }
-
-        /* Modal / Popup Styles */
-        .modal-overlay { 
-            display: none; 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(0, 0, 0, 0.75); 
-            backdrop-filter: blur(6px);
-            justify-content: center; 
-            align-items: center; 
-            z-index: 1000; 
-            padding: 1rem; 
-        }
-
-        .modal-content { 
-            background: #0d131d; 
-            border: 1px solid var(--card-border); 
-            border-radius: 16px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.8); 
-            max-width: 700px; 
-            width: 100%; 
-            max-height: 85vh; 
-            overflow-y: auto; 
-            padding: 2rem; 
-            position: relative; 
-            line-height: 1.6; 
-            color: var(--text-primary);
-        }
-
-        .close-btn { 
-            position: absolute; 
-            top: 15px; 
-            right: 20px; 
-            background: none; 
-            border: none; 
-            font-size: 1.8rem; 
-            font-weight: bold; 
-            color: var(--text-secondary); 
-            cursor: pointer; 
-            transition: color 0.2s;
-        }
-
-        .close-btn:hover { color: var(--accent-cyan); }
-        .modal-content h1 { font-size: 1.6rem; color: var(--accent-cyan); margin-bottom: 0.8rem; }
-        .modal-content h2 { font-size: 1.2rem; margin-top: 1.2rem; margin-bottom: 0.5rem; border-bottom: 1px dashed rgba(255, 255, 255, 0.15); padding-bottom: 0.3rem; color: var(--accent-gold); }
-        .modal-content p, .modal-content ul, .modal-content ol { margin-bottom: 0.8rem; color: var(--text-secondary); }
-        .modal-content ul, .modal-content ol { margin-left: 1.2rem; }
-        .faq-item { margin-bottom: 0.8rem; }
-        .faq-item h3 { font-size: 1rem; color: var(--accent-cyan); margin-bottom: 0.2rem; }
-
-        @media only screen and (max-width: 640px) {
-            header { flex-direction: column; gap: 12px; text-align: center; }
-            .card { padding: 1.25rem; }
-            .controls { flex-direction: column; }
-            .controls button { width: 100%; }
-        }
-    </style>
+<meta charset=UTF-8>
+<meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" name=viewport>
+<title>The Mystery Challenge - Online 20 Questions Word Guessing Game | KenitFun</title>
+<meta content="Play The Mystery Challenge online! Test your deduction skills in this classic 20 Questions mystery word guessing game. Guess retro vehicles, superheroes, foods, and space objects." name=description>
+<meta content="mystery challenge game, 20 questions game online, word guessing game, mystery item puzzle, trivia game online, kenitfun games" name=keywords>
+<meta content="index, follow" name=robots>
+<link href=https://kenitfun.com/games/mystery-challenge/ rel=canonical>
+<meta content=website property=og:type>
+<meta content="The Mystery Challenge - Free Online Word Guessing Game" property=og:title>
+<meta content="Can you guess the secret mystery item in 20 questions or less? Play now across various categories!" property=og:description>
+<meta content=KenitFun property=og:site_name>
+<script type=application/ld+json>
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "The Mystery Challenge",
+  "operatingSystem": "All",
+  "applicationCategory": "GameApplication",
+  "genre": "Puzzle Game",
+  "description": "An interactive 20-questions style word guessing puzzle game.",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<style>
+@import url(https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap);
+:root{--bg-main:#0a0d12;--card-bg:rgba(18, 24, 34, 0.92);--card-border:rgba(6, 182, 212, 0.3);--accent-cyan:#06b6d4;--accent-cyan-glow:rgba(6, 182, 212, 0.25);--accent-gold:#f59e0b;--text-primary:#f1f5f9;--text-secondary:#94a3b8;--log-bg:#0d131d;--user-msg-bg:rgba(6, 182, 212, 0.12);--game-msg-bg:rgba(245, 158, 11, 0.1)}
+*{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent}
+body,html{width:100%;height:100%;overflow-x:hidden}
+body{background-color:var(--bg-main);background-image:radial-gradient(circle at 10% 20%,rgba(6,182,212,.08) 0,transparent 40%),radial-gradient(circle at 90% 80%,rgba(245,158,11,.06) 0,transparent 40%),linear-gradient(rgba(255,255,255,.02) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.02) 1px,transparent 1px);background-size:100% 100%,100% 100%,30px 30px,30px 30px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--text-primary);padding:2rem 1rem;display:flex;flex-direction:column;align-items:center;min-height:100vh;touch-action:manipulation}
+button,div,a,input{outline:0!important}
+header{display:flex;justify-content:space-between;align-items:center;width:100%;max-width:720px;margin-bottom:1.5rem}
+header h2{font-size:1.4rem;letter-spacing:1.5px;text-transform:uppercase;background:linear-gradient(135deg,#fff 0,var(--accent-cyan) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:800}
+.action-btn,.back-btn{background:rgba(18,24,34,.8);border:1px solid var(--card-border);padding:.65rem 1.2rem;color:var(--text-primary);text-decoration:none;font-weight:700;border-radius:8px;cursor:pointer;font-family:inherit;font-size:.9rem;transition:all .25s ease;backdrop-filter:blur(8px)}
+.action-btn:hover,.back-btn:hover{background:var(--accent-cyan);color:#04080e;border-color:var(--accent-cyan);box-shadow:0 0 15px var(--accent-cyan-glow);transform:translateY(-2px)}
+.card{background:var(--card-bg);border:1px solid var(--card-border);box-shadow:0 20px 40px rgba(0,0,0,.6),0 0 30px rgba(6,182,212,.1);border-radius:16px;width:100%;max-width:720px;padding:2rem;display:flex;flex-direction:column;gap:1.2rem;backdrop-filter:blur(12px)}
+#categoryPrompt{font-size:1.1rem;color:#e2e8f0;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.counter{font-size:1rem;color:var(--accent-gold);font-weight:700;background:rgba(245,158,11,.1);padding:6px 14px;border-radius:20px;border:1px solid rgba(245,158,11,.25)}
+.log-box{background:var(--log-bg);border:1px solid rgba(255,255,255,.08);border-radius:12px;height:280px;overflow-y:auto;padding:1.2rem;font-size:.95rem;line-height:1.6;display:flex;flex-direction:column;gap:.8rem}
+.log-box div{padding:8px 12px;border-radius:8px;background:rgba(255,255,255,.02);border-left:3px solid var(--accent-cyan)}
+.log-box .hint-msg{border-left-color:var(--accent-gold);background:var(--game-msg-bg)}
+.input-group{display:flex;gap:.75rem}
+input[type=text]{flex:1;padding:.85rem 1rem;border:1px solid rgba(255,255,255,.15);border-radius:8px;font-family:inherit;font-size:.95rem;background:#090d14;color:#fff;transition:all .25s ease;user-select:text;-webkit-user-select:text}
+input[type=text]:focus{border-color:var(--accent-cyan);box-shadow:0 0 12px var(--accent-cyan-glow)}
+.controls{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:space-between}
+.category-badge{background:rgba(6,182,212,.15);color:var(--accent-cyan);padding:4px 12px;border-radius:20px;font-size:.85rem;font-weight:700;border:1px solid var(--card-border);display:inline-block}
+.modal-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.75);backdrop-filter:blur(6px);justify-content:center;align-items:center;z-index:1000;padding:1rem}
+.modal-overlay.active{display:flex}
+.modal-content{background:#0d131d;border:1px solid var(--card-border);border-radius:16px;box-shadow:0 25px 50px rgba(0,0,0,.8);max-width:700px;width:100%;max-height:85vh;overflow-y:auto;padding:2rem;position:relative;line-height:1.6;color:var(--text-primary)}
+.close-btn{position:absolute;top:15px;right:20px;background:0 0;border:none;font-size:1.8rem;font-weight:700;color:var(--text-secondary);cursor:pointer;transition:color .2s}
+.close-btn:hover{color:var(--accent-cyan)}
+.modal-content h1{font-size:1.6rem;color:var(--accent-cyan);margin-bottom:.8rem}
+.modal-content h2{font-size:1.2rem;margin-top:1.2rem;margin-bottom:.5rem;border-bottom:1px dashed rgba(255,255,255,.15);padding-bottom:.3rem;color:var(--accent-gold)}
+.modal-content ol,.modal-content p,.modal-content ul{margin-bottom:.8rem;color:var(--text-secondary)}
+.modal-content ol,.modal-content ul{margin-left:1.2rem}
+.faq-item{margin-bottom:.8rem}
+.faq-item h3{font-size:1rem;color:var(--accent-cyan);margin-bottom:.2rem}
+@media only screen and (max-width:640px){
+  header{flex-direction:column;gap:12px;text-align:center}
+  .card{padding:1.25rem}
+  .controls{flex-direction:column}
+  .controls button{width:100%}
+  .input-group{flex-direction:column}
+}
+</style>
 </head>
 <body>
-    <header>
-        <a href="../../index.html" class="back-btn">&larr; KENITFUN</a>
-        <h2>THE MYSTERY CHALLENGE</h2>
-    </header>
+<header>
+  <a class=back-btn href=../../index.html>← KENITFUN</a>
+  <h2>THE MYSTERY CHALLENGE</h2>
+</header>
+<main class=card>
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+    <h3 id=categoryPrompt>I am thinking of something mysterious...</h3>
+    <div class=counter>Questions Left: <span id=qCount>20</span>/20</div>
+  </div>
+  <div class=log-box id=logBox></div>
+  <div class=input-group>
+    <input autocomplete="off" autocorrect="off" class="code-input" id=userInput inputmode="text" placeholder="Ask a question or type your guess (e.g. Is it made of metal?)...">
+    <button class=action-btn id=sendBtn>Ask / Guess</button>
+  </div>
+  <div class=controls>
+    <button class=action-btn id=nextBtn>🔄 Next Challenge</button>
+    <button class=action-btn id=infoBtn>📖 How to Play & FAQ</button>
+  </div>
+</main>
+<div class=modal-overlay id=infoModal>
+  <article class=modal-content>
+    <button class=close-btn id=closeModal>×</button>
+    <h1>About The Mystery Challenge</h1>
+    <p>Welcome to <strong>The Mystery Challenge</strong> on KenitFun! Test your deduction skills in this interactive <i>20 Questions</i> word guessing game.</p>
+    <h2>How to Play</h2>
+    <ol>
+      <li><strong>Check Category:</strong> A mystery item is picked from categories like Vintage Objects, Retro Vehicles, Superheroes, Food, or Space.</li>
+      <li><strong>Ask Questions:</strong> Type questions about traits (e.g., "Is it made of metal?", "Does it fly?").</li>
+      <li><strong>Smart Feedback:</strong> Pay attention to the game's hints to narrow down your choices quickly.</li>
+      <li><strong>Guess the Word:</strong> Enter the name to unlock the solution!</li>
+    </ol>
+  </article>
+</div>
 
-    <!-- Main Game UI -->
-    <main class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap: 10px;">
-            <h3 id="categoryPrompt">I am thinking of something mysterious...</h3>
-            <div class="counter">Questions Left: <span id="qCount">20</span>/20</div>
-        </div>
+<script>
+if(document.activeElement && typeof document.activeElement.blur === 'function'){
+  document.activeElement.blur();
+}
 
-        <div class="log-box" id="logBox"></div>
+const categories=[
+  {
+    prompt:"I am thinking of a classic vintage object...",
+    badge:"Vintage Objects",
+    items:[
+      {name:"gramophone",tags:["metal","music","sound","large","vintage","disc","horn","records"],hint:"It was used to play music before modern digital speakers!"},
+      {name:"pocket watch",tags:["metal","time","small","portable","clock","chain","pocket"],hint:"It tells time and fits right inside your pocket on a chain."},
+      {name:"typewriter",tags:["metal","write","paper","mechanical","keys","office","text"],hint:"People used this mechanical machine to type letters before computers."},
+      {name:"rotary phone",tags:["metal","electric","call","communication","dial","number"],hint:"You have to rotate a circular dial to make calls on this vintage device."},
+      {name:"hourglass",tags:["glass","time","sand","portable","measure","ancient"],hint:"It measures time using flowing sand inside a glass tube."}
+    ]
+  },
+  {
+    prompt:"I am thinking of an iconic retro vehicle or bike...",
+    badge:"Classic Vehicles",
+    items:[
+      {name:"yamaha rx100",tags:["bike","motorcycle","2stroke","fast","engine","sound","exhaust","yamaha","rx100"],hint:"A legendary 2-stroke motorcycle known for its iconic crisp exhaust sound!"},
+      {name:"vespa scooter",tags:["scooter","two wheeler","italian","slow","classic","ride"],hint:"A stylish Italian two-wheeler scooter loved across generations."},
+      {name:"ambassador car",tags:["car","four wheeler","white","government","big","vintage","hindustan"],hint:"Known as the 'King of Indian Roads', often used by government leaders."},
+      {name:"bullet 350",tags:["bike","motorcycle","heavy","sound","engine","royal enfield","thump"],hint:"A heavy-duty bike with a famous iconic deep thumping engine sound!"},
+      {name:"steam locomotive",tags:["train","big","heavy","track","steam","railway","engine"],hint:"An ancient train engine powered by steam and burning coal."}
+    ]
+  },
+  {
+    prompt:"I am thinking of a legendary retro video game...",
+    badge:"Retro Games",
+    items:[
+      {name:"pac man",tags:["arcade","yellow","ghost","maze","old","dots","eating"],hint:"A yellow circle character that eats dots and dodges colorful ghosts!"},
+      {name:"super mario",tags:["plumber","jump","mushroom","nintendo","2d","coins","pipe","mario"],hint:"An iconic Italian plumber who jumps over obstacles to save the princess."},
+      {name:"tetris",tags:["blocks","puzzle","falling","russian","lines","shapes"],hint:"A famous puzzle game where falling geometric blocks need to fit together perfectly."},
+      {name:"contra",tags:["gun","action","shooting","2 player","jungle","soldier","konami"],hint:"A classic 2-player arcade action game where soldiers shoot through jungles."},
+      {name:"gta vice city",tags:["open world","3d","cars","miami","tommy","retro","radio"],hint:"An 80s Miami-style open world game featuring Tommy Vercetti."}
+    ]
+  },
+  {
+    prompt:"I am thinking of a famous superhero...",
+    badge:"Superheroes",
+    items:[
+      {name:"spider man",tags:["web","red","mask","marvel","wall","peter","spider"],hint:"He crawls walls, shoots webs, and wears a red-and-blue mask!"},
+      {name:"batman",tags:["dc","black","night","gotham","hero","cave","dark knight"],hint:"He operates in Gotham City, wears black, and has no actual superpowers."},
+      {name:"iron man",tags:["suit","flying","marvel","robot","rich","tony","armor"],hint:"A genius billionaire in an advanced high-tech flying armor suit."},
+      {name:"superman",tags:["fly","cape","dc","alien","strong","red cape","krypton"],hint:"An alien hero from Krypton who flies wearing a iconic red cape."},
+      {name:"shaktimaan",tags:["indian","red","spin","tv show","superhero","gangadhar"],hint:"India's iconic television superhero who spins to fight evil!"}
+    ]
+  },
+  {
+    prompt:"I am thinking of a delicious popular food item...",
+    badge:"Food & Cuisine",
+    items:[
+      {name:"pizza",tags:["cheese","round","italian","junk food","baked","slices","topping"],hint:"A round Italian baked treat topped with melted cheese and tasty slices."},
+      {name:"samosa",tags:["indian","potato","fried","triangle","spicy","snack"],hint:"A crunchy Indian fried triangular snack filled with spiced potatoes."},
+      {name:"burger",tags:["bun","patty","fast food","american","cheese","sandwich"],hint:"A popular fast-food sandwich with a delicious patty tucked inside round buns."},
+      {name:"sushi",tags:["japan","fish","rice","seaweed","raw","roll"],hint:"A traditional Japanese dish made of seasoned rice paired with raw fish and seaweed."}
+    ]
+  }
+];
 
-        <div class="input-group">
-            <input type="text" id="userInput" placeholder="Ask a yes/no question or make your guess!" autofocus>
-            <button class="action-btn" id="sendBtn">Ask / Guess</button>
-        </div>
-        
-        <div class="controls">
-            <button class="action-btn" id="nextBtn">🔄 Next Challenge</button>
-            <button class="action-btn" id="infoBtn">📖 How to Play & FAQ</button>
-        </div>
-    </main>
+let currentCat=null,secret=null,remaining=20,gameOver=!1;
 
-    <!-- Modal Popup containing SEO Content for AdSense Approval -->
-    <div class="modal-overlay" id="infoModal">
-        <article class="modal-content">
-            <button class="close-btn" id="closeModal">&times;</button>
-            <h1>About The Mystery Challenge</h1>
-            <p>Welcome to <strong>The Mystery Challenge</strong> on KenitFun! Test your deduction skills in this interactive <i>20 Questions</i> word guessing game. Figure out the hidden items across various topics through clever questioning.</p>
+const logBox=document.getElementById("logBox"),
+      userInput=document.getElementById("userInput"),
+      qCount=document.getElementById("qCount"),
+      sendBtn=document.getElementById("sendBtn"),
+      nextBtn=document.getElementById("nextBtn"),
+      categoryPrompt=document.getElementById("categoryPrompt"),
+      infoBtn=document.getElementById("infoBtn"),
+      infoModal=document.getElementById("infoModal"),
+      closeModal=document.getElementById("closeModal");
 
-            <h2>How to Play</h2>
-            <ol>
-                <li><strong>Check Category:</strong> A mystery item is picked from categories like Vintage Objects, Retro Vehicles, Superheroes, Food, or Space.</li>
-                <li><strong>Ask Questions:</strong> Type questions about traits (e.g., "Is it made of metal?", "Can it fly?").</li>
-                <li><strong>Track Tries:</strong> You have <strong>20 questions</strong> to gather clues and guess the secret word.</li>
-                <li><strong>Guess the Item:</strong> Enter the exact name to win!</li>
-            </ol>
+function initNewGame(){
+  currentCat=categories[Math.floor(Math.random()*categories.length)];
+  secret=currentCat.items[Math.floor(Math.random()*currentCat.items.length)];
+  remaining=20;
+  gameOver=!1;
+  qCount.innerText=remaining;
+  userInput.disabled=!1;
+  sendBtn.disabled=!1;
+  userInput.value="";
+  categoryPrompt.innerHTML=`${currentCat.prompt} <span class="category-badge">${currentCat.badge}</span>`;
+  logBox.innerHTML=`<div><b>Game Master:</b> Category set to <b>${currentCat.badge}</b>. Ask about properties (like color, material, use) or make a direct guess!</div>`;
+}
 
-            <h2>Game Strategy & Tips</h2>
-            <ul>
-                <li>Start with general inquiries regarding size, material, or modern vs. retro origins.</li>
-                <li>Use keywords like <i>metal, glass, food, speed, engine, or ancient</i> for better matching.</li>
-            </ul>
+function appendLog(speaker,msg,isHint=!1){
+  const cssClass=isHint?'class="hint-msg"':'';
+  logBox.innerHTML+=`<div ${cssClass}><b>${speaker}:</b> ${msg}</div>`;
+  logBox.scrollTop=logBox.scrollHeight;
+}
 
-            <h2>Frequently Asked Questions (FAQ)</h2>
-            <div class="faq-item">
-                <h3>Q: Is this game free?</h3>
-                <p>Yes, completely free with no downloads required.</p>
-            </div>
-            <div class="faq-item">
-                <h3>Q: Can I play on mobile?</h3>
-                <p>Yes, it is fully responsive for smartphones and desktop screens alike.</p>
-            </div>
-        </article>
-    </div>
+function processInput(){
+  if(gameOver) return;
+  const rawVal=userInput.value.trim();
+  const inputNorm=rawVal.toLowerCase();
+  
+  if(!inputNorm) return;
+  
+  appendLog("You",rawVal);
+  userInput.value="";
+  remaining--;
+  qCount.innerText=remaining;
+  
+  // Check exact or partial name match
+  const secretTokens=secret.name.split(" ");
+  const matchDirect=inputNorm===secret.name || secretTokens.some(tok => tok.length>2 && inputNorm.includes(tok));
+  
+  if(matchDirect){
+    appendLog("Game Master",`🎉 <strong>BINGO! You CRACKED IT!</strong> The mystery answer is <b>${secret.name.toUpperCase()}</b>!`);
+    endGame();
+    return;
+  }
+  
+  // Tag matching check
+  let foundTags=secret.tags.filter(tag=>inputNorm.includes(tag));
+  
+  if(foundTags.length>0){
+    appendLog("Game Master",`YES! Absolutely! Your question hits closely. Key match: <i>"${foundTags.join(", ")}"</i>!`);
+  } else {
+    // Provide a smart hint if missed
+    if(remaining <= 15 && remaining % 3 === 0){
+      appendLog("Game Master",`NO, but here is a clue: 💡 <i>${secret.hint}</i>`, true);
+    } else {
+      appendLog("Game Master",`NO / Not quite matching. Try asking about its function, color, or material!`);
+    }
+  }
+  
+  if(remaining<=0){
+    appendLog("Game Master",`❌ <strong>Game Over!</strong> You ran out of questions. The secret answer was <b>${secret.name.toUpperCase()}</b>.`);
+    endGame();
+  }
+}
 
-    <script>
-        // Multi-Category Database
-        const categories = [
-            {
-                prompt: "I am thinking of a classic vintage object...",
-                badge: "Vintage Objects",
-                items: [
-                    { name: "gramophone", tags: ["metal", "music", "sound", "large"] },
-                    { name: "pocket watch", tags: ["metal", "time", "small", "portable"] },
-                    { name: "typewriter", tags: ["metal", "write", "paper", "mechanical"] },
-                    { name: "rotary phone", tags: ["metal", "electric", "call", "communication"] },
-                    { name: "hourglass", tags: ["glass", "time", "sand", "portable"] }
-                ]
-            },
-            {
-                prompt: "I am thinking of an iconic retro vehicle or bike...",
-                badge: "Classic Vehicles",
-                items: [
-                    { name: "yamaha rx100", tags: ["bike", "motorcycle", "2stroke", "fast", "engine"] },
-                    { name: "vespa scooter", tags: ["scooter", "two wheeler", "italian", "slow"] },
-                    { name: "ambassador car", tags: ["car", "four wheeler", "white", "government", "big"] },
-                    { name: "bullet 350", tags: ["bike", "motorcycle", "heavy", "sound", "engine"] },
-                    { name: "steam locomotive", tags: ["train", "big", "heavy", "track", "steam"] }
-                ]
-            },
-            {
-                prompt: "I am thinking of a legendary video game...",
-                badge: "Retro Games",
-                items: [
-                    { name: "pac man", tags: ["arcade", "yellow", "ghost", "maze", "old"] },
-                    { name: "super mario", tags: ["plumber", "jump", "mushroom", "nintendo", "2d"] },
-                    { name: "tetris", tags: ["blocks", "puzzle", "falling", "russian"] },
-                    { name: "contra", tags: ["gun", "action", "shooting", "2 player", "jungle"] },
-                    { name: "gta vice city", tags: ["open world", "3d", "cars", "miami", "tommy"] }
-                ]
-            },
-            {
-                prompt: "I am thinking of a famous wild animal...",
-                badge: "Animals",
-                items: [
-                    { name: "bengal tiger", tags: ["stripes", "cat", "carnivore", "predator", "big"] },
-                    { name: "blue whale", tags: ["ocean", "water", "mammal", "giant", "big"] },
-                    { name: "bald eagle", tags: ["bird", "fly", "feathers", "sky", "predator"] },
-                    { name: "african elephant", tags: ["trunk", "tusks", "giant", "herbivore", "land"] },
-                    { name: "king cobra", tags: ["reptile", "snake", "venom", "poison", "crawl"] }
-                ]
-            },
-            {
-                prompt: "I am thinking of a world-famous monument...",
-                badge: "Monuments",
-                items: [
-                    { name: "taj mahal", tags: ["white", "marble", "india", "tomb", "love"] },
-                    { name: "eiffel tower", tags: ["iron", "metal", "paris", "france", "tall"] },
-                    { name: "great wall of china", tags: ["stone", "long", "china", "border"] },
-                    { name: "pyramids of giza", tags: ["egypt", "desert", "sand", "ancient", "triangle"] },
-                    { name: "colosseum", tags: ["rome", "italy", "arena", "ancient", "stone"] }
-                ]
-            },
-            {
-                prompt: "I am thinking of a famous superhero...",
-                badge: "Superheroes",
-                items: [
-                    { name: "spider man", tags: ["web", "red", "mask", "marvel", "wall"] },
-                    { name: "batman", tags: ["dc", "black", "night", "gotham", "no superpowers"] },
-                    { name: "iron man", tags: ["suit", "flying", "marvel", "robot", "rich"] },
-                    { name: "superman", tags: ["fly", "cape", "dc", "alien", "strong"] },
-                    { name: "shaktimaan", tags: ["indian", "red", "spin", "tv show", "superhero"] }
-                ]
-            },
-            {
-                prompt: "I am thinking of a delicious popular food item...",
-                badge: "Food & Cuisine",
-                items: [
-                    { name: "pizza", tags: ["cheese", "round", "italian", "junk food", "baked"] },
-                    { name: "samosa", tags: ["indian", "potato", "fried", "triangle", "spicy"] },
-                    { name: "burger", tags: ["bun", "patty", "fast food", "american"] },
-                    { name: "sushi", tags: ["japan", "fish", "rice", "seaweed", "raw"] },
-                    { name: "ice cream", tags: ["sweet", "cold", "desert", "milk", "summer"] }
-                ]
-            },
-            {
-                prompt: "I am thinking of an object in outer space...",
-                badge: "Astronomy & Space",
-                items: [
-                    { name: "black hole", tags: ["gravity", "dark", "space", "giant", "destroy"] },
-                    { name: "mars", tags: ["planet", "red", "space", "desert", "rover"] },
-                    { name: "the moon", tags: ["night", "satellite", "orbit", "white", "space"] },
-                    { name: "shooting star", tags: ["meteor", "light", "sky", "fast", "space"] }
-                ]
-            }
-        ];
+function endGame(){
+  gameOver=!0;
+  userInput.disabled=!0;
+  sendBtn.disabled=!0;
+}
 
-        let currentCat = null;
-        let secret = null;
-        let remaining = 20;
-        let gameOver = false;
+infoBtn.addEventListener("click",()=>infoModal.classList.add("active"));
+closeModal.addEventListener("click",()=>infoModal.classList.remove("active"));
+infoModal.addEventListener("click",e=>{if(e.target===infoModal) infoModal.classList.remove("active")});
+sendBtn.addEventListener("click",processInput);
+nextBtn.addEventListener("click",initNewGame);
+userInput.addEventListener("keydown",e=>{"Enter"===e.key&&processInput()});
 
-        const logBox = document.getElementById('logBox');
-        const userInput = document.getElementById('userInput');
-        const qCount = document.getElementById('qCount');
-        const sendBtn = document.getElementById('sendBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const categoryPrompt = document.getElementById('categoryPrompt');
-
-        // Modal Elements
-        const infoBtn = document.getElementById('infoBtn');
-        const infoModal = document.getElementById('infoModal');
-        const closeModal = document.getElementById('closeModal');
-
-        function initNewGame() {
-            currentCat = categories[Math.floor(Math.random() * categories.length)];
-            secret = currentCat.items[Math.floor(Math.random() * currentCat.items.length)];
-            
-            remaining = 20;
-            gameOver = false;
-            qCount.innerText = remaining;
-            userInput.disabled = false;
-            sendBtn.disabled = false;
-            userInput.value = "";
-
-            categoryPrompt.innerHTML = `${currentCat.prompt} <span class="category-badge">${currentCat.badge}</span>`;
-            logBox.innerHTML = `<div><b>Game:</b> Category set to <b>${currentCat.badge}</b>! Ask questions to guess the mystery item.</div>`;
-            userInput.focus();
-        }
-
-        function appendLog(sender, text) {
-            logBox.innerHTML += `<div><b>${sender}:</b> ${text}</div>`;
-            logBox.scrollTop = logBox.scrollHeight;
-        }
-
-        function processInput() {
-            if (gameOver) return;
-
-            const query = userInput.value.trim().toLowerCase();
-            if (!query) return;
-
-            appendLog("You", userInput.value);
-            userInput.value = "";
-            remaining--;
-            qCount.innerText = remaining;
-
-            if (query.includes(secret.name)) {
-                appendLog("Game", `🎉 BINGO! You correctly guessed <b>${secret.name.toUpperCase()}</b>!`);
-                endGame();
-                return;
-            }
-
-            let matched = false;
-            for (let tag of secret.tags) {
-                if (query.includes(tag)) {
-                    matched = true;
-                    break;
-                }
-            }
-
-            let reply = "";
-            if (matched) {
-                reply = `YES! It is closely related to your question / keyword.`;
-            } else {
-                if (query.includes("is it") || query.includes("does it") || query.includes("has") || query.includes("can")) {
-                    reply = `NO, that doesn't describe this ${currentCat.badge.toLowerCase()} item.`;
-                } else {
-                    reply = `I'm not sure about that aspect, try asking another way!`;
-                }
-            }
-
-            appendLog("Game", reply);
-
-            if (remaining <= 0) {
-                appendLog("Game", `❌ Out of questions! The secret answer was <b>${secret.name.toUpperCase()}</b>.`);
-                endGame();
-            }
-        }
-
-        function endGame() {
-            gameOver = true;
-            userInput.disabled = true;
-            sendBtn.disabled = true;
-        }
-
-        // Modal Controls
-        infoBtn.addEventListener('click', () => { infoModal.style.display = 'flex'; });
-        closeModal.addEventListener('click', () => { infoModal.style.display = 'none'; });
-        window.addEventListener('click', (e) => { if (e.target === infoModal) infoModal.style.display = 'none'; });
-
-        sendBtn.addEventListener('click', processInput);
-        nextBtn.addEventListener('click', initNewGame);
-        userInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') processInput(); });
-
-        initNewGame();
-    </script>
+initNewGame();
+</script>
 </body>
 </html>

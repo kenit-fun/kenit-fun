@@ -3,56 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Primary SEO Meta Tags -->
-    <title>1950s Rotary Phone Simulator | Interactive Vintage Phone - KenitFun</title>
-    <meta name="title" content="1950s Rotary Phone Simulator | Interactive Vintage Phone - KenitFun">
-    <meta name="description" content="Experience a realistic 1950s vintage rotary phone simulator with physical dial rotation, mechanical sound effects, and secret Easter egg hotlines.">
-    <meta name="keywords" content="rotary phone simulator, 1950s phone game, vintage rotary dialer, interactive rotary phone, retro web game, web audio api game">
+    <title>1950s Rotary Phone Mystery Simulator | Interactive Vintage Game - KenitFun</title>
+    <meta name="title" content="1950s Rotary Phone Mystery Simulator | Interactive Vintage Game - KenitFun">
+    <meta name="description" content="An interactive 1950s rotary phone simulator with realistic mechanical audio, voice-acted hotlines, retro static effects, and a secret phonebook directory.">
+    <meta name="keywords" content="rotary phone simulator, 1950s phone game, mystery phonebook game, interactive retro audio, web audio api game, voice hotline simulator">
     <meta name="robots" content="index, follow">
 
-    <!-- JSON-LD FAQ Schema for Google Search -->
+    <!-- Schema FAQ -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "FAQPage",
       "mainEntity": [{
         "@type": "Question",
-        "name": "How do you dial a number on the rotary phone simulator?",
+        "name": "How do you dial a number on the rotary phone?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Click or tap on any circular number hole (0-9). The wheel physically rotates around to the mechanical stop plate before springing back into place."
+          "text": "Click or tap on any circular number hole (0-9). The dial rotates around to the mechanical stop plate and recoils back into place."
         }
       }, {
         "@type": "Question",
-        "name": "What secret Easter Eggs can you call?",
+        "name": "How does the Voice Operator work?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Try dialing special 7-digit numbers like '555-0199' for the KenitFun Hotline, '867-5309' for Jenny, or '000-0000' for the phantom static line."
+          "text": "The phone uses Web Audio filters combined with Speech Synthesis to simulate realistic 1950s radio & telephone speaker output."
         }
       }, {
         "@type": "Question",
-        "name": "How do you clear or reset the phone display?",
+        "name": "Where can I find secret numbers to call?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Click the metal receiver hook on top of the phone body to simulate hanging up the handset and clearing the screen."
+          "text": "Click the 'Directory' tab on the bottom right to open the vintage Yellow Pages phonebook containing secret extension numbers."
         }
       }]
     }
     </script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Special+Elite&display=swap');
 
         :root {
-            --bg-color: #f4ecd8;
-            --phone-body: #232724;
-            --phone-dial-base: #d8ceb9;
-            --wheel-clear: rgba(255, 255, 255, 0.25);
-            --ink: #2b221e;
-            --border: #423226;
-            --accent: #a34828;
-            --gold: #c29d53;
+            --bg-color: #12100e;
+            --phone-body: #1c1d19;
+            --phone-dial-base: #c2b59b;
+            --wheel-clear: rgba(255, 255, 255, 0.22);
+            --ink: #e2d9cc;
+            --border: #3b3228;
+            --accent: #c85a32;
+            --gold: #d4af37;
+            --glow: rgba(200, 90, 50, 0.4);
         }
 
         * {
@@ -63,14 +62,18 @@
 
         body {
             background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 50% 30%, rgba(50, 40, 30, 0.4) 0%, transparent 70%),
+                repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px);
             font-family: 'Special Elite', cursive, serif;
             color: var(--ink);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 2rem 1rem;
+            padding: 1.5rem 1rem;
             user-select: none;
+            overflow-x: hidden;
         }
 
         header {
@@ -78,34 +81,44 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            max-width: 500px;
-            margin-bottom: 1.5rem;
+            max-width: 460px;
+            margin-bottom: 1rem;
         }
 
         .back-btn {
-            background: #fffdf9;
+            background: #24201c;
             border: 2px solid var(--border);
-            padding: 0.5rem 1rem;
+            padding: 0.4rem 0.9rem;
             color: var(--ink);
             text-decoration: none;
-            font-weight: bold;
-            box-shadow: 3px 3px 0px var(--border);
-            transition: all 0.1s ease;
+            font-weight: 700;
+            box-shadow: 3px 3px 0 var(--border);
+            transition: all 0.15s ease;
+            font-family: 'Courier Prime', monospace;
         }
 
         .back-btn:hover {
-            box-shadow: 4px 4px 0px var(--accent);
+            box-shadow: 4px 4px 0 var(--accent);
             border-color: var(--accent);
+            color: #fff;
+        }
+
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 460px;
+            position: relative;
         }
 
         .phone-casing {
             background: var(--phone-body);
             width: 100%;
-            max-width: 420px;
-            height: 520px;
-            border-radius: 40px 40px 25px 25px;
+            height: 510px;
+            border-radius: 40px 40px 30px 30px;
             border: 4px solid var(--border);
-            box-shadow: 12px 14px 0px rgba(0,0,0,0.25);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.8), inset 0 2px 10px rgba(255,255,255,0.05);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -113,12 +126,11 @@
             position: relative;
         }
 
-        /* Receiver Hook / Hang Up Button */
         .receiver-hook {
             position: absolute;
             top: -16px;
-            width: 120px;
-            height: 20px;
+            width: 130px;
+            height: 22px;
             background: #111;
             border: 2px solid var(--border);
             border-radius: 8px;
@@ -126,54 +138,49 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.6);
             transition: transform 0.1s ease;
         }
 
-        .receiver-hook:hover {
-            background: #333;
-        }
-
-        .receiver-hook:active {
-            transform: translateY(3px);
-        }
+        .receiver-hook:hover { background: #222; }
+        .receiver-hook:active { transform: translateY(3px); }
 
         .hook-label {
             font-size: 0.65rem;
             color: var(--gold);
-            letter-spacing: 1px;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
         }
 
         .display-screen {
-            background: #c8bd9f;
+            background: #101411;
             width: 85%;
-            height: 52px;
+            height: 48px;
             border: 2px solid var(--border);
             border-radius: 6px;
             margin-top: 1rem;
-            margin-bottom: 1.8rem;
+            margin-bottom: 1.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.8rem;
-            letter-spacing: 6px;
-            box-shadow: inset 3px 3px 7px rgba(0,0,0,0.3);
-            color: #1a1917;
+            letter-spacing: 5px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.9);
+            color: #4af626;
+            font-family: 'Courier Prime', monospace;
+            text-shadow: 0 0 8px rgba(74, 246, 38, 0.6);
         }
 
-        /* Rotary Unit Frame */
         .rotary-cradle {
             width: 270px;
             height: 270px;
             background: var(--phone-dial-base);
             border-radius: 50%;
-            border: 5px solid var(--border);
+            border: 6px solid var(--border);
             position: relative;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.4), 0 6px 12px rgba(0,0,0,0.3);
+            box-shadow: inset 0 0 25px rgba(0,0,0,0.6), 0 8px 16px rgba(0,0,0,0.5);
         }
 
-        /* Fixed numbers beneath the wheel */
         .dial-number-plate {
             position: absolute;
             width: 44px;
@@ -183,155 +190,207 @@
             align-items: center;
             justify-content: center;
             font-size: 1.4rem;
-            font-weight: bold;
-            color: var(--ink);
+            font-weight: 700;
+            color: #1a1512;
             pointer-events: none;
         }
 
-        /* The actual rotatable clear wheel */
         .rotary-wheel {
             width: 100%;
             height: 100%;
             border-radius: 50%;
             position: absolute;
-            top: 0;
-            left: 0;
-            transition: transform 0.05s linear;
+            top: 0; left: 0;
+            transition: transform 50ms linear;
         }
 
-        /* The finger holes */
         .finger-hole {
             position: absolute;
             width: 48px;
             height: 48px;
             border-radius: 50%;
             background: var(--wheel-clear);
-            border: 2px solid rgba(255, 255, 255, 0.6);
+            border: 2px solid rgba(255,255,255,0.5);
             cursor: pointer;
-            box-shadow: inset 1px 1px 4px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.2);
+            box-shadow: inset 1px 1px 4px rgba(0,0,0,0.3);
             backdrop-filter: blur(1px);
         }
 
         .finger-hole:hover {
             border-color: var(--accent);
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(255,255,255,0.4);
         }
 
-        /* Finger Stop (Metal Piece at bottom right) */
         .finger-stop {
             position: absolute;
             width: 14px;
             height: 38px;
-            background: linear-gradient(to right, #888, #ccc, #666);
-            border: 1px solid #222;
+            background: linear-gradient(to right, #666, #aaa, #444);
+            border: 1px solid #111;
             bottom: 25px;
             right: 48px;
             transform: rotate(-35deg);
             border-radius: 3px;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.4);
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
             z-index: 10;
         }
 
-        /* Status & Operator Box */
-        .operator-box {
-            margin-top: 1.8rem;
-            max-width: 420px;
-            text-align: center;
-            font-size: 1.05rem;
-            min-height: 55px;
-            line-height: 1.4;
-        }
-
-        .faq-section {
-            margin-top: 2rem;
+        .speaker-box {
+            margin-top: 1.2rem;
             width: 100%;
-            max-width: 420px;
-            background: #fffdf9;
+            background: #181512;
             border: 2px solid var(--border);
             border-radius: 8px;
-            padding: 1rem;
-            box-shadow: 4px 4px 0px var(--border);
+            padding: 0.8rem;
+            text-align: center;
+            font-size: 0.95rem;
+            min-height: 65px;
+            line-height: 1.4;
+            color: #d1c4b2;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
         }
 
-        .faq-section details {
-            margin-bottom: 0.8rem;
+        /* Phone Book Directory Styles */
+        .directory-btn {
+            margin-top: 1rem;
+            background: var(--gold);
+            color: #111;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            font-family: 'Special Elite', cursive;
+            font-size: 0.95rem;
+            font-weight: 700;
+            border-radius: 4px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+            transition: transform 0.15s ease, background 0.15s ease;
+        }
+
+        .directory-btn:hover {
+            background: #e5be48;
+            transform: translateY(-2px);
+        }
+
+        .directory-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            padding: 1rem;
+        }
+
+        .directory-modal.active { display: flex; }
+
+        .yellow-pages {
+            background: #ebdca8;
+            color: #222;
+            width: 100%;
+            max-width: 440px;
+            border: 4px solid #332314;
+            border-radius: 6px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.9);
+            font-family: 'Courier Prime', monospace;
+            position: relative;
+        }
+
+        .yellow-pages h3 {
+            text-align: center;
+            border-bottom: 2px dashed #332314;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            font-family: 'Special Elite', cursive;
+            color: #8b0000;
+        }
+
+        .entry-list {
+            list-style: none;
+            font-size: 0.88rem;
+            line-height: 1.8;
+        }
+
+        .entry-list li {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dotted #887a58;
+            cursor: pointer;
+            padding: 2px 4px;
+        }
+
+        .entry-list li:hover {
+            background: rgba(0,0,0,0.08);
+            font-weight: bold;
+        }
+
+        .close-directory {
+            margin-top: 1rem;
+            width: 100%;
+            background: #332314;
+            color: #ebdca8;
+            border: none;
+            padding: 0.5rem;
+            font-family: 'Special Elite', cursive;
             cursor: pointer;
         }
 
-        .faq-section details:last-child {
-            margin-bottom: 0;
-        }
-
-        .faq-section summary {
-            font-weight: bold;
-            color: var(--accent);
-        }
-
-        .faq-section p {
-            margin-top: 0.4rem;
-            font-size: 0.9rem;
-            line-height: 1.4;
-        }
-
-        @media only screen and (max-width: 640px) {
-            header {
-                flex-direction: column;
-                gap: 10px;
-            }
+        @media only screen and (max-width: 480px) {
+            .phone-casing { height: 490px; }
+            .rotary-cradle { width: 240px; height: 240px; }
+            .finger-stop { bottom: 20px; right: 40px; }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <a href="../../index.html" class="back-btn">&larr; KENITFUN</a>
-        <h2>1950s ROTARY PHONE</h2>
+        <a class="back-btn" href="../../index.html">&larr; KENITFUN</a>
+        <h2>1950s HOTLINE</h2>
     </header>
 
-    <div class="phone-casing">
-        <!-- Clickable Hang-up Button -->
-        <div class="receiver-hook" id="receiverHook" title="Click to hang up / reset display">
-            <span class="hook-label">Hang Up / Reset</span>
-        </div>
-
-        <div class="display-screen" id="display">___-____</div>
-
-        <div class="rotary-cradle" id="cradle">
-            <!-- Numbers will be placed here -->
-            
-            <!-- Rotating Wheel Container -->
-            <div class="rotary-wheel" id="wheel">
-                <!-- Finger holes generated dynamically -->
+    <div class="main-container">
+        <div class="phone-casing">
+            <div class="receiver-hook" id="receiverHook" title="Click to hang up / reset line">
+                <span class="hook-label">Hang Up / Reset</span>
             </div>
+            
+            <div class="display-screen" id="display">___-____</div>
 
-            <!-- Physical Metal Stop Bracket -->
-            <div class="finger-stop"></div>
+            <div class="rotary-cradle" id="cradle">
+                <div class="rotary-wheel" id="wheel"></div>
+                <div class="finger-stop"></div>
+            </div>
         </div>
+
+        <div class="speaker-box" id="speakerText">
+            Pick up handset & dial a 7-digit hotline...<br>
+            <small style="opacity:0.7;">(Click Directory below to inspect secret lines)</small>
+        </div>
+
+        <button class="directory-btn" id="openDirBtn">📖 Open Phonebook Directory</button>
     </div>
 
-    <div class="operator-box" id="operatorText">
-        Pick up handset & dial a 7-digit number... <br>
-        <small style="opacity:0.75">(Try 555-0199, 867-5309, or 000-0000)</small>
-    </div>
-
-    <!-- Visible FAQ Section -->
-    <div class="faq-section">
-        <details>
-            <summary>❓ How does the mechanical dial work?</summary>
-            <p>Click any numbered hole. The wheel rotates down to the metal stop plate on the bottom right, then smoothly winds back into position while generating vintage click sounds.</p>
-        </details>
-        <details>
-            <summary>🕹️ Hidden Easter Egg numbers</summary>
-            <p>Try dialing: <strong>555-0199</strong> (KenitFun Line), <strong>867-5309</strong> (Jenny), <strong>911-0000</strong> (Operator), or <strong>000-0000</strong> (Dead Line).</p>
-        </details>
-        <details>
-            <summary>📞 How to clear dialed digits?</summary>
-            <p>Click the <strong>HANG UP / RESET</strong> bar at the top of the phone body to clear your screen instantly.</p>
-        </details>
+    <!-- Phonebook Modal -->
+    <div class="directory-modal" id="dirModal">
+        <div class="yellow-pages">
+            <h3>📖 CLASSIFIED DIRECTORY (1958)</h3>
+            <ul class="entry-list" id="directoryList">
+                <li data-num="5550199"><span>KenitFun Main Station</span> <strong>555-0199</strong></li>
+                <li data-num="8675309"><span>Jenny's Hotline</span> <strong>867-5309</strong></li>
+                <li data-num="6660000"><span>Midnight Phantom</span> <strong>666-0000</strong></li>
+                <li data-num="9110000"><span>Central Operator Switch</span> <strong>911-0000</strong></li>
+                <li data-num="1955000"><span>Time Beacon (1955)</span> <strong>195-5000</strong></li>
+                <li data-num="0000000"><span>The Void (Dead Line)</span> <strong>000-0000</strong></li>
+            </ul>
+            <button class="close-directory" id="closeDirBtn">Close Directory</button>
+        </div>
     </div>
 
     <script>
-        // --- Web Audio API Mechanical Sound Engine ---
+        // --- Web Audio API Mechanical & Telephone Engine ---
         let audioCtx = null;
 
         function initAudio() {
@@ -339,214 +398,272 @@
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
                 audioCtx = new AudioContext();
             }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
         }
 
-        // Rapid click sounds during wheel rotation
+        // Mechanical Ratchet Clicks
         function playRatchetClick() {
             initAudio();
             if (!audioCtx) return;
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
-
             osc.type = 'triangle';
-            osc.frequency.setValueAtTime(180 + Math.random() * 60, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
-
+            osc.frequency.setValueAtTime(160 + Math.random() * 80, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.025);
             osc.connect(gain);
             gain.connect(audioCtx.destination);
             osc.start();
-            osc.stop(audioCtx.currentTime + 0.03);
+            osc.stop(audioCtx.currentTime + 0.025);
         }
 
-        // Clunk sound when reaching the stop bracket
+        // Dial Metal Stop Thud
         function playStopThud() {
             initAudio();
             if (!audioCtx) return;
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
-
             osc.type = 'square';
-            osc.frequency.setValueAtTime(80, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.08);
-
+            osc.frequency.setValueAtTime(75, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.07);
             osc.connect(gain);
             gain.connect(audioCtx.destination);
             osc.start();
-            osc.stop(audioCtx.currentTime + 0.08);
+            osc.stop(audioCtx.currentTime + 0.07);
         }
 
-        // Telephone Ringback Tone
+        // Vintage Ringing Tone (Dual Frequency)
         function playRingTone() {
             initAudio();
             if (!audioCtx) return;
-
+            const now = audioCtx.currentTime;
             const osc1 = audioCtx.createOscillator();
             const osc2 = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
 
-            osc1.type = 'sine';
-            osc2.type = 'sine';
-            osc1.frequency.setValueAtTime(440, audioCtx.currentTime);
-            osc2.frequency.setValueAtTime(480, audioCtx.currentTime);
+            osc1.type = 'sine'; osc2.type = 'sine';
+            osc1.frequency.setValueAtTime(440, now);
+            osc2.frequency.setValueAtTime(480, now);
 
-            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 1.5);
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 1.8);
 
-            osc1.connect(gain);
-            osc2.connect(gain);
+            osc1.connect(gain); osc2.connect(gain);
             gain.connect(audioCtx.destination);
 
-            osc1.start();
-            osc2.start();
-            osc1.stop(audioCtx.currentTime + 1.5);
-            osc2.stop(audioCtx.currentTime + 1.5);
+            osc1.start(now); osc2.start(now);
+            osc1.stop(now + 1.8); osc2.stop(now + 1.8);
         }
 
-        // Receiver Clack Sound
+        // Analog Radio/Phone Static Noise
+        function playStaticNoise(duration = 1.5) {
+            initAudio();
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            const bufferSize = audioCtx.sampleRate * duration;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(1000, now);
+            filter.Q.setValueAtTime(2, now);
+
+            const gain = audioCtx.createGain();
+            gain.gain.setValueAtTime(0.08, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+            noise.connect(filter);
+            filter.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            noise.start(now);
+            noise.stop(now + duration);
+        }
+
+        // Hook Click Sound
         function playHookClick() {
             initAudio();
             if (!audioCtx) return;
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
-
             osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.06);
-
+            osc.frequency.setValueAtTime(280, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
             osc.connect(gain);
             gain.connect(audioCtx.destination);
             osc.start();
-            osc.stop(audioCtx.currentTime + 0.06);
+            osc.stop(audioCtx.currentTime + 0.05);
         }
 
-        // --- Rotary Mechanics & Math ---
+        // --- Synthetic Voice Operator Engine ---
+        function speakOperatorMessage(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel(); // Stop current speech
+                const msg = new SpeechSynthesisUtterance();
+                msg.text = text;
+                msg.pitch = 0.8; // Low vintage operator pitch
+                msg.rate = 0.9;  // Slightly slow & dramatic
+                
+                // Pick female/male default voice
+                const voices = window.speechSynthesis.getVoices();
+                if (voices.length > 0) {
+                    msg.voice = voices.find(v => v.lang.includes('en')) || voices[0];
+                }
+                window.speechSynthesis.speak(msg);
+            }
+        }
+
+        // --- Interaction Logic ---
         const cradle = document.getElementById('cradle');
         const wheel = document.getElementById('wheel');
         const display = document.getElementById('display');
-        const operatorText = document.getElementById('operatorText');
+        const speakerText = document.getElementById('speakerText');
         const receiverHook = document.getElementById('receiverHook');
+        const digits = ["1","2","3","4","5","6","7","8","9","0"];
 
-        const digits = ['1','2','3','4','5','6','7','8','9','0'];
         let dialedNumber = "";
         let isDialing = false;
 
-        // Position numbers and holes along the circle arc
-        digits.forEach((num, index) => {
-            // Angle spread across the dial wheel (starting top-right, going clockwise)
-            const angle = (index * 0.42) + 0.65;
-            const radius = 96;
-            const center = 135;
+        function rotateDial(index, digit) {
+            isDialing = true;
+            const deg = 22 * (10 - index) + 35;
+            const forwardDuration = 180 + deg * 3;
 
-            const x = center + radius * Math.cos(angle) - 22;
-            const y = center + radius * Math.sin(angle) - 22;
+            let interval = setInterval(playRatchetClick, 45);
 
-            // 1. Static Under-Plate Number
-            const numPlate = document.createElement('div');
-            numPlate.className = 'dial-number-plate';
-            numPlate.innerText = num;
+            wheel.style.transition = `transform ${forwardDuration}ms cubic-bezier(0.25, 1, 0.5, 1)`;
+            wheel.style.transform = `rotate(${deg}deg)`;
+
+            setTimeout(() => {
+                clearInterval(interval);
+                playStopThud();
+                appendDigit(digit);
+
+                const recoilDuration = deg * 4.5;
+                interval = setInterval(playRatchetClick, 50);
+
+                wheel.style.transition = `transform ${recoilDuration}ms cubic-bezier(0.35, 0, 0.25, 1)`;
+                wheel.style.transform = "rotate(0deg)";
+
+                setTimeout(() => {
+                    clearInterval(interval);
+                    isDialing = false;
+                }, recoilDuration);
+
+            }, forwardDuration + 50);
+        }
+
+        function appendDigit(digit) {
+            if (dialedNumber.length >= 7) dialedNumber = "";
+            dialedNumber += digit;
+
+            let formatted = dialedNumber;
+            if (dialedNumber.length > 3) {
+                formatted = dialedNumber.slice(0, 3) + "-" + dialedNumber.slice(3);
+            }
+            display.innerText = formatted.padEnd(8, "_");
+
+            if (dialedNumber.length === 7) {
+                checkHotline(dialedNumber);
+            }
+        }
+
+        function checkHotline(number) {
+            playRingTone();
+            speakerText.innerText = "☎️ Ringing hotline connection...";
+
+            setTimeout(() => {
+                playStaticNoise(2.0);
+
+                let voiceText = "";
+                let htmlText = "";
+
+                if (number === "5550199") {
+                    voiceText = "Welcome to Kenit Fun Hotline. You have unlocked the mystery easter egg station!";
+                    htmlText = "🎙️ <strong>OPERATOR:</strong> <i>'Welcome to KenitFun Station! You found the secret Easter Egg!'</i>";
+                } else if (number === "8675309") {
+                    voiceText = "Jenny is not available right now. Please leave a message after the tone.";
+                    htmlText = "🎵 <strong>VOICEMAIL:</strong> <i>'Jenny, I got your number... 867-5309!'</i>";
+                } else if (number === "6660000") {
+                    voiceText = "Who is calling at this hour? The shadows are watching you.";
+                    htmlText = "👻 <strong>UNKNOWN:</strong> <i>'Who is calling at this hour? The shadows are watching...'</i>";
+                } else if (number === "1955000") {
+                    voiceText = "Time beacon active. Year 1955 confirmed. Standby for temporal sync.";
+                    htmlText = "⏳ <strong>TIME BEACON:</strong> <i>'Year 1955 temporal sync online...'</i>";
+                } else if (number.startsWith("911")) {
+                    voiceText = "Emergency central switchboards active. Please hold for operator.";
+                    htmlText = "🚨 <strong>EMERGENCY:</strong> <i>'Central switchboards active. Standby.'</i>";
+                } else if (number === "0000000") {
+                    voiceText = "The line is disconnected.";
+                    htmlText = "📻 <strong>STATIC:</strong> <i>'The line is completely dead... only silence remains.'</i>";
+                } else {
+                    voiceText = "We are sorry. The number you have dialed is not in service.";
+                    htmlText = "📢 <strong>AUTOMATED MSG:</strong> <i>'The number you have dialed is not in service. Try another line.'</i>";
+                }
+
+                speakerText.innerHTML = htmlText;
+                speakOperatorMessage(voiceText);
+
+            }, 1800);
+        }
+
+        // Build Rotary Wheel UI
+        digits.forEach((digit, idx) => {
+            const angle = idx * 0.42 + 0.65;
+            const x = 135 + 96 * Math.cos(angle) - 22;
+            const y = 135 + 96 * Math.sin(angle) - 22;
+
+            const numPlate = document.createElement("div");
+            numPlate.className = "dial-number-plate";
+            numPlate.innerText = digit;
             numPlate.style.left = `${x}px`;
             numPlate.style.top = `${y}px`;
             cradle.appendChild(numPlate);
 
-            // 2. Transparent Rotatable Finger Hole
-            const hole = document.createElement('div');
-            hole.className = 'finger-hole';
+            const hole = document.createElement("div");
+            hole.className = "finger-hole";
             hole.style.left = `${x}px`;
             hole.style.top = `${y}px`;
-
-            hole.addEventListener('click', () => {
-                if (!isDialing) {
-                    rotateDial(index, num);
-                }
+            hole.addEventListener("click", () => {
+                if (!isDialing) rotateDial(idx, digit);
             });
-
             wheel.appendChild(hole);
         });
 
-        // Mechanical Dial Rotation & Spring Recoil Sequence
-        function rotateDial(index, digit) {
-            isDialing = true;
-
-            // Target rotation degrees based on distance to metal stop
-            const pullAngle = (10 - index) * 22 + 35; 
-            const duration = 180 + pullAngle * 3;
-
-            let soundInterval = setInterval(playRatchetClick, 45);
-
-            // Forward Rotation
-            wheel.style.transition = `transform ${duration}ms cubic-bezier(0.25, 1, 0.5, 1)`;
-            wheel.style.transform = `rotate(${pullAngle}deg)`;
-
-            setTimeout(() => {
-                clearInterval(soundInterval);
-                playStopThud();
-
-                // Append digit to display
-                appendDigit(digit);
-
-                // Spring Back Recoil
-                const returnDuration = pullAngle * 4.5;
-                soundInterval = setInterval(playRatchetClick, 50);
-
-                wheel.style.transition = `transform ${returnDuration}ms cubic-bezier(0.35, 0, 0.25, 1)`;
-                wheel.style.transform = `rotate(0deg)`;
-
-                setTimeout(() => {
-                    clearInterval(soundInterval);
-                    isDialing = false;
-                }, returnDuration);
-
-            }, duration + 50);
-        }
-
-        function appendDigit(num) {
-            if (dialedNumber.length >= 7) {
-                dialedNumber = "";
-            }
-
-            dialedNumber += num;
-
-            // Format string: XXX-XXXX
-            let formatted = dialedNumber;
-            if (dialedNumber.length > 3) {
-                formatted = dialedNumber.slice(0, 3) + '-' + dialedNumber.slice(3);
-            }
-            display.innerText = formatted.padEnd(8, '_');
-
-            if (dialedNumber.length === 7) {
-                checkNumber(dialedNumber);
-            }
-        }
-
-        // Easter Egg Checker
-        function checkNumber(num) {
-            playRingTone();
-            operatorText.innerText = "☎️ Ringing line...";
-
-            setTimeout(() => {
-                if (num === "5550199") {
-                    operatorText.innerHTML = "🎙️ <i>'Welcome to the KenitFun Hotline! You found the secret Easter Egg!'</i>";
-                } else if (num === "8675309") {
-                    operatorText.innerHTML = "🎵 <i>'Jenny, I got your number... 867-5309!'</i>";
-                } else if (num.startsWith("911")) {
-                    operatorText.innerText = "🚨 'Emergency operator service line simulator active.'";
-                } else if (num === "0000000") {
-                    operatorText.innerText = "📻 'The line is dead... only static remains.'";
-                } else {
-                    operatorText.innerText = "📢 'We're sorry, the number you have dialed is not in service.'";
-                }
-            }, 1600);
-        }
-
-        // Reset / Hang up function
-        receiverHook.addEventListener('click', () => {
+        // Reset Hook Event
+        receiverHook.addEventListener("click", () => {
             playHookClick();
+            if ('speechSynthesis' in window) window.speechSynthesis.cancel();
             dialedNumber = "";
             display.innerText = "___-____";
-            operatorText.innerText = "Handset reset. Dial a 7-digit number...";
+            speakerText.innerText = "Handset reset. Dial a 7-digit hotline...";
+        });
+
+        // Directory Modal Controls
+        const dirModal = document.getElementById("dirModal");
+        document.getElementById("openDirBtn").addEventListener("click", () => dirModal.classList.add("active"));
+        document.getElementById("closeDirBtn").addEventListener("click", () => dirModal.classList.remove("active"));
+
+        document.querySelectorAll("#directoryList li").forEach(item => {
+            item.addEventListener("click", () => {
+                const targetNum = item.getAttribute("data-num");
+                dirModal.classList.remove("active");
+                dialedNumber = targetNum;
+                let formatted = targetNum.slice(0, 3) + "-" + targetNum.slice(3);
+                display.innerText = formatted;
+                checkHotline(targetNum);
+            });
         });
     </script>
 </body>

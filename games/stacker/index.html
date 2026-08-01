@@ -1,799 +1,482 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctypehtml>
+<html lang=en>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
-    <!-- Primary SEO Meta Tags -->
-    <title>Zen Stone Balance - True Physics Cascade Edition | KenitFun</title>
-    <meta name="title" content="Zen Stone Balance - True Physics Cascade Edition | KenitFun">
-    <meta name="description" content="Experience a soothing yet challenging 2D physics stone stacking simulator. Master balance, avoid cascade collapses, and achieve zen harmony on KenitFun.">
-    <meta name="keywords" content="zen stone balance, rock stacking game, physics balance game, zen rock balancer, HTML5 physics game, online web game">
-    <meta name="robots" content="index, follow">
-
-    <!-- JSON-LD FAQ Schema for Google Search -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "mainEntity": [{
-        "@type": "Question",
-        "name": "How do you play Zen Stone Balance?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Drag and drop stones onto the center pedestal using your mouse or touch screen. Stack all 5 stones from largest to smallest without letting them slide off or crash."
-        }
-      }, {
-        "@type": "Question",
-        "name": "How does the cascade collapse physics work?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Each stone has simulated mass, gravity, and angular momentum. If an upper stone is placed off-center, its weight will knock lower stones off balance, causing a domino-style tower collapse."
-        }
-      }, {
-        "@type": "Question",
-        "name": "How do I win the game?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Align all 5 stones vertically on the pedestal so they remain completely still without falling. Once stability is detected, the Zen Harmony win screen will activate."
-        }
-      }]
+<meta charset=UTF-8>
+<meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" name=viewport>
+<title>Zen Stone Balance - True Physics Cascade Edition | KenitFun</title>
+<meta content="Zen Stone Balance - True Physics Cascade Edition | KenitFun" name=title>
+<meta content="Experience a soothing yet challenging 2D physics stone stacking simulator. Master balance, avoid cascade collapses, and achieve zen harmony on KenitFun." name=description>
+<meta content="zen stone balance, rock stacking game, physics balance game, zen rock balancer, HTML5 physics game, online web game" name=keywords>
+<meta content="index, follow" name=robots>
+<script type=application/ld+json>
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [{
+    "@type": "Question",
+    "name": "How do you play Zen Stone Balance?",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Drag and drop stones onto the center pedestal using your mouse or touch screen. Stack all 5 stones from largest to smallest without letting them slide off or crash."
     }
-    </script>
-
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600&display=swap');
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-            -webkit-user-select: none;
-        }
-
-        body, html {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            background-color: #0d1b2a;
-            font-family: 'Montserrat', sans-serif;
-        }
-
-        canvas {
-            display: block;
-            width: 100vw;
-            height: 100vh;
-            touch-action: none;
-            cursor: grab;
-        }
-
-        canvas:active {
-            cursor: grabbing;
-        }
-
-        /* Glassmorphism UI Overlay */
-        .ui-header {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            right: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 10;
-            pointer-events: none;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 10px;
-            pointer-events: auto;
-        }
-
-        .back-btn, .action-btn {
-            pointer-events: auto;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 0.7rem 1.4rem;
-            color: #ffffff;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            border-radius: 30px;
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .back-btn:hover, .action-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            box-shadow: 0 8px 32px 0 rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .title-badge {
-            color: #ffffff;
-            font-weight: 300;
-            letter-spacing: 3px;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-            font-size: 1.2rem;
-            text-align: center;
-        }
-
-        .instruction-toast {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #e0e0e0;
-            padding: 0.6rem 1.5rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            pointer-events: none;
-            letter-spacing: 0.5px;
-            z-index: 10;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        }
-
-        /* Win Modal */
-        .win-modal {
-            position: absolute;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(10, 20, 30, 0.75);
-            backdrop-filter: blur(15px);
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #ffffff;
-            z-index: 100;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-        }
-
-        .win-modal.active {
-            display: flex;
-            opacity: 1;
-        }
-
-        .win-card {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 2.5rem 3rem;
-            border-radius: 24px;
-            text-align: center;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-        }
-
-        .win-modal h2 {
-            font-size: 2.5rem;
-            color: #f39c12;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-shadow: 0 0 20px rgba(243, 156, 18, 0.4);
-        }
-
-        .win-modal p {
-            font-weight: 300;
-            margin-bottom: 2rem;
-            color: #d0d0d0;
-        }
-
-        /* Glassmorphism Popup FAQ Modal */
-        .faq-modal {
-            position: absolute;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: rgba(10, 20, 30, 0.75);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 120;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .faq-modal.active {
-            display: flex;
-            opacity: 1;
-        }
-
-        .faq-card {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            padding: 2rem;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 500px;
-            color: #ffffff;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-            position: relative;
-        }
-
-        .faq-card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 1.2rem;
-            color: #f39c12;
-            letter-spacing: 1px;
-            text-align: center;
-        }
-
-        .faq-item {
-            margin-bottom: 1rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 0.8rem;
-        }
-
-        .faq-item:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .faq-item h4 {
-            font-size: 0.95rem;
-            color: #e0e0e0;
-            margin-bottom: 0.3rem;
-            font-weight: 600;
-        }
-
-        .faq-item p {
-            font-size: 0.85rem;
-            color: #b0b8c0;
-            line-height: 1.4;
-            font-weight: 300;
-        }
-
-        .close-faq-btn {
-            margin-top: 1.2rem;
-            width: 100%;
-        }
-
-        @media (max-width: 600px) {
-            .title-badge {
-                display: none;
-            }
-        }
-    </style>
+  }, {
+    "@type": "Question",
+    "name": "How does the cascade collapse physics work?",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Each stone has simulated mass, gravity, and angular momentum. If an upper stone is placed off-center, its weight will knock lower stones off balance, causing a domino-style tower collapse."
+    }
+  }, {
+    "@type": "Question",
+    "name": "How do I win the game?",
+    "acceptedAnswer": {
+      "@type": "Answer",
+      "text": "Align all 5 stones vertically on the pedestal so they remain completely still without falling. Once stability is detected, the Zen Harmony win screen will activate."
+    }
+  }]
+}
+</script>
+<style>
+@import url(https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600;700&display=swap);
+*{box-sizing:border-box;margin:0;padding:0;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+body,html{width:100%;height:100%;overflow:hidden;background-color:#0d1b2a;font-family:Montserrat,sans-serif;touch-action:none}
+canvas{display:block;width:100vw;height:100vh;touch-action:none;cursor:grab}
+canvas:active{cursor:grabbing}
+.ui-header{position:absolute;top:15px;left:15px;right:15px;display:flex;justify-content:space-between;align-items:center;z-index:10;pointer-events:none}
+.header-actions{display:flex;gap:8px;pointer-events:auto}
+.action-btn,.back-btn{pointer-events:auto;background:rgba(255,255,255,.18);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.3);padding:.6rem 1.1rem;color:#fff;text-decoration:none;font-weight:600;font-size:.85rem;border-radius:30px;box-shadow:0 8px 32px 0 rgba(0,0,0,.2);cursor:pointer;transition:all .2s ease;letter-spacing:1px;text-transform:uppercase;display:inline-flex;align-items:center;justify-content:center}
+.action-btn:active,.back-btn:active{transform:scale(.95);background:rgba(255,255,255,.35)}
+.title-badge{color:#fff;font-weight:600;letter-spacing:2px;text-shadow:0 2px 10px rgba(0,0,0,.5);font-size:1.1rem;text-align:center}
+.win-modal{position:absolute;top:0;left:0;width:100vw;height:100vh;background:rgba(10,20,30,.8);backdrop-filter:blur(15px);display:none;flex-direction:column;align-items:center;justify-content:center;color:#fff;z-index:100;opacity:0;transition:opacity .4s ease}
+.win-modal.active{display:flex;opacity:1}
+.win-card{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.25);padding:2rem 2.5rem;border-radius:24px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.5);max-width:90%}
+.win-modal h2{font-size:2rem;color:#f39c12;margin-bottom:.5rem;font-weight:700;letter-spacing:1px;text-shadow:0 0 20px rgba(243,156,18,.4)}
+.win-modal p{font-weight:300;margin-bottom:1.5rem;color:#d0d0d0;font-size:.95rem}
+.faq-modal{position:absolute;top:0;left:0;width:100vw;height:100vh;background:rgba(10,20,30,.8);backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);display:none;align-items:center;justify-content:center;z-index:120;opacity:0;transition:opacity .3s ease}
+.faq-modal.active{display:flex;opacity:1}
+.faq-card{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);padding:1.5rem;border-radius:20px;width:90%;max-width:480px;color:#fff;box-shadow:0 20px 50px rgba(0,0,0,.5);position:relative}
+.faq-card h3{font-size:1.3rem;margin-bottom:1rem;color:#f39c12;letter-spacing:1px;text-align:center}
+.faq-item{margin-bottom:.8rem;border-bottom:1px solid rgba(255,255,255,.1);padding-bottom:.6rem}
+.faq-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.faq-item h4{font-size:.9rem;color:#e0e0e0;margin-bottom:.2rem;font-weight:600}
+.faq-item p{font-size:.8rem;color:#b0b8c0;line-height:1.4;font-weight:300}
+.close-faq-btn{margin-top:1rem;width:100%}
+@media (max-width:600px){
+  .title-badge{display:none}
+  .action-btn,.back-btn{padding:.5rem .85rem;font-size:.75rem}
+  .win-card{padding:1.8rem 1.5rem}
+  .win-modal h2{font-size:1.6rem}
+}
+</style>
 </head>
 <body>
+<div class=ui-header>
+  <a class=back-btn href=../../index.html>← KENITFUN</a>
+  <div class=title-badge>ZEN STONE BALANCER</div>
+  <div class=header-actions>
+    <button class=action-btn id=faqBtn>❓ FAQ</button>
+    <button class=action-btn id=resetBtn>🔄 Reset</button>
+  </div>
+</div>
 
-    <div class="ui-header">
-        <a href="../../index.html" class="back-btn">&larr; KENITFUN</a>
-        <div class="title-badge">ZEN STONE BALANCER</div>
-        <div class="header-actions">
-            <button class="action-btn" id="faqBtn">❓ FAQ</button>
-            <button class="action-btn" id="resetBtn">🔄 Reset</button>
-        </div>
+<canvas id=gameCanvas></canvas>
+
+<div class=win-modal id=winModal>
+  <div class=win-card>
+    <h2>✨ ZEN HARMONY ✨</h2>
+    <p>You mastered real-world cascade tower balance!</p>
+    <button class=action-btn onclick=initGame()>Stack Again</button>
+  </div>
+</div>
+
+<div class=faq-modal id=faqModal>
+  <div class=faq-card>
+    <h3>🪨 ZEN BALANCER FAQ</h3>
+    <div class=faq-item>
+      <h4>🎯 How do I play?</h4>
+      <p>Drag stones from both sides using your touch screen or mouse and carefully place them on the pedestal. Stack all 5 stones safely.</p>
     </div>
-
-    <div class="instruction-toast">
-        ⚠️ Warning: A single off-balance stone can crash the entire tower!
+    <div class=faq-item>
+      <h4>⚖️ How does physics work?</h4>
+      <p>Every stone features real-time gravity, friction, and momentum. Placing off-center causes realistic domino collapses.</p>
     </div>
-
-    <canvas id="gameCanvas"></canvas>
-
-    <!-- Win Modal -->
-    <div class="win-modal" id="winModal">
-        <div class="win-card">
-            <h2>✨ ZEN HARMONY REACHED ✨</h2>
-            <p>You mastered real-world cascade tower balance!</p>
-            <button class="action-btn" onclick="initGame()">Stack Again</button>
-        </div>
+    <div class=faq-item>
+      <h4>🏆 How do I win?</h4>
+      <p>Align all 5 stones vertically above the pedestal and release. Keep the tower stable for a split second to clear.</p>
     </div>
+    <button class="action-btn close-faq-btn" id=closeFaqBtn>Got It</button>
+  </div>
+</div>
 
-    <!-- Popup FAQ Modal -->
-    <div class="faq-modal" id="faqModal">
-        <div class="faq-card">
-            <h3>🪨 ZEN BALANCER FAQ</h3>
-            <div class="faq-item">
-                <h4>🎯 How do I play?</h4>
-                <p>Drag stones from the left and right sides and carefully place them on the center stone pedestal. Stack all 5 stones without knocking them over.</p>
-            </div>
-            <div class="faq-item">
-                <h4>⚖️ How does the physics engine work?</h4>
-                <p>Every stone features real-time gravity, friction, and angular velocity. Placing a stone off-center exerts rotational force on lower stones, triggering realistic collapses.</p>
-            </div>
-            <div class="faq-item">
-                <h4>🏆 How do I trigger Zen Harmony?</h4>
-                <p>Align all 5 stones in order of size directly above the pedestal and release your touch. Keep the tower motionless for a split second to clear the level.</p>
-            </div>
-            <button class="action-btn close-faq-btn" id="closeFaqBtn">Got It</button>
-        </div>
-    </div>
+<script>
+let audioCtx=null;
+function getAudioContext(){
+  if(!audioCtx){
+    const t=window.AudioContext||window.webkitAudioContext;
+    audioCtx=new t;
+  }
+  if(audioCtx.state==="suspended"){audioCtx.resume();}
+  return audioCtx;
+}
 
-    <script>
-        // --- Web Audio Synthesizer ---
-        let audioCtx = null;
+function playClinkSound(t=.3){
+  const e=getAudioContext();
+  if(e){
+    const i=e.createOscillator(),s=e.createGain();
+    i.type="sine";
+    i.frequency.setValueAtTime(700+300*Math.random(),e.currentTime);
+    i.frequency.exponentialRampToValueAtTime(120,e.currentTime+.08);
+    s.gain.setValueAtTime(t,e.currentTime);
+    s.gain.exponentialRampToValueAtTime(.001,e.currentTime+.08);
+    i.connect(s);s.connect(e.destination);
+    i.start();i.stop(e.currentTime+.08);
+  }
+}
 
-        function getAudioContext() {
-            if (!audioCtx) {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                audioCtx = new AudioContext();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            return audioCtx;
+function playThudSound(t=.4){
+  const e=getAudioContext();
+  if(e){
+    const i=e.createOscillator(),s=e.createGain();
+    i.type="triangle";
+    i.frequency.setValueAtTime(90+40*Math.random(),e.currentTime);
+    i.frequency.exponentialRampToValueAtTime(15,e.currentTime+.18);
+    s.gain.setValueAtTime(t,e.currentTime);
+    s.gain.exponentialRampToValueAtTime(.001,e.currentTime+.18);
+    i.connect(s);s.connect(e.destination);
+    i.start();i.stop(e.currentTime+.18);
+  }
+}
+
+function playWinSound(){
+  const a=getAudioContext();
+  if(a){
+    [261.63,329.63,392,523.25,659.25].forEach((t,e)=>{
+      const i=a.createOscillator(),s=a.createGain();
+      i.type="sine";
+      i.frequency.setValueAtTime(t,a.currentTime+.12*e);
+      s.gain.setValueAtTime(.25,a.currentTime+.12*e);
+      s.gain.exponentialRampToValueAtTime(.001,a.currentTime+.12*e+.5);
+      i.connect(s);s.connect(a.destination);
+      i.start(a.currentTime+.12*e);i.stop(a.currentTime+.12*e+.5);
+    });
+  }
+}
+
+const canvas=document.getElementById("gameCanvas"),ctx=canvas.getContext("2d"),winModal=document.getElementById("winModal");
+let width,height,scaleFactor=1,stones=[],draggedStone=null,dragOffsetX=0,dragOffsetY=0,lastMouseX=0,lastMouseY=0,gameFinished=!1;
+const bgImg=new Image;
+bgImg.src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80";
+
+const pedestal={x:0,y:0,radiusX:110,radiusY:35};
+const stoneTextures=[
+  {base:"#4a4e51",highlight:"#8e9498",dark:"#232628",specks:"#71777c"},
+  {base:"#8c7d70",highlight:"#cbbba8",dark:"#4f4439",specks:"#a69688"},
+  {base:"#5c6b64",highlight:"#9cb0a6",dark:"#303b35",specks:"#788a80"},
+  {base:"#948a8c",highlight:"#d6cbcd",dark:"#524b4d",specks:"#b5aab0"},
+  {base:"#3d434a",highlight:"#737b85",dark:"#1e2226",specks:"#5b636d"}
+];
+
+function resizeCanvas(){
+  width=canvas.width=window.innerWidth;
+  height=canvas.height=window.innerHeight;
+  
+  if(width <= 600) {
+    scaleFactor = Math.min(width / 500, 0.65);
+  } else {
+    scaleFactor = Math.min(width / 900, 1);
+  }
+  
+  pedestal.radiusX = 110 * scaleFactor;
+  pedestal.radiusY = 35 * scaleFactor;
+  pedestal.x = width / 2;
+  pedestal.y = height - (100 * scaleFactor);
+}
+
+window.addEventListener("resize",resizeCanvas);
+
+class Stone{
+  constructor(t,e,i,s){
+    this.id=t;
+    this.rx=e;
+    this.ry=i;
+    this.texture=s;
+    this.x=0;this.y=0;
+    this.vx=0;this.vy=0;
+    this.angle=.1*(Math.random()-.5);
+    this.angularVelocity=0;
+    this.points=[];
+    for(let t=0;t<16;t++){
+      let a=t/16*Math.PI*2,n=.88+.24*Math.random();
+      this.points.push({x:Math.cos(a)*this.rx*n,y:Math.sin(a)*this.ry*n});
+    }
+    this.specks=[];
+    for(let t=0;t<20;t++){
+      this.specks.push({x:(Math.random()-.5)*this.rx*1.2,y:(Math.random()-.5)*this.ry*1.2,r:2*Math.random()+.8});
+    }
+  }
+
+  draw(){
+    ctx.save();
+    ctx.translate(this.x,this.y);
+    ctx.rotate(this.angle);
+    ctx.save();
+    ctx.shadowColor="rgba(0, 0, 0, 0.45)";
+    ctx.shadowBlur=20*scaleFactor;
+    ctx.shadowOffsetY=12*scaleFactor;
+    ctx.beginPath();
+    ctx.moveTo(this.points[0].x,this.points[0].y);
+    for(let t=1;t<this.points.length;t++){
+      let e=(this.points[t].x+this.points[t-1].x)/2,i=(this.points[t].y+this.points[t-1].y)/2;
+      ctx.quadraticCurveTo(this.points[t-1].x,this.points[t-1].y,e,i);
+    }
+    ctx.closePath();
+    const t=ctx.createRadialGradient(.35*-this.rx,.4*-this.ry,.1*this.rx,0,0,1.2*Math.max(this.rx,this.ry));
+    t.addColorStop(0,this.texture.highlight);
+    t.addColorStop(.4,this.texture.base);
+    t.addColorStop(1,this.texture.dark);
+    ctx.fillStyle=t;
+    ctx.fill();
+    ctx.restore();
+    ctx.clip();
+    ctx.fillStyle=this.texture.specks;
+    this.specks.forEach(t=>{
+      ctx.beginPath();
+      ctx.arc(t.x,t.y,t.r,0,2*Math.PI);
+      ctx.fill();
+    });
+    ctx.lineWidth=1.5;
+    ctx.strokeStyle="rgba(255, 255, 255, 0.2)";
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  containsPoint(t,e){
+    let i=t-this.x,s=e-this.y,a=Math.cos(-this.angle),n=Math.sin(-this.angle),r=i*a-s*n,l=i*n+s*a;
+    return r*r/(this.rx*this.rx*1.4)+l*l/(this.ry*this.ry*1.4)<=1;
+  }
+
+  updatePhysics(){
+    if(this!==draggedStone){
+      this.vy+=.48*scaleFactor;
+      this.x+=this.vx;
+      this.y+=this.vy;
+      this.angle+=this.angularVelocity;
+      this.vx*=.93;
+      this.vy*=.98;
+      this.angularVelocity*=.9;
+
+      if(this.y>height-this.ry){
+        this.y=height-this.ry;
+        this.vy=0;
+        this.vx*=.6;
+        this.angularVelocity*=.5;
+      }
+      if(this.x<this.rx){
+        this.x=this.rx;
+        this.vx*=-.5;
+      }
+      if(this.x>width-this.rx){
+        this.x=width-this.rx;
+        this.vx*=-.5;
+      }
+
+      let e=this.x-pedestal.x,t=pedestal.y-pedestal.radiusY-this.ry+8;
+      if(Math.abs(e)<pedestal.radiusX&&this.y>=t-10&&this.y<=20+t){
+        let i=e/pedestal.radiusX;
+        if(Math.abs(i)>.38){
+          this.vx+=1.1*i;
+          this.angularVelocity+=.02*i;
+          this.vy*=.85;
+        }else{
+          this.y+=.2*(t-this.y);
+          this.vy*=.25;
+          this.vx*=.75;
+          this.angle*=.85;
+          this.angularVelocity*=.5;
         }
+      }
 
-        function playClinkSound(volume = 0.3) {
-            const ctx = getAudioContext();
-            if (!ctx) return;
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(700 + Math.random() * 300, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(120, ctx.currentTime + 0.08);
-
-            gain.gain.setValueAtTime(volume, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
-
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-
-            osc.start();
-            osc.stop(ctx.currentTime + 0.08);
-        }
-
-        function playThudSound(volume = 0.4) {
-            const ctx = getAudioContext();
-            if (!ctx) return;
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(90 + Math.random() * 40, ctx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(15, ctx.currentTime + 0.18);
-
-            gain.gain.setValueAtTime(volume, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
-
-            osc.connect(gain);
-            gain.connect(ctx.destination);
-
-            osc.start();
-            osc.stop(ctx.currentTime + 0.18);
-        }
-
-        function playWinSound() {
-            const ctx = getAudioContext();
-            if (!ctx) return;
-            const notes = [261.63, 329.63, 392.00, 523.25, 659.25];
-            notes.forEach((freq, idx) => {
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.12);
-
-                gain.gain.setValueAtTime(0.25, ctx.currentTime + idx * 0.12);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.12 + 0.5);
-
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-
-                osc.start(ctx.currentTime + idx * 0.12);
-                osc.stop(ctx.currentTime + idx * 0.12 + 0.5);
-            });
-        }
-
-        // --- Canvas & Multi-Body Physics Engine ---
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const winModal = document.getElementById('winModal');
-
-        let width, height;
-        let stones = [];
-        let draggedStone = null;
-        let dragOffsetX = 0, dragOffsetY = 0;
-        let lastMouseX = 0, lastMouseY = 0;
-        let gameFinished = false;
-
-        const bgImg = new Image();
-        bgImg.src = 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1920&q=80';
-
-        function resizeCanvas() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-            if (pedestal) {
-                pedestal.x = width / 2;
-                pedestal.y = height - 120;
+      stones.forEach(t=>{
+        if(t!==this){
+          let e=this.x-t.x,i=this.ry+t.ry-6,s=t.y-i;
+          if(Math.abs(e)<.85*(this.rx+t.rx)&&this.y>=s-15&&this.y<=25+s&&this.vy>=0){
+            let a=e/(.65*t.rx);
+            if(Math.abs(a)>.3){
+              this.vx+=1.2*a;
+              this.angularVelocity+=.035*a;
+              this.vy*=.85;
+              if(t!==draggedStone){
+                t.vx-=.75*a;
+                t.angularVelocity-=.02*a;
+                t.vy+=.3;
+              }
+            }else{
+              this.y+=.25*(s-this.y);
+              this.vy*=.2;
+              this.vx*=.7;
+              this.angle*=.85;
+              this.angularVelocity*=.5;
             }
+          }
         }
-        window.addEventListener('resize', resizeCanvas);
+      });
+    }
+  }
+}
 
-        const pedestal = {
-            x: 0,
-            y: 0,
-            radiusX: 130,
-            radiusY: 40
-        };
+function initGame(){
+  resizeCanvas();
+  gameFinished=!1;
+  winModal.classList.remove("active");
+  stones=[];
+  
+  let baseSizes = [
+    {rx: 75, ry: 35},
+    {rx: 62, ry: 30},
+    {rx: 50, ry: 25},
+    {rx: 40, ry: 20},
+    {rx: 30, ry: 16}
+  ];
 
-        const stoneTextures = [
-            { base: '#4a4e51', highlight: '#8e9498', dark: '#232628', specks: '#71777c' },
-            { base: '#8c7d70', highlight: '#cbbba8', dark: '#4f4439', specks: '#a69688' },
-            { base: '#5c6b64', highlight: '#9cb0a6', dark: '#303b35', specks: '#788a80' },
-            { base: '#948a8c', highlight: '#d6cbcd', dark: '#524b4d', specks: '#b5aab0' },
-            { base: '#3d434a', highlight: '#737b85', dark: '#1e2226', specks: '#5b636d' }
-        ];
+  for(let t = 0; t < 5; t++){
+    let scaledRx = baseSizes[t].rx * scaleFactor;
+    let scaledRy = baseSizes[t].ry * scaleFactor;
+    const i = new Stone(t, scaledRx, scaledRy, stoneTextures[t]);
+    
+    if(width <= 600){
+      i.x = (t % 2 === 0) ? 0.15 * width : 0.85 * width;
+      i.y = 0.20 * height + (t * 42 * scaleFactor);
+    } else {
+      i.x = (t % 2 === 0) ? .18 * width + Math.random() * (.08 * width) : .74 * width + Math.random() * (.08 * width);
+      i.y = .35 * height + 60 * t * scaleFactor;
+    }
+    stones.push(i);
+  }
+}
 
-        class Stone {
-            constructor(id, rx, ry, texture) {
-                this.id = id;
-                this.rx = rx;
-                this.ry = ry;
-                this.texture = texture;
-                
-                this.x = 0;
-                this.y = 0;
-                this.vx = 0;
-                this.vy = 0;
-                this.angle = (Math.random() - 0.5) * 0.1;
-                this.angularVelocity = 0;
+function drawBeachPedestal(){
+  ctx.save();
+  ctx.translate(pedestal.x,pedestal.y);
+  ctx.shadowColor="rgba(0, 0, 0, 0.5)";
+  ctx.shadowBlur=30*scaleFactor;
+  ctx.shadowOffsetY=20*scaleFactor;
+  ctx.beginPath();
+  ctx.ellipse(0,0,pedestal.radiusX,pedestal.radiusY,0,0,2*Math.PI);
+  const t=ctx.createRadialGradient(0,-10,10,0,0,pedestal.radiusX);
+  t.addColorStop(0,"#75685a");
+  t.addColorStop(.6,"#473d34");
+  t.addColorStop(1,"#241e19");
+  ctx.fillStyle=t;
+  ctx.fill();
+  ctx.restore();
+}
 
-                this.points = [];
-                const numPoints = 16;
-                for (let i = 0; i < numPoints; i++) {
-                    const angle = (i / numPoints) * Math.PI * 2;
-                    const noise = 0.88 + Math.random() * 0.24;
-                    this.points.push({
-                        x: Math.cos(angle) * this.rx * noise,
-                        y: Math.sin(angle) * this.ry * noise
-                    });
-                }
+function checkStackingWin(){
+  let e=[...stones].sort((t,e)=>e.y-t.y),t=e[0],i=pedestal.y-pedestal.radiusY-t.ry+8;
+  if(Math.abs(t.x-pedestal.x)>(30*scaleFactor)||Math.abs(t.y-i)>(12*scaleFactor)) return!1;
 
-                this.specks = [];
-                for (let i = 0; i < 20; i++) {
-                    this.specks.push({
-                        x: (Math.random() - 0.5) * this.rx * 1.2,
-                        y: (Math.random() - 0.5) * this.ry * 1.2,
-                        r: Math.random() * 2 + 0.8
-                    });
-                }
-            }
+  for(let t=1;t<e.length;t++){
+    let s=e[t-1],a=e[t],n=s.y-s.ry-a.ry+6,r=Math.abs(a.x-s.x),l=Math.abs(a.y-n);
+    if(r>(20*scaleFactor)||l>(10*scaleFactor)||Math.abs(a.vx)>.3||Math.abs(a.vy)>.3) return!1;
+  }
+  return!0;
+}
 
-            draw() {
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.angle);
+function render(){
+  if(bgImg.complete&&0!==bgImg.naturalWidth){
+    let i=bgImg.width/bgImg.height,t,e;
+    if(i<width/height){t=width;e=width/i;}
+    else{e=height;t=height*i;}
+    ctx.drawImage(bgImg,(width-t)/2,(height-e)/2,t,e);
+  }else{
+    ctx.fillStyle="#1e3c72";
+    ctx.fillRect(0,0,width,height);
+  }
+  ctx.fillStyle="rgba(10, 30, 50, 0.25)";
+  ctx.fillRect(0,0,width,height);
+  drawBeachPedestal();
+  
+  stones.forEach(t=>{
+    t.updatePhysics();
+    t.draw();
+  });
 
-                ctx.save();
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.45)';
-                ctx.shadowBlur = 20;
-                ctx.shadowOffsetY = 12;
+  if(!gameFinished&&!draggedStone&&checkStackingWin()){
+    gameFinished=!0;
+    playWinSound();
+    setTimeout(()=>{winModal.classList.add("active")},400);
+  }
+  requestAnimationFrame(render);
+}
 
-                ctx.beginPath();
-                ctx.moveTo(this.points[0].x, this.points[0].y);
-                for (let i = 1; i < this.points.length; i++) {
-                    const xc = (this.points[i].x + this.points[i - 1].x) / 2;
-                    const yc = (this.points[i].y + this.points[i - 1].y) / 2;
-                    ctx.quadraticCurveTo(this.points[i - 1].x, this.points[i - 1].y, xc, yc);
-                }
-                ctx.closePath();
+function getPointerPos(t){
+  const touch=t.touches?t.touches[0]:t;
+  return{x:touch.clientX,y:touch.clientY};
+}
 
-                const grad = ctx.createRadialGradient(-this.rx * 0.35, -this.ry * 0.4, this.rx * 0.1, 0, 0, Math.max(this.rx, this.ry) * 1.2);
-                grad.addColorStop(0, this.texture.highlight);
-                grad.addColorStop(0.4, this.texture.base);
-                grad.addColorStop(1, this.texture.dark);
+function onPointerDown(t){
+  if(gameFinished) return;
+  let e=getPointerPos(t);
+  
+  for(let t=stones.length-1;t>=0;t--){
+    if(stones[t].containsPoint(e.x,e.y)){
+      draggedStone=stones[t];
+      let offsetYShift=(window.innerWidth<=600)?35*scaleFactor:0;
+      
+      dragOffsetX=e.x-draggedStone.x;
+      dragOffsetY=(e.y-draggedStone.y)+offsetYShift;
+      lastMouseX=e.x;
+      lastMouseY=e.y;
+      draggedStone.vx=0;
+      draggedStone.vy=0;
+      draggedStone.angularVelocity=0;
+      stones.splice(t,1);
+      stones.push(draggedStone);
+      playClinkSound(.4);
+      break;
+    }
+  }
+}
 
-                ctx.fillStyle = grad;
-                ctx.fill();
-                ctx.restore();
+function onPointerMove(t){
+  if(draggedStone){
+    let e=getPointerPos(t);
+    draggedStone.vx=.45*(e.x-lastMouseX);
+    draggedStone.vy=.45*(e.y-lastMouseY);
+    draggedStone.x=e.x-dragOffsetX;
+    draggedStone.y=e.y-dragOffsetY;
+    draggedStone.angularVelocity=.008*draggedStone.vx;
+    lastMouseX=e.x;
+    lastMouseY=e.y;
+  }
+}
 
-                ctx.clip();
-                ctx.fillStyle = this.texture.specks;
-                this.specks.forEach(s => {
-                    ctx.beginPath();
-                    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-                    ctx.fill();
-                });
+function onPointerUp(){
+  if(draggedStone){
+    playThudSound(.5);
+    draggedStone=null;
+  }
+}
 
-                ctx.lineWidth = 1.5;
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-                ctx.stroke();
+canvas.addEventListener("mousedown",onPointerDown);
+window.addEventListener("mousemove",onPointerMove);
+window.addEventListener("mouseup",onPointerUp);
 
-                ctx.restore();
-            }
+canvas.addEventListener("touchstart",onPointerDown,{passive:false});
+window.addEventListener("touchmove",onPointerMove,{passive:false});
+window.addEventListener("touchend",onPointerUp);
 
-            containsPoint(px, py) {
-                const dx = px - this.x;
-                const dy = py - this.y;
-                const cos = Math.cos(-this.angle);
-                const sin = Math.sin(-this.angle);
-                const lx = dx * cos - dy * sin;
-                const ly = dx * sin + dy * cos;
+document.getElementById("resetBtn").addEventListener("click",()=>{
+  playThudSound();
+  initGame();
+});
 
-                return ((lx * lx) / (this.rx * this.rx) + (ly * ly) / (this.ry * this.ry)) <= 1;
-            }
+const faqModal=document.getElementById("faqModal");
+document.getElementById("faqBtn").addEventListener("click",()=>{faqModal.classList.add("active")});
+document.getElementById("closeFaqBtn").addEventListener("click",()=>{faqModal.classList.remove("active")});
 
-            updatePhysics() {
-                if (this === draggedStone) return;
-
-                // Physics Acceleration & Gravity
-                this.vy += 0.48;
-                this.x += this.vx;
-                this.y += this.vy;
-                this.angle += this.angularVelocity;
-
-                this.vx *= 0.93;
-                this.vy *= 0.98;
-                this.angularVelocity *= 0.90;
-
-                // Ground Collision
-                if (this.y > height - this.ry) {
-                    this.y = height - this.ry;
-                    this.vy = 0;
-                    this.vx *= 0.6;
-                    this.angularVelocity *= 0.5;
-                }
-                if (this.x < this.rx) { this.x = this.rx; this.vx *= -0.5; }
-                if (this.x > width - this.rx) { this.x = width - this.rx; this.vx *= -0.5; }
-
-                // Pedestal Base Interaction
-                const dxPed = this.x - pedestal.x;
-                const topOfPedestal = pedestal.y - pedestal.radiusY - this.ry + 8;
-
-                if (Math.abs(dxPed) < pedestal.radiusX && this.y >= topOfPedestal - 10 && this.y <= topOfPedestal + 20) {
-                    const offset = dxPed / pedestal.radiusX;
-                    
-                    if (Math.abs(offset) > 0.38) {
-                        this.vx += offset * 1.1;
-                        this.angularVelocity += offset * 0.02;
-                        this.vy *= 0.85; 
-                    } else {
-                        this.y += (topOfPedestal - this.y) * 0.2; 
-                        this.vy *= 0.25;
-                        this.vx *= 0.75;
-                        this.angle *= 0.85;
-                        this.angularVelocity *= 0.5;
-                    }
-                }
-
-                // --- Real Cascade Stacking & Dynamic Multi-Stone Collapse Engine ---
-                stones.forEach(other => {
-                    if (other === this) return;
-
-                    const dx = this.x - other.x;
-                    const minDistanceY = this.ry + other.ry - 6;
-
-                    if (Math.abs(dx) < (this.rx + other.rx) * 0.85) {
-                        const targetY = other.y - minDistanceY;
-
-                        if (this.y >= targetY - 15 && this.y <= targetY + 25 && this.vy >= 0) {
-                            const offset = dx / (other.rx * 0.65);
-
-                            if (Math.abs(offset) > 0.3) {
-                                // 1. Upper Stone Slides Off
-                                this.vx += offset * 1.2; 
-                                this.angularVelocity += offset * 0.035;
-                                this.vy *= 0.85;
-
-                                // 2. CASCADE COLLAPSE EFFECT: Push Lower Stone down & tilt it!
-                                if (other !== draggedStone) {
-                                    other.vx -= offset * 0.75; // Equal & Opposite Reaction
-                                    other.angularVelocity -= offset * 0.02;
-                                    other.vy += 0.3; // Knock lower stone off balance
-                                }
-                            } else {
-                                // Balanced resting position
-                                this.y += (targetY - this.y) * 0.25;
-                                this.vy *= 0.2;
-                                this.vx *= 0.7;
-                                this.angle *= 0.85;
-                                this.angularVelocity *= 0.5;
-                            }
-                        }
-                    }
-                });
-            }
-        }
-
-        function initGame() {
-            resizeCanvas();
-            gameFinished = false;
-            winModal.classList.remove('active');
-            stones = [];
-
-            const sizes = [
-                { rx: 85, ry: 40 },
-                { rx: 72, ry: 34 },
-                { rx: 60, ry: 29 },
-                { rx: 48, ry: 24 },
-                { rx: 36, ry: 19 }
-            ];
-
-            for (let i = 0; i < 5; i++) {
-                const s = new Stone(i, sizes[i].rx, sizes[i].ry, stoneTextures[i]);
-                if (i % 2 === 0) {
-                    s.x = width * 0.18 + Math.random() * (width * 0.08);
-                    s.y = height * 0.4 + i * 70;
-                } else {
-                    s.x = width * 0.74 + Math.random() * (width * 0.08);
-                    s.y = height * 0.4 + i * 70;
-                }
-                stones.push(s);
-            }
-        }
-
-        function drawBeachPedestal() {
-            ctx.save();
-            ctx.translate(pedestal.x, pedestal.y);
-
-            ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-            ctx.shadowBlur = 30;
-            ctx.shadowOffsetY = 20;
-
-            ctx.beginPath();
-            ctx.ellipse(0, 0, pedestal.radiusX, pedestal.radiusY, 0, 0, Math.PI * 2);
-
-            const grad = ctx.createRadialGradient(0, -10, 10, 0, 0, pedestal.radiusX);
-            grad.addColorStop(0, '#75685a');
-            grad.addColorStop(0.6, '#473d34');
-            grad.addColorStop(1, '#241e19');
-
-            ctx.fillStyle = grad;
-            ctx.fill();
-            ctx.restore();
-        }
-
-        function checkStackingWin() {
-            let sorted = [...stones].sort((a, b) => b.y - a.y);
-            
-            // Base stone placement check
-            let base = sorted[0];
-            let pedTopY = pedestal.y - pedestal.radiusY - base.ry + 8;
-            if (Math.abs(base.x - pedestal.x) > 30 || Math.abs(base.y - pedTopY) > 12) {
-                return false;
-            }
-
-            // Stacking alignment & motion check
-            for (let i = 1; i < sorted.length; i++) {
-                let lower = sorted[i - 1];
-                let upper = sorted[i];
-
-                let targetY = lower.y - lower.ry - upper.ry + 6;
-                let dx = Math.abs(upper.x - lower.x);
-                let dy = Math.abs(upper.y - targetY);
-
-                if (dx > 20 || dy > 10 || Math.abs(upper.vx) > 0.3 || Math.abs(upper.vy) > 0.3) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        function render() {
-            if (bgImg.complete && bgImg.naturalWidth !== 0) {
-                const imgRatio = bgImg.width / bgImg.height;
-                const canvasRatio = width / height;
-                let renderW, renderH;
-
-                if (canvasRatio > imgRatio) {
-                    renderW = width;
-                    renderH = width / imgRatio;
-                } else {
-                    renderH = height;
-                    renderW = height * imgRatio;
-                }
-                ctx.drawImage(bgImg, (width - renderW) / 2, (height - renderH) / 2, renderW, renderH);
-            } else {
-                ctx.fillStyle = '#1e3c72';
-                ctx.fillRect(0, 0, width, height);
-            }
-
-            ctx.fillStyle = 'rgba(10, 30, 50, 0.25)';
-            ctx.fillRect(0, 0, width, height);
-
-            drawBeachPedestal();
-
-            stones.forEach(s => {
-                s.updatePhysics();
-                s.draw();
-            });
-
-            if (!gameFinished && !draggedStone && checkStackingWin()) {
-                gameFinished = true;
-                playWinSound();
-                setTimeout(() => {
-                    winModal.classList.add('active');
-                }, 400);
-            }
-
-            requestAnimationFrame(render);
-        }
-
-        function getPointerPos(e) {
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            return { x: clientX, y: clientY };
-        }
-
-        function onPointerDown(e) {
-            if (gameFinished) return;
-            const pos = getPointerPos(e);
-
-            for (let i = stones.length - 1; i >= 0; i--) {
-                if (stones[i].containsPoint(pos.x, pos.y)) {
-                    draggedStone = stones[i];
-                    dragOffsetX = pos.x - draggedStone.x;
-                    dragOffsetY = pos.y - draggedStone.y;
-                    
-                    lastMouseX = pos.x;
-                    lastMouseY = pos.y;
-                    
-                    draggedStone.vx = 0;
-                    draggedStone.vy = 0;
-                    draggedStone.angularVelocity = 0;
-
-                    stones.splice(i, 1);
-                    stones.push(draggedStone);
-
-                    playClinkSound(0.4);
-                    break;
-                }
-            }
-        }
-
-        function onPointerMove(e) {
-            if (!draggedStone) return;
-            const pos = getPointerPos(e);
-
-            draggedStone.vx = (pos.x - lastMouseX) * 0.45;
-            draggedStone.vy = (pos.y - lastMouseY) * 0.45;
-
-            draggedStone.x = pos.x - dragOffsetX;
-            draggedStone.y = pos.y - dragOffsetY;
-
-            draggedStone.angularVelocity = draggedStone.vx * 0.008;
-
-            lastMouseX = pos.x;
-            lastMouseY = pos.y;
-        }
-
-        function onPointerUp() {
-            if (draggedStone) {
-                playThudSound(0.5);
-                draggedStone = null;
-            }
-        }
-
-        canvas.addEventListener('mousedown', onPointerDown);
-        window.addEventListener('mousemove', onPointerMove);
-        window.addEventListener('mouseup', onPointerUp);
-
-        canvas.addEventListener('touchstart', onPointerDown, { passive: true });
-        window.addEventListener('touchmove', onPointerMove, { passive: true });
-        window.addEventListener('touchend', onPointerUp);
-
-        document.getElementById('resetBtn').addEventListener('click', () => {
-            playThudSound();
-            initGame();
-        });
-
-        // FAQ Modal Event Handlers
-        const faqModal = document.getElementById('faqModal');
-        document.getElementById('faqBtn').addEventListener('click', () => {
-            faqModal.classList.add('active');
-        });
-        document.getElementById('closeFaqBtn').addEventListener('click', () => {
-            faqModal.classList.remove('active');
-        });
-
-        initGame();
-        render();
-    </script>
+initGame();
+render();
+</script>
 </body>
 </html>

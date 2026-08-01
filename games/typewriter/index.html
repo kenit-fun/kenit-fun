@@ -125,7 +125,6 @@
             flex-wrap: wrap;
         }
 
-        /* Ribbon Color Picker Spools */
         .color-palette {
             display: flex;
             align-items: center;
@@ -172,7 +171,6 @@
         .spool-green { background: var(--ink-green); color: var(--ink-green); }
         .spool-purple { background: var(--ink-purple); color: var(--ink-purple); }
 
-        /* Typewriter Paper Roll Deck */
         .paper-deck {
             background: var(--paper-bg);
             width: 100%;
@@ -194,7 +192,6 @@
             border-color: rgba(249, 115, 22, 0.5);
         }
 
-        /* Paper texture lines */
         .paper-deck::before {
             content: "";
             position: absolute;
@@ -220,7 +217,6 @@
             z-index: 2;
         }
 
-        /* Ribbon Indicator Badge */
         .ribbon-indicator {
             position: absolute;
             bottom: 14px;
@@ -237,7 +233,6 @@
             text-transform: uppercase;
         }
 
-        /* Dark Workshop Popup FAQ Modal */
         .faq-modal {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -332,7 +327,6 @@
         <a href="../../index.html" class="back-btn">&larr; KENITFUN</a>
         
         <div class="controls">
-            <!-- Vintage Multi-Color Ribbon Palette -->
             <div class="color-palette">
                 <span class="color-palette-title">Ribbon:</span>
                 <div class="color-spool spool-black active" data-color="#18181b" data-name="BLACK" title="Carbon Black"></div>
@@ -352,7 +346,6 @@
         <div class="ribbon-indicator" id="status">BLACK RIBBON ACTIVE</div>
     </div>
 
-    <!-- Dark Workshop Popup FAQ Modal -->
     <div class="faq-modal" id="faqModal">
         <div class="faq-card">
             <h3>📜 TYPEWRITER FAQ</h3>
@@ -373,7 +366,7 @@
     </div>
 
     <script>
-        // --- Web Audio API Mechanical Typewriter Sounds ---
+        // --- Web Audio API Advanced Mechanical Typewriter Audio Engine ---
         let audioCtx = null;
 
         function initAudio() {
@@ -381,49 +374,100 @@
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
                 audioCtx = new AudioContext();
             }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
         }
 
-        function playKeyClick() {
+        // Realistic Key Strike Audio Generator
+        function playKeyClick(isSpace = false) {
             initAudio();
             if (!audioCtx) return;
 
+            const now = audioCtx.currentTime;
+
+            // 1. Mechanical Noise Impact (Metallic Snap)
+            const bufferSize = audioCtx.sampleRate * 0.03;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                data[i] = Math.random() * 2 - 1;
+            }
+
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+
+            const noiseFilter = audioCtx.createBiquadFilter();
+            noiseFilter.type = 'bandpass';
+            noiseFilter.frequency.setValueAtTime(isSpace ? 400 : 1200 + Math.random() * 300, now);
+            noiseFilter.Q.setValueAtTime(3, now);
+
+            const noiseGain = audioCtx.createGain();
+            noiseGain.gain.setValueAtTime(isSpace ? 0.3 : 0.5, now);
+            noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.025);
+
+            noise.connect(noiseFilter);
+            noiseFilter.connect(noiseGain);
+            noiseGain.connect(audioCtx.destination);
+
+            // 2. Metallic Keybody Resonance (Thud)
             const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            
-            // Randomize pitch slightly for organic key hits
+            const oscGain = audioCtx.createGain();
+
             osc.type = 'triangle';
-            osc.frequency.setValueAtTime(300 + Math.random() * 400, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.04);
+            const baseFreq = isSpace ? 120 : 250 + Math.random() * 100;
+            osc.frequency.setValueAtTime(baseFreq, now);
+            osc.frequency.exponentialRampToValueAtTime(30, now + 0.035);
 
-            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.04);
+            oscGain.gain.setValueAtTime(isSpace ? 0.4 : 0.3, now);
+            oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.035);
 
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
+            osc.connect(oscGain);
+            oscGain.connect(audioCtx.destination);
 
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.04);
+            noise.start(now);
+            osc.start(now);
+            noise.stop(now + 0.03);
+            osc.stop(now + 0.04);
         }
 
+        // Mechanical Carriage Return Bell Sound
         function playCarriageReturn() {
             initAudio();
             if (!audioCtx) return;
 
-            // Bell ding sound on enter/newline
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
+            const now = audioCtx.currentTime;
 
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(1400, audioCtx.currentTime);
+            // Bell Ring Harmonic 1
+            const bell = audioCtx.createOscillator();
+            const bellGain = audioCtx.createGain();
 
-            gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+            bell.type = 'sine';
+            bell.frequency.setValueAtTime(1560, now); // High brass bell tone
 
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
+            bellGain.gain.setValueAtTime(0.4, now);
+            bellGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
 
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.4);
+            bell.connect(bellGain);
+            bellGain.connect(audioCtx.destination);
+
+            // Bell Overtone
+            const overtone = audioCtx.createOscillator();
+            const overtoneGain = audioCtx.createGain();
+
+            overtone.type = 'sine';
+            overtone.frequency.setValueAtTime(3120, now);
+
+            overtoneGain.gain.setValueAtTime(0.15, now);
+            overtoneGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.3);
+
+            overtone.connect(overtoneGain);
+            overtoneGain.connect(audioCtx.destination);
+
+            bell.start(now);
+            overtone.start(now);
+            bell.stop(now + 0.5);
+            overtone.stop(now + 0.3);
         }
 
         // --- Interaction Logic ---
@@ -435,6 +479,7 @@
         // Multi-Color Ribbon Switching Engine
         spools.forEach(spool => {
             spool.addEventListener('click', (e) => {
+                initAudio();
                 spools.forEach(s => s.classList.remove('active'));
                 
                 const selectedColor = spool.getAttribute('data-color');
@@ -455,11 +500,16 @@
             playCarriageReturn();
         });
 
+        // Keyboard Typing Event Listener with Sound Logic
         paperArea.addEventListener('keydown', (e) => {
+            initAudio(); // Audio context resume on interaction
+
             if (e.key === 'Enter') {
                 playCarriageReturn();
-            } else if (e.key.length === 1 || e.key === 'Backspace') {
-                playKeyClick();
+            } else if (e.key === ' ') {
+                playKeyClick(true); // Spacebar sound
+            } else if (e.key.length === 1 || e.key === 'Backspace' || e.key === 'Delete') {
+                playKeyClick(false); // Normal character click
             }
         });
 

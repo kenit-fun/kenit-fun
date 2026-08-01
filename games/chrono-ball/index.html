@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- Primary SEO Meta Tags -->
+    <title>Chrono-Ball 360° | Time-Dilation Physics Game - KenitFun</title>
+    <meta name="title" content="Chrono-Ball 360° | Time-Dilation Physics Game - KenitFun">
+    <meta name="description" content="Play Chrono-Ball 360°, a retro time-bending physics puzzle where gravity rotates and time moves only when you launch the core. Exclusive on KenitFun.">
+    <meta name="keywords" content="chrono ball game, time dilation physics game, unique web game, retro kinetic puzzle, kenitfun interactive games">
+    <meta name="robots" content="index, follow">
+
+    <!-- JSON-LD FAQ Schema for Google Search -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "How do you control the Kinetic Core?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Click or tap and drag anywhere inside the kinetic chamber to aim your slingshot trajectory, then release to launch the ball."
+        }
+      }, {
+        "@type": "Question",
+        "name": "What are Temporal Sinks and Chrono-Crystals?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Gold Chrono-Crystals refill your time energy and raise your score multiplier. Black Hole Sinks pull your ball into gravity traps and drain your energy rapidly."
+        }
+      }, {
+        "@type": "Question",
+        "name": "Does Chrono-Ball have sound effects?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! The game features a real-time Web Audio API synthesizer for launch thrusters, crystal collection chimes, ricochets, and black hole hums."
+        }
+      }]
+    }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Press+Start+2P&family=Rajdhani:wght@500;600;700&display=swap');
+
+        :root {
+            --bg-color: #0b0c10;
+            --paper-texture: rgba(15, 20, 30, 0.88);
+            --ink: #e0e6ed;
+            --border: #00f3ff;
+            --accent: #ff0055;
+            --brass: #ffb700;
+            --gold: #ffb700;
+            --core-glow: #00f3ff;
+            --panel-bg: rgba(5, 8, 15, 0.8);
+            --glow-color: rgba(0, 243, 255, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+            background-size: 24px 24px;
+            background-position: center center;
+            font-family: 'Rajdhani', sans-serif;
+            color: var(--ink);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.8rem 0.5rem;
+            user-select: none;
+        }
+
+        /* Updated Header with Vertical Stacking */
+        header {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.6rem;
+            width: 100%;
+            max-width: 480px;
+            margin-bottom: 0.8rem;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.6rem;
+            box-shadow: 0 4px 15px -5px var(--glow-color);
+        }
+
+        header h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: clamp(1.1rem, 5vw, 1.4rem);
+            letter-spacing: 1px;
+            color: #fff;
+            text-shadow: 0 0 10px var(--border), 2px 2px 0 var(--accent);
+            width: 100%;
+            text-align: center;
+        }
+
+        .back-btn {
+            align-self: flex-start;
+            background: rgba(0, 243, 255, 0.08);
+            border: 1px solid var(--border);
+            padding: 0.45rem 0.8rem;
+            color: var(--border);
+            text-decoration: none;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .back-btn:hover, .back-btn:active {
+            background: var(--border);
+            color: #000;
+            box-shadow: 0 0 12px var(--border);
+        }
+
+        /* Game Frame Container */
+        .game-frame {
+            background: var(--paper-texture);
+            width: 100%;
+            max-width: 480px;
+            border: 1px solid var(--border);
+            box-shadow: 0 0 25px var(--glow-color), inset 0 0 15px rgba(0, 243, 255, 0.1);
+            clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+            backdrop-filter: blur(12px);
+            padding: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .dashboard {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--panel-bg);
+            padding: 0.5rem 0.8rem;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            margin-bottom: 0.6rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(0.8rem, 3.5vw, 0.95rem);
+            font-weight: bold;
+        }
+
+        /* Canvas Container */
+        .canvas-container {
+            width: 100%;
+            max-width: 460px;
+            aspect-ratio: 460 / 420;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #chronoCanvas {
+            background: #030508;
+            border: 1px solid var(--border);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.9), 0 0 12px var(--glow-color);
+            cursor: crosshair;
+            touch-action: none;
+            width: 100%;
+            height: 100%;
+            border-radius: 4px;
+            display: block;
+        }
+
+        .energy-bar-container {
+            width: 100%;
+            height: 12px;
+            background: rgba(5, 8, 15, 0.9);
+            border: 1px solid var(--border);
+            margin-top: 0.6rem;
+            overflow: hidden;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.8);
+            border-radius: 2px;
+        }
+
+        .energy-fill {
+            height: 100%;
+            width: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--border));
+            box-shadow: 0 0 10px var(--border);
+            transition: width 0.1s linear;
+        }
+
+        .controls-note {
+            margin-top: 0.6rem;
+            font-size: 0.8rem;
+            color: #88a0c0;
+            text-align: center;
+            line-height: 1.3;
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 600;
+        }
+
+        .controls-note strong {
+            color: var(--border);
+        }
+
+        /* FAQ Section */
+        .faq-section {
+            margin-top: 1.2rem;
+            width: 100%;
+            max-width: 480px;
+            background: var(--paper-texture);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            padding: 0.8rem;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+            clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+        }
+
+        .faq-section details {
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+        }
+
+        .faq-section details:last-child {
+            margin-bottom: 0;
+        }
+
+        .faq-section summary {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--border);
+        }
+
+        .faq-section p {
+            margin-top: 0.3rem;
+            font-size: 0.82rem;
+            line-height: 1.35;
+            color: var(--ink);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../../index.html" class="back-btn">&lt; KENITFUN</a>
+        <h2>CHRONO-BALL 360°</h2>
+    </header>
+
+    <div class="game-frame">
+        <div class="dashboard">
+            <div>SCORE: <span id="scoreVal" style="color:var(--border)">0</span></div>
+            <div>MULT: <span id="multVal" style="color:var(--brass)">1.0x</span></div>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="chronoCanvas" width="460" height="420"></canvas>
+        </div>
+
+        <div class="energy-bar-container">
+            <div class="energy-fill" id="energyFill"></div>
+        </div>
+
+        <div class="controls-note">
+            🎯 <strong>Drag &amp; Release</strong> anywhere to launch!<br>
+            🔊 Web Audio API sound active.
+        </div>
+    </div>
+
+    <!-- SEO FAQ Section -->
+    <div class="faq-section">
+        <details>
+            <summary>🌀 How does time-dilation work?</summary>
+            <p>Time moves in direct proportion to the core's movement speed. When the ball stops, time freezes, giving you complete safety to calculate your next slingshot trajectory.</p>
+        </details>
+        <details>
+            <summary>🔮 What are Sinks and Crystals?</summary>
+            <p><strong>Crystals (Glowing Gold):</strong> Collect to gain points and replenish time energy.<br><strong>Gravity Sinks (Swirling Black Holes):</strong> Avoid them! They pull your ball off-course and siphon energy quickly.</p>
+        </details>
+    </div>
+
+    <script>
+        // --- Web Audio API Sound Synthesizer ---
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+            }
+        }
+
+        function playLaunchSound() {
+            initAudio();
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(140, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.25);
+
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.25);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.25);
+        }
+
+        function playBounceSound(speed) {
+            initAudio();
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'sine';
+            const freq = Math.min(1000, 220 + speed * 70);
+            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.12);
+        }
+
+        function playCollectSound() {
+            initAudio();
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(1174.66, audioCtx.currentTime + 0.18);
+
+            gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.18);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.18);
+        }
+
+        function playSinkSound() {
+            initAudio();
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(90, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.15);
+
+            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.15);
+        }
+
+        function playGameOverSound() {
+            initAudio();
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.6);
+
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
+
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.6);
+        }
+
+        // --- Game Logic ---
+        const canvas = document.getElementById('chronoCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreVal = document.getElementById('scoreVal');
+        const multVal = document.getElementById('multVal');
+        const energyFill = document.getElementById('energyFill');
+
+        const BASE_WIDTH = 460;
+        const BASE_HEIGHT = 420;
+
+        let score = 0;
+        let energy = 100;
+        let multiplier = 1.0;
+        let isGameOver = false;
+
+        const ball = {
+            x: BASE_WIDTH / 2,
+            y: BASE_HEIGHT / 2,
+            vx: 0,
+            vy: 0,
+            radius: 12,
+            dragged: false
+        };
+
+        let dragStart = { x: 0, y: 0 };
+        let dragCurrent = { x: 0, y: 0 };
+
+        let crystals = [];
+        let blackHoles = [];
+
+        function spawnEntities() {
+            crystals = [];
+            blackHoles = [];
+
+            for (let i = 0; i < 3; i++) {
+                crystals.push({
+                    x: 40 + Math.random() * (BASE_WIDTH - 80),
+                    y: 40 + Math.random() * (BASE_HEIGHT - 80),
+                    radius: 10,
+                    pulse: Math.random() * Math.PI
+                });
+            }
+
+            blackHoles.push({
+                x: 80 + Math.random() * (BASE_WIDTH - 160),
+                y: 80 + Math.random() * (BASE_HEIGHT - 160),
+                radius: 18,
+                angle: 0
+            });
+        }
+
+        function getPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = BASE_WIDTH / rect.width;
+            const scaleY = BASE_HEIGHT / rect.height;
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: (clientX - rect.left) * scaleX,
+                y: (clientY - rect.top) * scaleY
+            };
+        }
+
+        function handleStart(e) {
+            if (e.touches) e.preventDefault();
+            if (isGameOver) {
+                resetGame();
+                return;
+            }
+            const pos = getPos(e);
+            const dist = Math.hypot(pos.x - ball.x, pos.y - ball.y);
+            if (dist < 50 || Math.hypot(ball.vx, ball.vy) < 0.5) {
+                ball.dragged = true;
+                dragStart = { x: ball.x, y: ball.y };
+                dragCurrent = pos;
+            }
+        }
+
+        function handleMove(e) {
+            if (ball.dragged) {
+                if (e.touches) e.preventDefault();
+                dragCurrent = getPos(e);
+            }
+        }
+
+        function handleEnd(e) {
+            if (ball.dragged) {
+                ball.dragged = false;
+                const dx = dragStart.x - dragCurrent.x;
+                const dy = dragStart.y - dragCurrent.y;
+                ball.vx = dx * 0.15;
+                ball.vy = dy * 0.15;
+
+                if (Math.hypot(ball.vx, ball.vy) > 0.5) {
+                    playLaunchSound();
+                }
+            }
+        }
+
+        canvas.addEventListener('mousedown', handleStart);
+        canvas.addEventListener('mousemove', handleMove);
+        window.addEventListener('mouseup', handleEnd);
+
+        canvas.addEventListener('touchstart', handleStart, { passive: false });
+        canvas.addEventListener('touchmove', handleMove, { passive: false });
+        window.addEventListener('touchend', handleEnd);
+
+        function resetGame() {
+            score = 0;
+            energy = 100;
+            multiplier = 1.0;
+            isGameOver = false;
+            ball.x = BASE_WIDTH / 2;
+            ball.y = BASE_HEIGHT / 2;
+            ball.vx = 0;
+            ball.vy = 0;
+            scoreVal.innerText = score;
+            multVal.innerText = "1.0x";
+            spawnEntities();
+        }
+
+        function update() {
+            if (isGameOver) return;
+
+            const speed = Math.hypot(ball.vx, ball.vy);
+
+            if (speed > 0.1) {
+                energy -= 0.12;
+                if (energy <= 0) {
+                    energy = 0;
+                    isGameOver = true;
+                    playGameOverSound();
+                }
+            }
+            energyFill.style.width = `${energy}%`;
+
+            ball.x += ball.vx;
+            ball.y += ball.vy;
+
+            ball.vx *= 0.985;
+            ball.vy *= 0.985;
+
+            if (ball.x - ball.radius < 0) {
+                ball.x = ball.radius;
+                ball.vx *= -0.85;
+                playBounceSound(speed);
+            } else if (ball.x + ball.radius > BASE_WIDTH) {
+                ball.x = BASE_WIDTH - ball.radius;
+                ball.vx *= -0.85;
+                playBounceSound(speed);
+            }
+
+            if (ball.y - ball.radius < 0) {
+                ball.y = ball.radius;
+                ball.vy *= -0.85;
+                playBounceSound(speed);
+            } else if (ball.y + ball.radius > BASE_HEIGHT) {
+                ball.y = BASE_HEIGHT - ball.radius;
+                ball.vy *= -0.85;
+                playBounceSound(speed);
+            }
+
+            blackHoles.forEach(hole => {
+                hole.angle += 0.05;
+                const dx = hole.x - ball.x;
+                const dy = hole.y - ball.y;
+                const dist = Math.hypot(dx, dy);
+
+                if (dist < 120 && speed > 0.1) {
+                    ball.vx += (dx / dist) * 0.25;
+                    ball.vy += (dy / dist) * 0.25;
+                }
+
+                if (dist < hole.radius + ball.radius) {
+                    energy -= 12;
+                    ball.vx *= -1.2;
+                    ball.vy *= -1.2;
+                    playSinkSound();
+                }
+            });
+
+            crystals.forEach((c, idx) => {
+                c.pulse += 0.05;
+                const dist = Math.hypot(c.x - ball.x, c.y - ball.y);
+                if (dist < c.radius + ball.radius) {
+                    score += Math.round(10 * multiplier);
+                    energy = Math.min(100, energy + 20);
+                    multiplier += 0.2;
+                    scoreVal.innerText = score;
+                    multVal.innerText = `${multiplier.toFixed(1)}x`;
+                    playCollectSound();
+
+                    crystals[idx] = {
+                        x: 40 + Math.random() * (BASE_WIDTH - 80),
+                        y: 40 + Math.random() * (BASE_HEIGHT - 80),
+                        radius: 10,
+                        pulse: 0
+                    };
+                }
+            });
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, BASE_WIDTH, BASE_HEIGHT);
+
+            ctx.strokeStyle = '#0d1520';
+            ctx.lineWidth = 1;
+            for (let x = 0; x < BASE_WIDTH; x += 30) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, BASE_HEIGHT);
+                ctx.stroke();
+            }
+            for (let y = 0; y < BASE_HEIGHT; y += 30) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(BASE_WIDTH, y);
+                ctx.stroke();
+            }
+
+            if (ball.dragged) {
+                ctx.beginPath();
+                ctx.moveTo(ball.x, ball.y);
+                ctx.lineTo(ball.x + (dragStart.x - dragCurrent.x), ball.y + (dragStart.y - dragCurrent.y));
+                ctx.strokeStyle = '#00f3ff';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([6, 4]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            blackHoles.forEach(hole => {
+                ctx.save();
+                ctx.translate(hole.x, hole.y);
+                ctx.rotate(hole.angle);
+                ctx.beginPath();
+                ctx.arc(0, 0, hole.radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#05080f';
+                ctx.fill();
+                ctx.strokeStyle = '#ff0055';
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = '#ff0055';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                ctx.restore();
+            });
+
+            crystals.forEach(c => {
+                const scale = 1 + Math.sin(c.pulse) * 0.15;
+                ctx.save();
+                ctx.translate(c.x, c.y);
+                ctx.scale(scale, scale);
+                ctx.beginPath();
+                ctx.arc(0, 0, c.radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#ffb700';
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = '#ffb700';
+                ctx.fill();
+                ctx.strokeStyle = '#fff8e7';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.restore();
+            });
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+            ctx.fillStyle = '#00f3ff';
+            ctx.shadowBlur = 12;
+            ctx.shadowColor = '#00f3ff';
+            ctx.fill();
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            ctx.restore();
+
+            if (isGameOver) {
+                ctx.fillStyle = 'rgba(5, 8, 15, 0.88)';
+                ctx.fillRect(0, 0, BASE_WIDTH, BASE_HEIGHT);
+
+                ctx.fillStyle = '#00f3ff';
+                ctx.font = '20px "Orbitron", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('ENERGY DEPLETED', BASE_WIDTH / 2, BASE_HEIGHT / 2 - 10);
+
+                ctx.font = '11px "Press Start 2P", cursive';
+                ctx.fillStyle = '#ffb700';
+                ctx.fillText('TAP TO RESTART', BASE_WIDTH / 2, BASE_HEIGHT / 2 + 30);
+            }
+        }
+
+        function gameLoop() {
+            update();
+            draw();
+            requestAnimationFrame(gameLoop);
+        }
+
+        spawnEntities();
+        gameLoop();
+    </script>
+</body>
+</html>
