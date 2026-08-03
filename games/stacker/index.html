@@ -66,7 +66,7 @@ canvas:active{cursor:grabbing}
   .action-btn,.back-btn{padding:.5rem .85rem;font-size:.75rem}
   .win-card{padding:1.8rem 1.5rem}
   .win-modal h2{font-size:1.6rem}
-  canvas{height: 91vh;}
+  canvas{height: 90vh;}
 }
 </style>
 </head>
@@ -182,7 +182,8 @@ function resizeCanvas(){
   height=canvas.height=window.innerHeight;
   
   if(width <= 600) {
-    scaleFactor = Math.min(width / 500, 0.65);
+    // FIX 1: Minimum scale factor bounded at 0.82 so stones don't get too small on mobile
+    scaleFactor = Math.max(0.82, Math.min(width / 450, 0.95));
   } else {
     scaleFactor = Math.min(width / 900, 1);
   }
@@ -253,7 +254,11 @@ class Stone{
 
   containsPoint(t,e){
     let i=t-this.x,s=e-this.y,a=Math.cos(-this.angle),n=Math.sin(-this.angle),r=i*a-s*n,l=i*n+s*a;
-    return r*r/(this.rx*this.rx*1.4)+l*l/(this.ry*this.ry*1.4)<=1;
+    // FIX 2: Increased touch radius for smaller stones dynamically
+    let touchPadding = (width <= 600) ? Math.max(22, 45 - this.rx) : 10;
+    let effectiveRx = this.rx + touchPadding;
+    let effectiveRy = this.ry + touchPadding;
+    return r*r/(effectiveRx*effectiveRx)+l*l/(effectiveRy*effectiveRy)<=1;
   }
 
   updatePhysics(){
@@ -331,12 +336,13 @@ function initGame(){
   winModal.classList.remove("active");
   stones=[];
   
+  // FIX 3: Increased minimum sizes for smaller stones
   let baseSizes = [
     {rx: 75, ry: 35},
     {rx: 62, ry: 30},
-    {rx: 50, ry: 25},
-    {rx: 40, ry: 20},
-    {rx: 30, ry: 16}
+    {rx: 52, ry: 26},
+    {rx: 44, ry: 22},
+    {rx: 36, ry: 19} // Smallest stone base size increased
   ];
 
   for(let t = 0; t < 5; t++){
@@ -344,9 +350,10 @@ function initGame(){
     let scaledRy = baseSizes[t].ry * scaleFactor;
     const i = new Stone(t, scaledRx, scaledRy, stoneTextures[t]);
     
+    // FIX 4: Better mobile starting layout with proper horizontal spacing
     if(width <= 600){
-      i.x = (t % 2 === 0) ? 0.15 * width : 0.85 * width;
-      i.y = 0.20 * height + (t * 42 * scaleFactor);
+      i.x = (t % 2 === 0) ? 0.20 * width : 0.80 * width;
+      i.y = 0.18 * height + (t * 52 * scaleFactor);
     } else {
       i.x = (t % 2 === 0) ? .18 * width + Math.random() * (.08 * width) : .74 * width + Math.random() * (.08 * width);
       i.y = .35 * height + 60 * t * scaleFactor;
@@ -422,15 +429,16 @@ function onPointerDown(t){
   for(let t=stones.length-1;t>=0;t--){
     if(stones[t].containsPoint(e.x,e.y)){
       draggedStone=stones[t];
-      let offsetYShift=(window.innerWidth<=600)?35*scaleFactor:0;
+      // FIX 5: Balanced touch offset so the stone lifts above finger for accurate placement
+      let offsetYShift = (window.innerWidth <= 600) ? 40 * scaleFactor : 0;
       
-      dragOffsetX=e.x-draggedStone.x;
-      dragOffsetY=(e.y-draggedStone.y)+offsetYShift;
-      lastMouseX=e.x;
-      lastMouseY=e.y;
-      draggedStone.vx=0;
-      draggedStone.vy=0;
-      draggedStone.angularVelocity=0;
+      dragOffsetX = e.x - draggedStone.x;
+      dragOffsetY = (e.y - draggedStone.y) + offsetYShift;
+      lastMouseX = e.x;
+      lastMouseY = e.y;
+      draggedStone.vx = 0;
+      draggedStone.vy = 0;
+      draggedStone.angularVelocity = 0;
       stones.splice(t,1);
       stones.push(draggedStone);
       playClinkSound(.4);

@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="hi" prefix="og: https://ogp.me/ns#">
+<head>
+    <!-- Basic Meta Tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- Primary SEO Meta Tags -->
+    <title>Neon Cyber Dunk - Addictive HTML5 Mobile Physics Game</title>
+    <meta name="title" content="Neon Cyber Dunk - Addictive HTML5 Mobile Physics Game">
+    <meta name="description" content="Play Neon Cyber Dunk for free in your browser! Ultra smooth mobile touch controls, trajectory aiming, and retro neon vibes.">
+    <meta name="keywords" content="html5 game, physics game, cyber dunk, basketball arcade, browser games, free online game, mobile browser game">
+    <meta name="author" content="KenitFun Studios">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#0d0e15">
+
+    <!-- Open Graph / Facebook / WhatsApp SEO -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://example.com/neon-cyber-dunk">
+    <meta property="og:title" content="Neon Cyber Dunk - Ultimate Physics Arcade Game">
+    <meta property="og:description" content="Sling the cyber orb into glowing ring portals! Ultra touch-responsive controls. Play instantly without downloading.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80">
+
+    <!-- Twitter Card SEO -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://example.com/neon-cyber-dunk">
+    <meta property="twitter:title" content="Neon Cyber Dunk - Free HTML5 Mobile Game">
+    <meta property="twitter:description" content="Master the gravitational sling and dunk the cyber orb in this neon-themed arcade shooter!">
+    <meta property="twitter:image" content="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80">
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Neon Cyber Dunk",
+      "operatingSystem": "Any Browser",
+      "applicationCategory": "GameApplication",
+      "genre": "Arcade Physics",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
+    <!-- Stylesheet -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800;900&family=Rajdhani:wght@600;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            touch-action: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #080811;
+            font-family: 'Rajdhani', sans-serif;
+            color: #ffffff;
+            position: fixed;
+        }
+
+        #gameContainer {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at center, #15162c 0%, #05050a 100%);
+        }
+
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+            touch-action: none;
+        }
+
+        /* Responsive UI Overlay */
+        .hud {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .hud-item {
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+        }
+
+        .score-box {
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
+            color: #00f0ff;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+        }
+
+        .combo-box {
+            font-size: clamp(1rem, 3.5vw, 1.4rem);
+            color: #ff0055;
+            text-shadow: 0 0 10px rgba(255, 0, 85, 0.6);
+        }
+
+        .help-text {
+            position: absolute;
+            bottom: 25px;
+            width: 100%;
+            text-align: center;
+            font-size: clamp(0.85rem, 3vw, 1.1rem);
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 1.5px;
+            pointer-events: none;
+            animation: pulseText 2s infinite ease-in-out;
+        }
+
+        @keyframes pulseText {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.9; }
+        }
+
+        /* Modal Screens */
+        .overlay-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(8, 8, 17, 0.9);
+            backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .overlay-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 20px;
+            padding: 30px 40px;
+            text-align: center;
+            box-shadow: 0 0 40px rgba(0, 240, 255, 0.15);
+            max-width: 90%;
+            width: 380px;
+        }
+
+        .card h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.8rem, 6vw, 2.4rem);
+            margin-bottom: 15px;
+            background: linear-gradient(45deg, #00f0ff, #ff0055);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card p {
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            color: #a0a5c0;
+        }
+
+        .btn {
+            background: linear-gradient(90deg, #00f0ff, #7000ff);
+            border: none;
+            color: #ffffff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            font-weight: 800;
+            padding: 14px 32px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body>
+
+    <a class=back-btn href=../../index.html>← KENITFUN</a>
+    <div id="gameContainer">
+        <!-- HUD Overlay -->
+        <header class="hud">
+            <div class="hud-item score-box">SCORE: <span id="scoreVal">0</span></div>
+            <div class="hud-item combo-box">COMBO: <span id="comboVal">x1</span></div>
+        </header>
+
+        <p class="help-text">TOUCH & PULL BALL TO AIM</p>
+
+        <!-- Canvas Game World -->
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- Game Over Modal -->
+        <div class="overlay-screen" id="gameOverModal">
+            <div class="card">
+                <h1>ORB LOST</h1>
+                <p>Final Score: <span id="finalScore">0</span></p>
+                <button class="btn" id="restartBtn">TRY AGAIN</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Section -->
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('scoreVal');
+        const comboEl = document.getElementById('comboVal');
+        const finalScoreEl = document.getElementById('finalScore');
+        const gameOverModal = document.getElementById('gameOverModal');
+
+        let W, H, scale;
+        let score = 0, combo = 1, isGameOver = false;
+
+        // Sound Effects (Web Audio API)
+        let audioCtx;
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function playSound(freq, type = 'sine', duration = 0.15) {
+            if (!audioCtx) return;
+            try {
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        function resize() {
+            W = canvas.width = window.innerWidth;
+            H = canvas.height = window.innerHeight;
+            // Mobile base sizing adjust
+            scale = Math.max(0.85, Math.min(W, H) / 500);
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Game Entities
+        class Ball {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.vx = 0;
+                this.vy = 0;
+                this.radius = 18 * scale;
+                this.isDragging = false;
+                this.dragStartX = 0;
+                this.dragStartY = 0;
+                this.inAir = false;
+            }
+
+            update() {
+                if (this.inAir) {
+                    this.vy += 0.38 * scale; // Gravity
+                    this.x += this.vx;
+                    this.y += this.vy;
+
+                    // Wall Bounces
+                    if (this.x - this.radius < 0) {
+                        this.x = this.radius;
+                        this.vx *= -0.75;
+                        playSound(300, 'square', 0.08);
+                    } else if (this.x + this.radius > W) {
+                        this.x = W - this.radius;
+                        this.vx *= -0.75;
+                        playSound(300, 'square', 0.08);
+                    }
+
+                    // Fall off bottom
+                    if (this.y - this.radius > H) {
+                        triggerGameOver();
+                    }
+                }
+            }
+
+            draw() {
+                // Trajectory Prediction Line
+                if (this.isDragging) {
+                    let dx = this.dragStartX - currentPointerPos.x;
+                    let dy = this.dragStartY - currentPointerPos.y;
+
+                    ctx.beginPath();
+                    ctx.setLineDash([8, 8]);
+                    ctx.moveTo(this.x, this.y);
+                    ctx.lineTo(this.x + dx * 1.5, this.y + dy * 1.5);
+                    ctx.strokeStyle = '#00f0ff';
+                    ctx.lineWidth = 4 * scale;
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                }
+
+                // Orb Visual
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#ff0055';
+                ctx.shadowColor = '#ff0055';
+                ctx.shadowBlur = 20;
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.arc(this.x - 4, this.y - 4, this.radius * 0.35, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // Expanded hit test for mobile fingers
+            containsPoint(px, py) {
+                let dx = px - this.x;
+                let dy = py - this.y;
+                let touchRadius = Math.max(50, this.radius * 2.8); // 3x Bigger hit box
+                return (dx * dx + dy * dy) <= (touchRadius * touchRadius);
+            }
+        }
+
+        class Hoop {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.width = 120 * scale;
+                this.height = 14 * scale;
+            }
+
+            draw() {
+                ctx.save();
+                // Ring Rim
+                ctx.fillStyle = '#00f0ff';
+                ctx.shadowColor = '#00f0ff';
+                ctx.shadowBlur = 20;
+                ctx.fillRect(this.x - this.width / 2, this.y, this.width, this.height);
+
+                // Backboard / Net Glow
+                ctx.strokeStyle = 'rgba(0, 240, 255, 0.3)';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.moveTo(this.x - this.width / 2, this.y + this.height);
+                ctx.lineTo(this.x - this.width / 4, this.y + 45 * scale);
+                ctx.lineTo(this.x + this.width / 4, this.y + 45 * scale);
+                ctx.lineTo(this.x + this.width / 2, this.y + this.height);
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+
+        let ball;
+        let hoop;
+        let currentPointerPos = { x: 0, y: 0 };
+
+        function initGame() {
+            score = 0;
+            combo = 1;
+            isGameOver = false;
+            scoreEl.innerText = score;
+            comboEl.innerText = 'x' + combo;
+            gameOverModal.classList.add('hidden');
+
+            ball = new Ball(W / 2, H * 0.72);
+            spawnHoop();
+        }
+
+        function spawnHoop() {
+            let margin = 80 * scale;
+            let nextX = Math.random() * (W - margin * 2) + margin;
+            let nextY = Math.random() * (H * 0.3) + (H * 0.2);
+            hoop = new Hoop(nextX, nextY);
+        }
+
+        // Pointer Event Handlers (Cross-platform for Touch & Mouse)
+        function getPointerPos(e) {
+            let rect = canvas.getBoundingClientRect();
+            let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return {
+                x: clientX - rect.left,
+                y: clientY - rect.top
+            };
+        }
+
+        function onStart(e) {
+            initAudio();
+            if (isGameOver || ball.inAir) return;
+
+            let pos = getPointerPos(e);
+            if (ball.containsPoint(pos.x, pos.y)) {
+                ball.isDragging = true;
+                ball.dragStartX = pos.x;
+                ball.dragStartY = pos.y;
+                currentPointerPos = pos;
+            }
+        }
+
+        function onMove(e) {
+            if (!ball.isDragging) return;
+            currentPointerPos = getPointerPos(e);
+        }
+
+        function onEnd() {
+            if (!ball.isDragging) return;
+            ball.isDragging = false;
+
+            let dx = ball.dragStartX - currentPointerPos.x;
+            let dy = ball.dragStartY - currentPointerPos.y;
+
+            // Launch Ball
+            ball.vx = dx * 0.13;
+            ball.vy = dy * 0.13;
+            ball.inAir = true;
+
+            playSound(520, 'sine', 0.1);
+        }
+
+        // Event Listeners for Touch and Mouse
+        canvas.addEventListener('touchstart', onStart, { passive: false });
+        window.addEventListener('touchmove', onMove, { passive: false });
+        window.addEventListener('touchend', onEnd);
+
+        canvas.addEventListener('mousedown', onStart);
+        window.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', onEnd);
+
+        function checkHoopCollision() {
+            // Ball passing through hoop top to bottom
+            if (
+                ball.vy > 0 &&
+                ball.y > hoop.y &&
+                ball.y < hoop.y + hoop.height + 20 &&
+                ball.x > hoop.x - hoop.width / 2 &&
+                ball.x < hoop.x + hoop.width / 2
+            ) {
+                // Score Success!
+                score += 10 * combo;
+                combo++;
+                scoreEl.innerText = score;
+                comboEl.innerText = 'x' + combo;
+
+                playSound(880, 'triangle', 0.2);
+
+                // Reset Ball position to hoop position and spawn next
+                ball.inAir = false;
+                ball.vx = 0;
+                ball.vy = 0;
+                ball.x = hoop.x;
+                ball.y = hoop.y - 12;
+
+                spawnHoop();
+            }
+        }
+
+        function triggerGameOver() {
+            if (isGameOver) return;
+            isGameOver = true;
+            playSound(150, 'sawtooth', 0.4);
+            finalScoreEl.innerText = score;
+            gameOverModal.classList.remove('hidden');
+        }
+
+        document.getElementById('restartBtn').addEventListener('click', initGame);
+
+        // Main Loop
+        function gameLoop() {
+            ctx.clearRect(0, 0, W, H);
+
+            if (!isGameOver) {
+                ball.update();
+                checkHoopCollision();
+            }
+
+            hoop.draw();
+            ball.draw();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        initGame();
+        gameLoop();
+    </script>
+</body>
+</html>
