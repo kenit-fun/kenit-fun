@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: https://ogp.me/ns#">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- Primary SEO Meta Tags -->
+    <title>Cyber Reflex - Reaction Time Speed Benchmark</title>
+    <meta name="title" content="Cyber Reflex - Reaction Time Speed Benchmark">
+    <meta name="description" content="Test your human reaction time latency in milliseconds! A sleek cyberpunk reflex benchmark game with high precision timing and ranking.">
+    <meta name="keywords" content="reaction test, reflex benchmark, millisecond timer, speed test, reaction time game, html5 game">
+    <meta name="author" content="KenitFun Studios">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#080811">
+
+    <!-- Open Graph SEO -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Cyber Reflex 0.00s - Human Latency Test">
+    <meta property="og:description" content="What's your neural reflex speed? Tap as fast as the screen turns neon green!">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80">
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Cyber Reflex",
+      "operatingSystem": "Any Browser",
+      "applicationCategory": "GameApplication",
+      "genre": "Reflex Benchmark",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Rajdhani', sans-serif;
+            background-color: #080811;
+            color: #ffffff;
+        }
+
+        #gameZone {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        /* States */
+        .state-waiting {
+            background: radial-gradient(circle, #15162c 0%, #05050a 100%);
+        }
+
+        .state-ready {
+            background: radial-gradient(circle, #ff0055 0%, #4a0018 100%);
+            box-shadow: inset 0 0 100px rgba(255, 0, 85, 0.5);
+        }
+
+        .state-now {
+            background: radial-gradient(circle, #00ff88 0%, #004d29 100%);
+            box-shadow: inset 0 0 100px rgba(0, 255, 136, 0.6);
+        }
+
+        .state-result {
+            background: radial-gradient(circle, #00f0ff 0%, #00364d 100%);
+            box-shadow: inset 0 0 100px rgba(0, 240, 255, 0.5);
+        }
+
+        .state-early {
+            background: radial-gradient(circle, #ff5500 0%, #551a00 100%);
+        }
+
+        /* UI Elements */
+        .status-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2rem, 8vw, 4rem);
+            font-weight: 900;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+        }
+
+        .status-sub {
+            font-size: clamp(1rem, 3.5vw, 1.5rem);
+            color: rgba(255, 255, 255, 0.8);
+            letter-spacing: 1px;
+        }
+
+        .result-ms {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(3.5rem, 12vw, 7rem);
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+            margin: 10px 0;
+        }
+
+        .rank-tag {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 8px 24px;
+            border-radius: 30px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+            letter-spacing: 1.5px;
+            color: #00f0ff;
+        }
+
+        /* Top HUD */
+        .hud {
+            position: absolute;
+            top: 25px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            pointer-events: none;
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+            letter-spacing: 1px;
+            z-index: 10;
+        }
+
+        .hud span { color: #00f0ff; }
+    </style>
+</head>
+<body>
+
+    <div class="hud">
+        <div>BEST: <span id="bestVal">--</span></div>
+        <div>AVG: <span id="avgVal">--</span></div>
+    </div>
+
+    <div id="gameZone" class="state-waiting">
+        <h1 class="status-title" id="titleText">CYBER REFLEX</h1>
+        <p class="status-sub" id="subText">TAP ANYWHERE TO START BENCHMARK</p>
+        <div class="result-ms" id="msText" style="display: none;">0 ms</div>
+        <div class="rank-tag" id="rankTag" style="display: none;">RANK: -</div>
+    </div>
+
+    <script>
+        const gameZone = document.getElementById('gameZone');
+        const titleText = document.getElementById('titleText');
+        const subText = document.getElementById('subText');
+        const msText = document.getElementById('msText');
+        const rankTag = document.getElementById('rankTag');
+        const bestVal = document.getElementById('bestVal');
+        const avgVal = document.getElementById('avgVal');
+
+        let currentState = 'WAITING'; // WAITING, READY, NOW, RESULT, EARLY
+        let startTime = 0;
+        let timerTimeout = null;
+        let history = [];
+        let bestScore = Infinity;
+
+        // Audio Synth
+        let audioCtx;
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function playTone(freq, duration = 0.1, type = 'sine') {
+            if (!audioCtx) return;
+            try {
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        function handleTap() {
+            initAudio();
+
+            if (currentState === 'WAITING' || currentState === 'RESULT' || currentState === 'EARLY') {
+                startSequence();
+            } else if (currentState === 'READY') {
+                triggerTooEarly();
+            } else if (currentState === 'NOW') {
+                recordScore();
+            }
+        }
+
+        function startSequence() {
+            currentState = 'READY';
+            gameZone.className = 'state-ready';
+            titleText.innerText = 'WAIT FOR GREEN...';
+            subText.innerText = 'DO NOT TAP YET';
+            msText.style.display = 'none';
+            rankTag.style.display = 'none';
+
+            playTone(300, 0.1, 'square');
+
+            // Random delay between 1.8s and 4.5s
+            let randomDelay = Math.floor(Math.random() * 2700) + 1800;
+            timerTimeout = setTimeout(() => {
+                currentState = 'NOW';
+                gameZone.className = 'state-now';
+                titleText.innerText = 'TAP NOW!';
+                subText.innerText = '';
+                startTime = performance.now();
+                playTone(880, 0.15, 'sine');
+            }, randomDelay);
+        }
+
+        function triggerTooEarly() {
+            clearTimeout(timerTimeout);
+            currentState = 'EARLY';
+            gameZone.className = 'state-early';
+            titleText.innerText = 'TOO EARLY!';
+            subText.innerText = 'TAP TO RESTART BENCHMARK';
+            playTone(150, 0.3, 'sawtooth');
+        }
+
+        function recordScore() {
+            let endTime = performance.now();
+            let score = Math.round(endTime - startTime);
+            currentState = 'RESULT';
+            gameZone.className = 'state-result';
+
+            history.push(score);
+            if (score < bestScore) bestScore = score;
+
+            // Stats Update
+            bestVal.innerText = bestScore + ' ms';
+            let avg = Math.round(history.reduce((a, b) => a + b, 0) / history.length);
+            avgVal.innerText = avg + ' ms';
+
+            // Display
+            titleText.innerText = 'REFLEX LATENCY';
+            subText.innerText = 'TAP TO RETEST';
+            msText.innerText = score + ' ms';
+            msText.style.display = 'block';
+
+            // Rank evaluation
+            let rank = 'HUMAN AVERAGE';
+            if (score < 180) rank = 'NEURAL CYBORG ⚡';
+            else if (score < 220) rank = 'PRO GAMER 🎮';
+            else if (score < 280) rank = 'FAST REFLEX 🚀';
+            else if (score < 350) rank = 'AVERAGE HUMAN 🧍';
+            else rank = 'SYSTEM LAG 🐢';
+
+            rankTag.innerText = 'RANK: ' + rank;
+            rankTag.style.display = 'inline-block';
+
+            playTone(600, 0.2, 'triangle');
+        }
+
+        // Pointer listeners for Instant Touch response
+        gameZone.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            handleTap();
+        });
+    </script>
+</body>
+</html>

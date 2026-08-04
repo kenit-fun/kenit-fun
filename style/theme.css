@@ -1380,3 +1380,14 @@ footer a {
     transform: translateX(6px);
     stroke: #ff0055;
 }
+ .back-btn { 
+            background: #fffdf9; 
+            border: 2px solid var(--border); 
+            padding: 0.5rem 1rem; 
+            color: var(--ink); 
+            text-decoration: none; 
+            font-weight: bold; 
+            box-shadow: 3px 3px 0px var(--border); 
+            transition: all 0.1s;
+        }
+        .back-btn:hover { background: #f0e6d2; }

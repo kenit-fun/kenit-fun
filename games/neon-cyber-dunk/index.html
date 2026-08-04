@@ -45,7 +45,7 @@
       }
     }
     </script>
-
+    <link href="../../style/theme.css" />
     <!-- Stylesheet -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;800;900&family=Rajdhani:wght@600;700&display=swap');
@@ -201,11 +201,17 @@
         .btn:active {
             transform: scale(0.95);
         }
+        .flex {
+            display: flex;
+            justify-content: center;
+        }
     </style>
 </head>
 <body>
 
-    <a class=back-btn href=../../index.html>← KENITFUN</a>
+    <div class="flex">
+        <a class="btn" href=../../index.html>← KENITFUN</a>
+    </div>
     <div id="gameContainer">
         <!-- HUD Overlay -->
         <header class="hud">
