@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: https://ogp.me/ns#">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!-- Primary SEO Meta Tags -->
+    <title>Emoji Cyber Guess - 100+ Pop Culture & Movie Emoji Decoder Quiz</title>
+    <meta name="title" content="Emoji Cyber Guess - 100+ Pop Culture & Movie Emoji Decoder Quiz">
+    <meta name="description"
+        content="Play Emoji Cyber Guess! Test your brain with 100+ randomized emoji puzzles featuring movies, songs, brands, and games. Mobile-optimized HTML5 puzzle game.">
+    <meta name="keywords"
+        content="emoji quiz, guess the emoji, movie emoji trivia, 100 emoji puzzles, pop culture trivia, word puzzle, html5 game">
+    <meta name="author" content="KenitFun Studios">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#080811">
+
+    <!-- Open Graph SEO -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Emoji Cyber Guess - 100+ Emoji Trivia Puzzles">
+    <meta property="og:description"
+        content="Can you decode all 100+ hidden movies, games, and brands behind these emojis? Random dynamic puzzles every time you play!">
+    <meta property="og:image"
+        content="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80">
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Emoji Cyber Guess",
+      "operatingSystem": "Any Browser",
+      "applicationCategory": "GameApplication",
+      "genre": "Puzzle Trivia",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        body,
+        html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Rajdhani', sans-serif;
+            background-color: #080811;
+            color: #ffffff;
+        }
+
+        .game-wrapper {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 15px;
+            background: radial-gradient(circle at center, #15162c 0%, #05050a 100%);
+            position: relative;
+        }
+
+        /* SEO Header */
+        .seo-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1rem, 3.5vw, 1.4rem);
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-align: center;
+            background: linear-gradient(90deg, #ffffff 30%, #ffbb00 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(255, 187, 0, 0.3);
+            margin-bottom: 5px;
+        }
+
+        /* Top Bar HUD */
+        .hud-bar {
+            width: 100%;
+            max-width: 480px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: 'Orbitron', sans-serif;
+            z-index: 10;
+        }
+
+        .hud-box {
+            font-size: clamp(0.85rem, 2.8vw, 1.05rem);
+            color: #ffbb00;
+            text-shadow: 0 0 10px rgba(255, 187, 0, 0.5);
+        }
+
+        .category-badge {
+            padding: 4px 12px;
+            border-radius: 15px;
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(0, 240, 255, 0.4);
+            font-size: 0.75rem;
+            color: #00f0ff;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* Emoji Main Stage */
+        .stage {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 480px;
+            margin: auto 0;
+        }
+
+        .emoji-display {
+            font-size: clamp(2.8rem, 10vw, 4.5rem);
+            margin-bottom: 20px;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+            animation: floatEmoji 3s ease-in-out infinite;
+            letter-spacing: 6px;
+            text-align: center;
+        }
+
+        @keyframes floatEmoji {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-8px);
+            }
+        }
+
+        /* Answer Slots */
+        .answer-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 20px;
+            min-height: 48px;
+        }
+
+        .slot {
+            width: clamp(28px, 7vw, 38px);
+            height: clamp(36px, 9vw, 46px);
+            border-bottom: 3px solid #00f0ff;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1rem, 4vw, 1.2rem);
+            font-weight: 700;
+            color: #ffffff;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            transition: all 0.2s ease;
+        }
+
+        .slot.space {
+            border: none;
+            background: transparent;
+            width: 12px;
+            box-shadow: none;
+            cursor: default;
+        }
+
+        /* Letter Keyboard Options */
+        .keyboard {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .key-btn {
+            width: clamp(32px, 8.5vw, 42px);
+            height: clamp(38px, 9.5vw, 48px);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #ffffff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(0.9rem, 3.5vw, 1.1rem);
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.15s ease, background 0.2s ease;
+        }
+
+        .key-btn:active {
+            transform: scale(0.9);
+            background: #00f0ff;
+            color: #000;
+        }
+
+        .key-btn.disabled {
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* Control Buttons */
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border-radius: 25px;
+            border: none;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 0.78rem;
+            cursor: pointer;
+            letter-spacing: 1px;
+            transition: transform 0.2s ease;
+        }
+
+        .hint-btn {
+            background: rgba(255, 187, 0, 0.15);
+            border: 1px solid #ffbb00;
+            color: #ffbb00;
+        }
+
+        .clear-btn {
+            background: rgba(255, 0, 85, 0.15);
+            border: 1px solid #ff0055;
+            color: #ff0055;
+        }
+
+        .skip-btn {
+            background: rgba(0, 240, 255, 0.15);
+            border: 1px solid #00f0ff;
+            color: #00f0ff;
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Modal Overlay */
+        .modal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(8, 8, 17, 0.96);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .modal.hidden {
+            display: none;
+        }
+
+        .modal-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 380px;
+            width: 90%;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+        }
+
+        .modal-card h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.6rem;
+            color: #00f0ff;
+            margin-bottom: 15px;
+        }
+
+        .modal-card p {
+            color: #a0a5c0;
+            font-size: 1rem;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .start-btn {
+            background: linear-gradient(90deg, #ffbb00, #ff0055);
+            border: none;
+            color: #fff;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            padding: 12px 30px;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 0 15px rgba(255, 187, 0, 0.4);
+        }
+        .back-arrow {
+                color: white;
+                position: fixed;
+                right: 10px;
+                bottom: 10px;
+                font-size: 16px;
+                font-weight: bold;
+                text-decoration: none;
+                background: rgba(255, 255, 255, 0.3);
+                width: 30px;
+                height: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 100px;
+                z-index: 99;
+        }
+        .back-arrow:hover {
+            background: rgba(255, 255, 255, 1);
+        }
+    </style>
+</head>
+
+<body>
+<a href="/" class="back-arrow">←</a>
+    <div class="game-wrapper">
+        <!-- Main SEO Heading H1 -->
+        <h1 class="seo-title">EMOJI CYBER GUESS</h1>
+
+        <!-- Top HUD -->
+        <div class="hud-bar">
+            <div class="hud-box">SCORE: <span id="scoreVal">0</span></div>
+            <div class="category-badge" id="categoryBadge">CATEGORY</div>
+            <div class="hud-box">LEVEL: <span id="levelVal">1</span>/100</div>
+        </div>
+
+        <!-- Main Game Stage -->
+        <div class="stage">
+            <div class="emoji-display" id="emojiDisplay">🍿🎬</div>
+            <div class="answer-container" id="answerSlots"></div>
+
+            <div class="controls">
+                <button class="action-btn hint-btn" id="hintBtn">💡 HINT (-20)</button>
+                <button class="action-btn clear-btn" id="clearBtn">❌ CLEAR</button>
+                <button class="action-btn skip-btn" id="skipBtn">⏭️ NEXT (-10)</button>
+            </div>
+        </div>
+
+        <!-- Keyboard Options -->
+        <div class="keyboard" id="keyboard"></div>
+
+        <!-- Start / Victory Modal -->
+        <div class="modal" id="gameModal">
+            <div class="modal-card">
+                <h2 id="modalTitle">NEURAL DECODER</h2>
+                <p id="modalDesc">Decode 100 randomized pop-culture emoji puzzles. Earn points and flex your brainpower!
+                </p>
+                <button class="start-btn" id="startBtn">START GAME</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 100 Emoji Quiz Dataset
+        const rawQuizData = [
+            { emojis: "🦇👨", answer: "BATMAN", cat: "Superhero" },
+            { emojis: "🦁👑", answer: "LION KING", cat: "Movie" },
+            { emojis: "🕷️👨", answer: "SPIDERMAN", cat: "Superhero" },
+            { emojis: "👨‍🍳🐀", answer: "RATATOUILLE", cat: "Movie" },
+            { emojis: "👻🚫", answer: "GHOSTBUSTERS", cat: "Movie" },
+            { emojis: "🌭", answer: "HOTDOG", cat: "Food" },
+            { emojis: "❄️👸", answer: "FROZEN", cat: "Movie" },
+            { emojis: "📱🍎", answer: "APPLE", cat: "Brand" },
+            { emojis: "🍔🍟", answer: "MCDONALDS", cat: "Brand" },
+            { emojis: "💍👁️🌋", answer: "LORD OF THE RINGS", cat: "Movie" },
+            { emojis: "🌊🦈", answer: "JAWS", cat: "Movie" },
+            { emojis: "🦖🏞️", answer: "JURASSIC PARK", cat: "Movie" },
+            { emojis: "🚀🌌", answer: "INTERSTELLAR", cat: "Movie" },
+            { emojis: "🐼🥋", answer: "KUNG FU PANDA", cat: "Movie" },
+            { emojis: "🍯🐝", answer: "HONEYBEE", cat: "Word" },
+            { emojis: "🧜‍♀️🌊", answer: "LITTLE MERMAID", cat: "Movie" },
+            { emojis: "🏴‍☠️🚢", answer: "PIRATES OF THE CARIBBEAN", cat: "Movie" },
+            { emojis: "⚡🪄🧙", answer: "HARRY POTTER", cat: "Movie" },
+            { emojis: "👨‍🚒🔥", answer: "FIREFIGHTER", cat: "Word" },
+            { emojis: "👽🛸", answer: "ALIEN", cat: "Movie" },
+            { emojis: "🧲🦸", answer: "MAGNETO", cat: "Superhero" },
+            { emojis: "🤖🚗", answer: "TRANSFORMERS", cat: "Movie" },
+            { emojis: "🚗💨", answer: "FAST AND FURIOUS", cat: "Movie" },
+            { emojis: "🍿", answer: "POPCORN", cat: "Food" },
+            { emojis: "🚢🧊", answer: "TITANIC", cat: "Movie" },
+            { emojis: "🤠🧸", answer: "TOY STORY", cat: "Movie" },
+            { emojis: "🎈🏠", answer: "UP", cat: "Movie" },
+            { emojis: "🔍🐠", answer: "FINDING NEMO", cat: "Movie" },
+            { emojis: "💃☔", answer: "SINGIN IN THE RAIN", cat: "Movie" },
+            { emojis: "🟡👻", answer: "PACMAN", cat: "Game" },
+            { emojis: "🍄👨", answer: "SUPER MARIO", cat: "Game" },
+            { emojis: "🦔⚡", answer: "SONIC THE HEDGEHOG", cat: "Game" },
+            { emojis: "🗡️🛡️👑", answer: "ZELDA", cat: "Game" },
+            { emojis: "⛏️🧱", answer: "MINECRAFT", cat: "Game" },
+            { emojis: "🔫🍗", answer: "PUBG", cat: "Game" },
+            { emojis: "🚓💰", answer: "GTA", cat: "Game" },
+            { emojis: "🍫🏭", answer: "CHARLIE AND THE CHOCOLATE FACTORY", cat: "Movie" },
+            { emojis: "🦍🏙️", answer: "KING KONG", cat: "Movie" },
+            { emojis: "🟢💪", answer: "HULK", cat: "Superhero" },
+            { emojis: "🔨⚡", answer: "THOR", cat: "Superhero" },
+            { emojis: "🛡️🇺🇸", answer: "CAPTAIN AMERICA", cat: "Superhero" },
+            { emojis: "🤖👨", answer: "IRON MAN", cat: "Superhero" },
+            { emojis: "🖤🐆", answer: "BLACK PANTHER", cat: "Superhero" },
+            { emojis: "🕶️💊", answer: "THE MATRIX", cat: "Movie" },
+            { emojis: "🤡🎈", answer: "IT", cat: "Movie" },
+            { emojis: "🪓🏨", answer: "THE SHINING", cat: "Movie" },
+            { emojis: "🦁🦒🦛", answer: "MADAGASCAR", cat: "Movie" },
+            { emojis: "🦉✉️", answer: "HEDWIG", cat: "Character" },
+            { emojis: "👠🎃", answer: "CINDERELLA", cat: "Movie" },
+            { emojis: "🍎👸", answer: "SNOW WHITE", cat: "Movie" },
+            { emojis: "🏹🔥", answer: "HUNGER GAMES", cat: "Movie" },
+            { emojis: "🌀🏃", answer: "MAZE RUNNER", cat: "Movie" },
+            { emojis: "💭😴", answer: "INCEPTION", cat: "Movie" },
+            { emojis: "🥊🏆", answer: "ROCKY", cat: "Movie" },
+            { emojis: "🚗⏰", answer: "BACK TO THE FUTURE", cat: "Movie" },
+            { emojis: "🍫🏃", answer: "FORREST GUMP", cat: "Movie" },
+            { emojis: "🦈🌊", answer: "MEG", cat: "Movie" },
+            { emojis: "🧟🧟", answer: "WALKING DEAD", cat: "Show" },
+            { emojis: "🧪💎", answer: "BREAKING BAD", cat: "Show" },
+            { emojis: "👑⚔️🐉", answer: "GAME OF THRONES", cat: "Show" },
+            { emojis: "🦑🎮", answer: "SQUID GAME", cat: "Show" },
+            { emojis: "🚲💡👾", answer: "STRANGER THINGS", cat: "Show" },
+            { emojis: "☕🛋️", answer: "FRIENDS", cat: "Show" },
+            { emojis: "📄🏢", answer: "THE OFFICE", cat: "Show" },
+            { emojis: "💰🎭", answer: "MONEY HEIST", cat: "Show" },
+            { emojis: "🦇🌃", answer: "GOTHAM", cat: "Show" },
+            { emojis: "⚡🏃", answer: "THE FLASH", cat: "Superhero" },
+
+            { emojis: "☕🍩", answer: "DUNKIN DONUTS", cat: "Brand" },
+            { emojis: "☕🧜", answer: "STARBUCKS", cat: "Brand" },
+            { emojis: "👟✔️", answer: "NIKE", cat: "Brand" },
+            { emojis: "🐆👟", answer: "PUMA", cat: "Brand" },
+            { emojis: "🏎️🐎", answer: "FERRARI", cat: "Brand" },
+            { emojis: "🔴🐂", answer: "RED BULL", cat: "Brand" },
+            { emojis: "🎯🏪", answer: "TARGET", cat: "Brand" },
+            { emojis: "📦😊", answer: "AMAZON", cat: "Brand" },
+            { emojis: "🎵🎧", answer: "SPOTIFY", cat: "Brand" },
+            { emojis: "🐦", answer: "TWITTER", cat: "Brand" },
+            { emojis: "📸🌈", answer: "INSTAGRAM", cat: "Brand" },
+            { emojis: "▶️🔴", answer: "YOUTUBE", cat: "Brand" },
+            { emojis: "👻💬", answer: "SNAPCHAT", cat: "Brand" },
+            { emojis: "🔍🌍", answer: "GOOGLE", cat: "Brand" },
+            { emojis: "🪟💻", answer: "MICROSOFT", cat: "Brand" },
+            { emojis: "🎮🔵", answer: "PLAYSTATION", cat: "Brand" },
+            { emojis: "🎮🟢", answer: "XBOX", cat: "Brand" },
+            { emojis: "🍕🏠", answer: "PIZZA HUT", cat: "Brand" },
+            { emojis: "🌮🔔", answer: "TACO BELL", cat: "Brand" },
+            { emojis: "👴🍗", answer: "KFC", cat: "Brand" },
+            { emojis: "👑🍔", answer: "BURGER KING", cat: "Brand" },
+
+            { emojis: "🍦", answer: "ICE CREAM", cat: "Food" },
+            { emojis: "🧀🍕", answer: "CHEESE PIZZA", cat: "Food" },
+            { emojis: "🍇🍷", answer: "WINE", cat: "Food" },
+            { emojis: "🎥🍿", answer: "CINEMA", cat: "Word" },
+            { emojis: "☀️🕶️", answer: "SUNGLASSES", cat: "Word" },
+            { emojis: "🌕🐺", answer: "WEREWOLF", cat: "Word" },
+            { emojis: "🌧️🌈", answer: "RAINBOW", cat: "Word" },
+            { emojis: "🔥🦊", answer: "FIREFOX", cat: "Brand" },
+            { emojis: "🍓🎂", answer: "STRAWBERRY CAKE", cat: "Food" },
+            { emojis: "🚀🌌", answer: "SPACE", cat: "Word" },
+            { emojis: "🌋🔥", answer: "VOLCANO", cat: "Word" },
+            { emojis: "🎯🐂", answer: "BULLSEYE", cat: "Word" }
+        ];
+
+        let quizData = [];
+        let currentLevel = 0;
+        let score = 0;
+        let currentAnswer = "";
+        let userInputs = [];
+        let keyMapping = [];
+
+        // Elements
+        const emojiDisplay = document.getElementById('emojiDisplay');
+        const answerSlots = document.getElementById('answerSlots');
+        const keyboard = document.getElementById('keyboard');
+        const categoryBadge = document.getElementById('categoryBadge');
+        const scoreVal = document.getElementById('scoreVal');
+        const levelVal = document.getElementById('levelVal');
+        const gameModal = document.getElementById('gameModal');
+        const startBtn = document.getElementById('startBtn');
+        const hintBtn = document.getElementById('hintBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const skipBtn = document.getElementById('skipBtn');
+
+        // Web Audio Synth
+        let audioCtx;
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function playSound(freq, duration = 0.1, type = 'sine') {
+            if (!audioCtx) return;
+            try {
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) { }
+        }
+
+        // Shuffle Function for Random Levels
+        function shuffleArray(array) {
+            let shuffled = [...array];
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        }
+
+        function loadLevel() {
+            if (currentLevel >= quizData.length) {
+                // All 100 levels done!
+                document.getElementById('modalTitle').innerText = "ULTIMATE VICTORY!";
+                document.getElementById('modalDesc').innerText = `You decoded all 100 emoji puzzles!\nFinal Score: ${score}`;
+                startBtn.innerText = "PLAY AGAIN";
+                gameModal.classList.remove('hidden');
+                currentLevel = 0;
+                score = 0;
+                quizData = shuffleArray(rawQuizData);
+                return;
+            }
+
+            let item = quizData[currentLevel];
+            emojiDisplay.innerText = item.emojis;
+            categoryBadge.innerText = item.cat;
+            currentAnswer = item.answer.toUpperCase();
+            userInputs = [];
+
+            levelVal.innerText = currentLevel + 1;
+            scoreVal.innerText = score;
+
+            renderSlots();
+            generateKeyboard();
+        }
+
+        function renderSlots() {
+            answerSlots.innerHTML = '';
+            let inputIdx = 0;
+
+            for (let i = 0; i < currentAnswer.length; i++) {
+                let char = currentAnswer[i];
+                let slot = document.createElement('div');
+
+                if (char === ' ') {
+                    slot.className = 'slot space';
+                } else {
+                    slot.className = 'slot';
+                    if (userInputs[inputIdx]) {
+                        slot.innerText = userInputs[inputIdx].char;
+                        let keyObj = userInputs[inputIdx];
+                        slot.onclick = () => removeLetter(keyObj);
+                    }
+                    inputIdx++;
+                }
+                answerSlots.appendChild(slot);
+            }
+        }
+
+        function generateKeyboard() {
+            keyboard.innerHTML = '';
+            let cleanAnswer = currentAnswer.replace(/\s/g, '');
+            let letters = cleanAnswer.split('');
+
+            // Fill 12 keys minimum or 14 if longer
+            let totalKeys = Math.max(12, cleanAnswer.length + 3);
+            const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+            while (letters.length < totalKeys) {
+                let randomChar = alphabet[Math.floor(Math.random() * alphabet.length)];
+                letters.push(randomChar);
+            }
+
+            // Shuffle
+            letters.sort(() => Math.random() - 0.5);
+
+            keyMapping = letters.map((char, index) => ({ id: index, char: char, used: false }));
+
+            keyMapping.forEach(item => {
+                let btn = document.createElement('button');
+                btn.className = 'key-btn';
+                btn.innerText = item.char;
+                btn.id = `key-${item.id}`;
+                btn.onclick = () => selectLetter(item);
+                keyboard.appendChild(btn);
+            });
+        }
+
+        function selectLetter(item) {
+            initAudio();
+            let cleanAnswerLength = currentAnswer.replace(/\s/g, '').length;
+            if (userInputs.length >= cleanAnswerLength || item.used) return;
+
+            item.used = true;
+            userInputs.push(item);
+            document.getElementById(`key-${item.id}`).classList.add('disabled');
+
+            playSound(500, 0.08);
+            renderSlots();
+            checkAnswer();
+        }
+
+        function removeLetter(itemObj) {
+            initAudio();
+            userInputs = userInputs.filter(x => x.id !== itemObj.id);
+            itemObj.used = false;
+            document.getElementById(`key-${itemObj.id}`).classList.remove('disabled');
+
+            playSound(300, 0.08);
+            renderSlots();
+        }
+
+        function clearAll() {
+            initAudio();
+            userInputs.forEach(item => {
+                item.used = false;
+                document.getElementById(`key-${item.id}`).classList.remove('disabled');
+            });
+            userInputs = [];
+            playSound(250, 0.1);
+            renderSlots();
+        }
+
+        function checkAnswer() {
+            let cleanAnswer = currentAnswer.replace(/\s/g, '');
+            if (userInputs.length === cleanAnswer.length) {
+                let userString = userInputs.map(x => x.char).join('');
+                if (userString === cleanAnswer) {
+                    // Correct!
+                    playSound(880, 0.2, 'triangle');
+                    score += 50;
+                    currentLevel++;
+                    setTimeout(loadLevel, 400);
+                } else {
+                    // Wrong!
+                    playSound(150, 0.2, 'sawtooth');
+                }
+            }
+        }
+
+        // Hint System
+        hintBtn.addEventListener('click', () => {
+            initAudio();
+            if (score < 20) return;
+
+            let cleanAnswer = currentAnswer.replace(/\s/g, '');
+            for (let i = 0; i < cleanAnswer.length; i++) {
+                if (!userInputs[i] || userInputs[i].char !== cleanAnswer[i]) {
+                    let targetKey = keyMapping.find(k => k.char === cleanAnswer[i] && !k.used);
+                    if (targetKey) {
+                        score -= 20;
+                        scoreVal.innerText = score;
+                        selectLetter(targetKey);
+                    }
+                    break;
+                }
+            }
+        });
+
+        // Skip / Next System
+        skipBtn.addEventListener('click', () => {
+            initAudio();
+            playSound(400, 0.15, 'square');
+            if (score >= 10) {
+                score -= 10;
+            } else {
+                score = 0;
+            }
+            currentLevel++;
+            loadLevel();
+        });
+
+        clearBtn.addEventListener('click', clearAll);
+
+        startBtn.addEventListener('click', () => {
+            initAudio();
+            gameModal.classList.add('hidden');
+            quizData = shuffleArray(rawQuizData); // Randomize every time game starts
+            currentLevel = 0;
+            score = 0;
+            loadLevel();
+        });
+    </script>
+</body>
+
+</html>

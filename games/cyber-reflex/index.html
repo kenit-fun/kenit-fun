@@ -32,10 +32,27 @@
       "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
     }
     </script>
-
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap');
-
+.back-arrow {
+                color: white;
+                position: fixed;
+                right: 10px;
+                bottom: 10px;
+                font-size: 16px;
+                font-weight: bold;
+                text-decoration: none;
+                background: rgba(255, 255, 255, 0.3);
+                width: 30px;
+                height: 30px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 100px;
+        }
+        .back-arrow:hover {
+            background: rgba(255, 255, 255, 1);
+        }
         * {
             box-sizing: border-box;
             margin: 0;
@@ -161,6 +178,7 @@
         <div class="rank-tag" id="rankTag" style="display: none;">RANK: -</div>
     </div>
 
+    <a href="/" class="back-arrow">←</a>
     <script>
         const gameZone = document.getElementById('gameZone');
         const titleText = document.getElementById('titleText');
