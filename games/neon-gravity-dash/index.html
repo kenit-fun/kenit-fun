@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: https://ogp.me/ns#">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- Primary SEO Meta Tags -->
+    <title>Neon Gravity Dash - Endless Cyber Orbital Runner</title>
+    <meta name="title" content="Neon Gravity Dash - Endless Cyber Orbital Runner">
+    <meta name="description" content="Play Neon Gravity Dash! Hook onto orbital gravity nodes, slingshot through endless space, collect energy orbs, and beat high scores in this addictive HTML5 runner.">
+    <meta name="keywords" content="endless runner, gravity slingshot, arcade physics, html5 game, cyber runner, mobile browser game, free online game">
+    <meta name="author" content="KenitFun Studios">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#080811">
+
+    <!-- Open Graph SEO -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Neon Gravity Dash - Infinite Cyber Physics Runner">
+    <meta property="og:description" content="How far can you slingshot? Tap and hold to tether gravity rings and launch through endless space.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80">
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Neon Gravity Dash",
+      "operatingSystem": "Any Browser",
+      "applicationCategory": "GameApplication",
+      "genre": "Endless Physics Runner",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            touch-action: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Rajdhani', sans-serif;
+            background-color: #080811;
+            color: #ffffff;
+            position: fixed;
+        }
+
+        #gameContainer {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at center, #101428 0%, #040409 100%);
+        }
+
+        /* Responsive Top Bar Header (No Overlap Grid) */
+        .top-nav {
+            position: absolute;
+            top: 12px;
+            left: 0;
+            width: 100%;
+            padding: 0 15px;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 10px;
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        .back-home-btn {
+            pointer-events: auto;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(0, 255, 204, 0.4);
+            padding: 6px 14px;
+            color: #00ffcc;
+            text-decoration: none;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 0.75rem;
+            border-radius: 20px;
+            backdrop-filter: blur(8px);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            min-height: 36px;
+        }
+
+        .back-home-btn:active {
+            transform: scale(0.95);
+            background: rgba(0, 255, 204, 0.25);
+        }
+
+        /* Responsive SEO Title Bar */
+        .seo-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(0.85rem, 3.2vw, 1.25rem);
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            text-align: center;
+            background: linear-gradient(90deg, #ffffff 30%, #00ffcc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0 5px;
+        }
+
+        /* Header Right Spacer/Balance Element */
+        .nav-spacer {
+            width: 70px; /* Balances center title on desktop */
+        }
+
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* HUD Overlay */
+        .hud {
+            position: absolute;
+            top: 58px;
+            left: 0;
+            width: 100%;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+            z-index: 10;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .hud-val {
+            font-size: clamp(0.85rem, 2.8vw, 1.2rem);
+            color: #00ffcc;
+            text-shadow: 0 0 10px rgba(0, 255, 204, 0.6);
+            background: rgba(8, 8, 17, 0.4);
+            padding: 4px 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 255, 204, 0.15);
+            backdrop-filter: blur(4px);
+        }
+
+        .help-text {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            padding: 0 10px;
+            text-align: center;
+            font-size: clamp(0.75rem, 2.6vw, 1rem);
+            color: rgba(255, 255, 255, 0.75);
+            letter-spacing: 1.2px;
+            pointer-events: none;
+            animation: pulseText 2s infinite ease-in-out;
+            z-index: 10;
+        }
+
+        @keyframes pulseText {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.9; }
+        }
+
+        /* Modal Overlay */
+        .modal {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(8, 8, 17, 0.92);
+            backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .modal.hidden { display: none; }
+
+        .modal-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(0, 255, 204, 0.3);
+            border-radius: 20px;
+            padding: 28px 20px;
+            max-width: 390px;
+            width: 92%;
+            box-shadow: 0 0 30px rgba(0, 255, 204, 0.2);
+        }
+
+        .modal-card h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.4rem, 4.5vw, 1.9rem);
+            color: #00ffcc;
+            margin-bottom: 10px;
+        }
+
+        .modal-card p {
+            color: #a0a5c0;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .modal-btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            border: none;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            padding: 11px 22px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            font-size: 0.82rem;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #00ffcc, #00f0ff);
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+        }
+
+        .btn-action:active { transform: scale(0.95); }
+
+        /* FAQ Popup Box */
+        .faq-card {
+            text-align: left;
+            max-height: 82vh;
+            overflow-y: auto;
+        }
+
+        .faq-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00ffcc;
+            font-size: 1.25rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .faq-step {
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.04);
+            border-left: 3px solid #00ffcc;
+            padding: 8px 12px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .faq-step h4 {
+            font-size: 0.85rem;
+            color: #ffffff;
+            margin-bottom: 2px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .faq-step p {
+            font-size: 0.8rem;
+            color: #a0a5c0;
+            margin-bottom: 0;
+        }
+
+        .close-faq-btn {
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        /* Mobile Responsive Media Queries */
+        @media (max-width: 480px) {
+            .top-nav {
+                grid-template-columns: auto 1fr; /* Drop spacer on mobile */
+                padding: 0 10px;
+            }
+            .nav-spacer {
+                display: none;
+            }
+            .seo-title {
+                text-align: right; /* Right align on small screens to give room to back button */
+                font-size: 0.8rem;
+            }
+            .hud {
+                top: 52px;
+                padding: 0 10px;
+            }
+            .hud-val {
+                font-size: 0.75rem;
+                padding: 3px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="gameContainer">
+        <!-- Responsive Navigation Header (No Overlap) -->
+        <header class="top-nav">
+            <a href="../../index.html" class="back-home-btn" aria-label="Go to Homepage">
+                ‹ HOME
+            </a>
+            <h1 class="seo-title">NEON GRAVITY DASH</h1>
+            <div class="nav-spacer"></div> <!-- Spacer element -->
+        </header>
+
+        <!-- Top Score HUD -->
+        <div class="hud">
+            <div class="hud-val">DIST: <span id="distVal">0</span>m</div>
+            <div class="hud-val">BEST: <span id="bestVal">0</span>m</div>
+        </div>
+
+        <p class="help-text">HOLD SCREEN TO HOOK & ORBIT • RELEASE TO LAUNCH</p>
+
+        <!-- Game Canvas -->
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- Start / Game Over Modal -->
+        <div class="modal" id="gameModal">
+            <div class="modal-card">
+                <h2 id="modalTitle">ORBITAL RUNNER</h2>
+                <p id="modalDesc">Hook onto gravity nodes to dodge hazards and launch into deep space!</p>
+                
+                <div class="modal-btn-group">
+                    <button class="btn-action btn-primary" id="startBtn">START RUN</button>
+                    <button class="btn-action btn-secondary" id="faqBtn">❓ HOW TO PLAY</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ How-To-Play Modal -->
+        <div class="modal hidden" id="faqModal">
+            <div class="modal-card faq-card">
+                <h3>❓ HOW TO PLAY</h3>
+                
+                <div class="faq-step">
+                    <h4>1. 🎯 HOOK GRAVITY NODES</h4>
+                    <p>Tap and Hold anywhere on the screen when your orb is near a blue glowing gravity node to lock a tether beam.</p>
+                </div>
+
+                <div class="faq-step">
+                    <h4>2. 🔄 ORBIT & GAIN SPEED</h4>
+                    <p>Holding down makes your orb swing around the node in a high-speed orbital arc.</p>
+                </div>
+
+                <div class="faq-step">
+                    <h4>3. 🚀 RELEASE TO SLINGSHOT</h4>
+                    <p>Release your finger/mouse at the right angle to launch forward using centrifugal momentum.</p>
+                </div>
+
+                <div class="faq-step">
+                    <h4>4. ⚠️ DODGE RED HAZARDS</h4>
+                    <p>Avoid touching red plasma spheres or falling off screen limits!</p>
+                </div>
+
+                <button class="btn-action btn-primary close-faq-btn" id="closeFaqBtn">GOT IT!</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const distVal = document.getElementById('distVal');
+        const bestVal = document.getElementById('bestVal');
+        const gameModal = document.getElementById('gameModal');
+        const faqModal = document.getElementById('faqModal');
+        const startBtn = document.getElementById('startBtn');
+        const faqBtn = document.getElementById('faqBtn');
+        const closeFaqBtn = document.getElementById('closeFaqBtn');
+
+        let W, H, scale;
+        let distance = 0, bestDistance = 0;
+        let isGameOver = false, isHolding = false;
+
+        // Audio Synth
+        let audioCtx;
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function playSound(freq, duration = 0.1, type = 'sine') {
+            if (!audioCtx) return;
+            try {
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        function resize() {
+            W = canvas.width = window.innerWidth;
+            H = canvas.height = window.innerHeight;
+            scale = Math.max(0.85, Math.min(W, H) / 500);
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Game World Entities
+        class OrbPlayer {
+            constructor() {
+                this.x = 100 * scale;
+                this.y = H / 2;
+                this.vx = 4 * scale;
+                this.vy = 0;
+                this.radius = 12 * scale;
+                this.tetherNode = null;
+                this.tetherDist = 0;
+            }
+
+            update() {
+                if (this.tetherNode) {
+                    // Orbit Math
+                    let dx = this.x - this.tetherNode.x;
+                    let dy = this.y - this.tetherNode.y;
+                    let angle = Math.atan2(dy, dx);
+                    
+                    let speed = Math.hypot(this.vx, this.vy);
+                    speed = Math.max(5 * scale, speed * 1.005); // Gravity acceleration
+
+                    angle += (speed / this.tetherDist);
+                    this.x = this.tetherNode.x + Math.cos(angle) * this.tetherDist;
+                    this.y = this.tetherNode.y + Math.sin(angle) * this.tetherDist;
+
+                    this.vx = -Math.sin(angle) * speed;
+                    this.vy = Math.cos(angle) * speed;
+                } else {
+                    // Free flight
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.vy += 0.08 * scale; // Gravity drift
+                }
+
+                // Bounds Check
+                if (this.y < -50 || this.y > H + 50) {
+                    triggerGameOver();
+                }
+            }
+
+            draw() {
+                if (this.tetherNode) {
+                    // Tether Beam
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.moveTo(this.x, this.y);
+                    ctx.lineTo(this.tetherNode.x, this.tetherNode.y);
+                    ctx.strokeStyle = '#00ffcc';
+                    ctx.lineWidth = 2.5;
+                    ctx.shadowColor = '#00ffcc';
+                    ctx.shadowBlur = 10;
+                    ctx.stroke();
+                    ctx.restore();
+                }
+
+                // Orb Body
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#ff0055';
+                ctx.shadowColor = '#ff0055';
+                ctx.shadowBlur = 15;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        class GravityNode {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.radius = (Math.random() * 15 + 20) * scale;
+                this.pulse = 0;
+            }
+
+            draw() {
+                this.pulse += 0.05;
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#00f0ff';
+                ctx.shadowColor = '#00f0ff';
+                ctx.shadowBlur = 15 + Math.sin(this.pulse) * 5;
+                ctx.fill();
+
+                // Outer Ring
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius + 12 * scale, 0, Math.PI * 2);
+                ctx.strokeStyle = 'rgba(0, 240, 255, 0.25)';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+
+        class Hazard {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = 18 * scale;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = '#ff0055';
+                ctx.shadowColor = '#ff0055';
+                ctx.shadowBlur = 12;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        let player;
+        let nodes = [];
+        let hazards = [];
+        let cameraX = 0;
+
+        function initGame() {
+            distance = 0;
+            isGameOver = false;
+            isHolding = false;
+            gameModal.classList.add('hidden');
+            faqModal.classList.add('hidden');
+
+            player = new OrbPlayer();
+            nodes = [];
+            hazards = [];
+            cameraX = 0;
+
+            // Generate Initial Infinite World Track
+            let currentX = 250 * scale;
+            for (let i = 0; i < 8; i++) {
+                spawnNodeTrack(currentX);
+                currentX += (Math.random() * 100 + 200) * scale;
+            }
+        }
+
+        function spawnNodeTrack(x) {
+            let y = Math.random() * (H * 0.6) + (H * 0.2);
+            nodes.push(new GravityNode(x, y));
+
+            // Hazard Chance
+            if (Math.random() > 0.4 && nodes.length > 2) {
+                hazards.push(new Hazard(x + 100 * scale, y + (Math.random() - 0.5) * 150 * scale));
+            }
+        }
+
+        function findClosestNode() {
+            let closest = null;
+            let minDist = Infinity;
+            nodes.forEach(n => {
+                let d = Math.hypot(player.x - n.x, player.y - n.y);
+                if (d < minDist && d < 250 * scale) {
+                    minDist = d;
+                    closest = n;
+                }
+            });
+            return { node: closest, dist: minDist };
+        }
+
+        // Pointer Controls
+        function onStart(e) {
+            initAudio();
+            if (isGameOver || !gameModal.classList.contains('hidden') || !faqModal.classList.contains('hidden')) return;
+            isHolding = true;
+
+            let result = findClosestNode();
+            if (result.node) {
+                player.tetherNode = result.node;
+                player.tetherDist = result.dist;
+                playSound(600, 0.1, 'sine');
+            }
+        }
+
+        function onEnd() {
+            isHolding = false;
+            if (player.tetherNode) {
+                player.tetherNode = null;
+                playSound(880, 0.1, 'triangle'); // Slingshot Launch Sound
+            }
+        }
+
+        canvas.addEventListener('pointerdown', onStart);
+        window.addEventListener('pointerup', onEnd);
+
+        function triggerGameOver() {
+            if (isGameOver) return;
+            isGameOver = true;
+            playSound(150, 0.3, 'sawtooth');
+            if (distance > bestDistance) bestDistance = distance;
+            bestVal.innerText = bestDistance;
+            document.getElementById('modalTitle').innerText = "RUN ENDED";
+            document.getElementById('modalDesc').innerText = `Distance Reached: ${distance}m`;
+            gameModal.classList.remove('hidden');
+        }
+
+        startBtn.addEventListener('click', initGame);
+
+        // FAQ Modal Controls
+        faqBtn.addEventListener('click', () => {
+            initAudio();
+            faqModal.classList.remove('hidden');
+        });
+
+        closeFaqBtn.addEventListener('click', () => {
+            initAudio();
+            faqModal.classList.add('hidden');
+        });
+
+        // Infinite Loop Game Engine
+        function gameLoop() {
+            ctx.clearRect(0, 0, W, H);
+
+            if (!isGameOver) {
+                player.update();
+
+                // Camera follow player horizontally
+                cameraX = W * 0.25 - player.x;
+                distance = Math.floor(player.x / 10);
+                distVal.innerText = distance;
+
+                // Infinite Procedural Generation
+                let lastNode = nodes[nodes.length - 1];
+                if (lastNode.x + cameraX < W + 200) {
+                    spawnNodeTrack(lastNode.x + (Math.random() * 80 + 220) * scale);
+                }
+
+                // Collision Checks
+                hazards.forEach(h => {
+                    let d = Math.hypot(player.x - h.x, player.y - h.y);
+                    if (d < player.radius + h.size) {
+                        triggerGameOver();
+                    }
+                });
+            }
+
+            // Render World with Camera Offset
+            ctx.save();
+            ctx.translate(cameraX, 0);
+
+            nodes.forEach(n => n.draw());
+            hazards.forEach(h => h.draw());
+            player.draw();
+
+            ctx.restore();
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        initGame();
+        gameLoop();
+    </script>
+</body>
+</html>
