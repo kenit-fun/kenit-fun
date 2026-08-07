@@ -11,7 +11,7 @@
     <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon_io/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon_io/favicon-16x16.png">
     <link rel="manifest" href="./assets/favicon_io/site.webmanifest">
-    <title>KenitFun - Quirky & Vintage Mini Games</title>
+    <title>KenitFun – Free Online Mini Games, Puzzles & Retro Experiences</title>
     <link rel="stylesheet" type="text/css" href="./style/theme.css">
     <link rel="stylesheet" type="text/css" href="./style/cards.css">
     <meta name="google-site-verification" content="H022X7Ik7vDPxwiGVjedsQCYLUQkRt3iSerbibrgs_8" />
@@ -32,7 +32,7 @@
         <h1>
             <img src="./assets/kenitfunlogo.png" width="200px" height="auto" alt="KenitFun" />
         </h1>
-        <p class="subtitle">Free Online Mini Games – Play Fun Puzzle, Brain & Retro Games | KenitFun.</p>
+        <p class="subtitle">Tiny games, clever puzzles & nostalgic digital toys — play instantly, relax, and have a little fun.</p>
     </header>
 
     <main class="arcade-grid">
@@ -57,7 +57,7 @@
             </div>
             <span class="ow-play-btn">PLAY NOW &rarr;</span>
         </a>
-<a href="games/neon-gravity-dash/index.html" class="ngd-game-card ngd-theme-neon">
+<a href="games/neon-gravity-dash/index.html" class="game-card ngd-game-card ngd-theme-neon">
     <div class="ngd-card-badge">
         <span class="ngd-badge-pulse"></span> INFINITE ORBITAL RUNNER
     </div>
@@ -418,7 +418,143 @@
         <a href="./terms.html" title="terms">Terms & Condition</a>
         <a href="mailto:kenitfun@gmail.com" title="contact email">Contact Us</a>
     </footer>
+<!-- Background Animated Canvas -->
+<canvas id="bgCanvas"></canvas>
 
+<script>
+    (function () {
+    const canvas = document.getElementById('bgCanvas');
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let particles = [];
+    let mouse = { x: null, y: null, radius: 120 };
+
+    // Resize Handler
+    function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Mouse / Touch Interaction
+    window.addEventListener('pointermove', (e) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+    });
+
+    window.addEventListener('pointerleave', () => {
+        mouse.x = null;
+        mouse.y = null;
+    });
+
+    // Particle Class
+    class Particle {
+        constructor() {
+            this.x = Math.random() * width;
+            this.y = Math.random() * height;
+            this.size = Math.random() * 2 + 0.8;
+            this.baseX = this.x;
+            this.baseY = this.y;
+            this.vx = (Math.random() - 0.5) * 0.6;
+            this.vy = (Math.random() - 0.5) * 0.6;
+            
+            // Cyberpunk color palette matching your cards
+            const colors = ['#00f0ff', '#ff0055', '#00ffcc', '#ffbb00'];
+            this.color = colors[Math.floor(Math.random() * colors.length)];
+            this.alpha = Math.random() * 0.6 + 0.2;
+        }
+
+        update() {
+            // Drift Movement
+            this.x += this.vx;
+            this.y += this.vy;
+
+            // Bounce off edges
+            if (this.x < 0 || this.x > width) this.vx *= -1;
+            if (this.y < 0 || this.y > height) this.vy *= -1;
+
+            // Interactive Repulsion with Mouse
+            if (mouse.x !== null && mouse.y !== null) {
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.hypot(dx, dy);
+
+                if (distance < mouse.radius) {
+                    let angle = Math.atan2(dy, dx);
+                    let force = (mouse.radius - distance) / mouse.radius;
+                    this.x -= Math.cos(angle) * force * 3;
+                    this.y -= Math.sin(angle) * force * 3;
+                }
+            }
+        }
+
+        draw() {
+            ctx.save();
+            ctx.globalAlpha = this.alpha;
+            ctx.fillStyle = this.color;
+            ctx.shadowColor = this.color;
+            ctx.shadowBlur = 8;
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+
+    // Initialize Particles
+    function init() {
+        particles = [];
+        // Screen size ke hisab se count adjust
+        const particleCount = Math.floor((width * height) / 12000);
+        for (let i = 0; i < Math.min(particleCount, 90); i++) {
+            particles.push(new Particle());
+        }
+    }
+    init();
+
+    // Connect Nearby Particles with Constellation Lines
+    function connect() {
+        for (let a = 0; a < particles.length; a++) {
+            for (let b = a + 1; b < particles.length; b++) {
+                let dx = particles[a].x - particles[b].x;
+                let dy = particles[a].y - particles[b].y;
+                let dist = Math.hypot(dx, dy);
+
+                if (dist < 110) {
+                    let opacity = 1 - (dist / 110);
+                    ctx.save();
+                    ctx.globalAlpha = opacity * 0.15;
+                    ctx.strokeStyle = '#00f0ff';
+                    ctx.lineWidth = 0.8;
+                    ctx.beginPath();
+                    ctx.moveTo(particles[a].x, particles[a].y);
+                    ctx.lineTo(particles[b].x, particles[b].y);
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            }
+        }
+    }
+
+    // Animation Loop
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+        
+        particles.forEach(p => {
+            p.update();
+            p.draw();
+        });
+
+        connect();
+        requestAnimationFrame(animate);
+    }
+
+    animate();
+})();
+</script>
 </body>
 
 </html>

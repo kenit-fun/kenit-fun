@@ -8,7 +8,7 @@
     flex-direction: column;
     justify-content: space-between;
     width: 100%;
-    max-width: 380px;
+    /* max-width: 380px; */
     min-height: 240px;
     padding: 24px;
     border-radius: 16px;
@@ -142,7 +142,7 @@
     flex-direction: column;
     justify-content: space-between;
     width: 100%;
-    max-width: 380px;
+    /* max-width: 380px; */
     min-height: 240px;
     padding: 24px;
     border-radius: 16px;
@@ -275,7 +275,7 @@
     flex-direction: column;
     justify-content: space-between;
     width: 100%;
-    max-width: 380px;
+    /* max-width: 380px; */
     min-height: 240px;
     padding: 24px;
     border-radius: 16px;
