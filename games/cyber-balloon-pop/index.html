@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: https://ogp.me/ns#">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- Primary SEO Meta Tags -->
+    <title>Cyber Balloon Pop - Fun Arcade Reflex & Slice Game</title>
+    <meta name="title" content="Cyber Balloon Pop - Fun Arcade Reflex & Slice Game">
+    <meta name="description" content="Play Cyber Balloon Pop! Tap and slice rising neon energy balloons, trigger slow-mo combos, avoid bombs, and beat high scores in this fun HTML5 arcade game.">
+    <meta name="keywords" content="balloon pop game, balloon popper, arcade reflex, slice game, html5 browser game, mobile casual game, free online game">
+    <meta name="author" content="KenitFun Studios">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#080811">
+
+    <!-- Open Graph SEO -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Cyber Balloon Pop - Fun Arcade Reflex Game">
+    <meta property="og:description" content="Slice and pop rising cyber balloons! Fast, easy, and super fun to play on any device.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80">
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Cyber Balloon Pop",
+      "operatingSystem": "Any Browser",
+      "applicationCategory": "GameApplication",
+      "genre": "Arcade Casual",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            touch-action: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Rajdhani', sans-serif;
+            background-color: #080811;
+            color: #ffffff;
+            position: fixed;
+        }
+
+        #gameContainer {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at center, #180a22 0%, #040409 100%);
+        }
+
+        /* Responsive Top Bar Navigation Grid (No Overlap) */
+        .top-nav {
+            position: absolute;
+            top: 12px;
+            left: 0;
+            width: 100%;
+            padding: 0 15px;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            gap: 10px;
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        .back-home-btn {
+            pointer-events: auto;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 0, 200, 0.4);
+            padding: 6px 14px;
+            color: #ff00c8;
+            text-decoration: none;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 0.75rem;
+            border-radius: 20px;
+            backdrop-filter: blur(8px);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 0 10px rgba(255, 0, 200, 0.2);
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            min-height: 36px;
+        }
+
+        .back-home-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 0, 200, 0.25);
+        }
+
+        /* Responsive SEO Title */
+        .seo-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(0.85rem, 3.2vw, 1.25rem);
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            text-align: center;
+            background: linear-gradient(90deg, #ffffff 30%, #ff00c8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 0 5px;
+        }
+
+        .nav-spacer {
+            width: 70px;
+        }
+
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        /* HUD Overlay */
+        .hud {
+            position: absolute;
+            top: 58px;
+            left: 0;
+            width: 100%;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+            z-index: 10;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .hud-val {
+            font-size: clamp(0.85rem, 2.8vw, 1.2rem);
+            color: #ff00c8;
+            text-shadow: 0 0 10px rgba(255, 0, 200, 0.6);
+            background: rgba(8, 8, 17, 0.4);
+            padding: 4px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 0, 200, 0.2);
+            backdrop-filter: blur(4px);
+        }
+
+        .help-text {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            padding: 0 10px;
+            text-align: center;
+            font-size: clamp(0.75rem, 2.6vw, 1rem);
+            color: rgba(255, 255, 255, 0.75);
+            letter-spacing: 1.2px;
+            pointer-events: none;
+            animation: pulseText 2s infinite ease-in-out;
+            z-index: 10;
+        }
+
+        @keyframes pulseText {
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.9; }
+        }
+
+        /* Modal Overlay */
+        .modal {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(8, 8, 17, 0.92);
+            backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .modal.hidden { display: none; }
+
+        .modal-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 0, 200, 0.35);
+            border-radius: 20px;
+            padding: 28px 20px;
+            max-width: 390px;
+            width: 92%;
+            box-shadow: 0 0 30px rgba(255, 0, 200, 0.2);
+        }
+
+        .modal-card h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.4rem, 4.5vw, 1.9rem);
+            color: #ff00c8;
+            margin-bottom: 10px;
+        }
+
+        .modal-card p {
+            color: #a0a5c0;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .modal-btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            border: none;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            padding: 11px 22px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            font-size: 0.82rem;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #ff00c8, #00f0ff);
+            color: #fff;
+            box-shadow: 0 0 20px rgba(255, 0, 200, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+        }
+
+        .btn-action:active { transform: scale(0.95); }
+
+        /* FAQ Popup Box */
+        .faq-card {
+            text-align: left;
+            max-height: 82vh;
+            overflow-y: auto;
+        }
+
+        .faq-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: #ff00c8;
+            font-size: 1.25rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .faq-step {
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.04);
+            border-left: 3px solid #ff00c8;
+            padding: 8px 12px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .faq-step h4 {
+            font-size: 0.85rem;
+            color: #ffffff;
+            margin-bottom: 2px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .faq-step p {
+            font-size: 0.8rem;
+            color: #a0a5c0;
+            margin-bottom: 0;
+        }
+
+        .close-faq-btn {
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .top-nav {
+                grid-template-columns: auto 1fr;
+                padding: 0 10px;
+            }
+            .nav-spacer { display: none; }
+            .seo-title { text-align: right; font-size: 0.8rem; }
+            .hud { top: 52px; padding: 0 10px; }
+            .hud-val { font-size: 0.75rem; padding: 3px 8px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="gameContainer">
+        <!-- Navigation Header -->
+        <header class="top-nav">
+            <a href="../../index.html" class="back-home-btn" aria-label="Go to Homepage">
+                ‹ HOME
+            </a>
+            <h1 class="seo-title">CYBER BALLOON POP</h1>
+            <div class="nav-spacer"></div>
+        </header>
+
+        <!-- Top Score HUD -->
+        <div class="hud">
+            <div class="hud-val">SCORE: <span id="scoreVal">0</span></div>
+            <div class="hud-val">LIVES: <span id="livesVal">❤️❤️❤️</span></div>
+        </div>
+
+        <p class="help-text">TAP OR SLICE RISING BALLOONS TO POP THEM!</p>
+
+        <!-- Game Canvas -->
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- Start / Game Over Modal -->
+        <div class="modal" id="gameModal">
+            <div class="modal-card">
+                <h2 id="modalTitle">CYBER BALLOON POP</h2>
+                <p id="modalDesc">Tap or slice floating neon balloons before they escape! Watch out for bombs!</p>
+                
+                <div class="modal-btn-group">
+                    <button class="btn-action btn-primary" id="startBtn">START POPPING</button>
+                    <button class="btn-action btn-secondary" id="faqBtn">❓ HOW TO PLAY</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Modal -->
+        <div class="modal hidden" id="faqModal">
+            <div class="modal-card faq-card">
+                <h3>❓ HOW TO PLAY</h3>
+                
+                <div class="faq-step">
+                    <h4>1. 🎈 TAP OR SLICE TO POP</h4>
+                    <p>Tap balloons individually or swipe/drag your finger across multiple balloons to pop them in a combo!</p>
+                </div>
+
+                <div class="faq-step">
+                    <h4>2. 🟡 SPECIAL GOLD ORBS</h4>
+                    <p>Golden balloons grant +30 bonus points!</p>
+                </div>
+
+                <div class="faq-step">
+                    <h4>3. ⏱️ FREEZE ORBS</h4>
+                    <p>Popping blue freeze orbs slows down time for 4 seconds.</p>
+                </div>
+
+                <div class="faq-step">
+                    <h4>4. 💣 AVOID RED BOMBS</h4>
+                    <p>Do NOT pop red spiked bombs or you will lose 1 life!</p>
+                </div>
+
+                <button class="btn-action btn-primary close-faq-btn" id="closeFaqBtn">GOT IT!</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreVal = document.getElementById('scoreVal');
+        const livesVal = document.getElementById('livesVal');
+        const gameModal = document.getElementById('gameModal');
+        const faqModal = document.getElementById('faqModal');
+        const startBtn = document.getElementById('startBtn');
+        const faqBtn = document.getElementById('faqBtn');
+        const closeFaqBtn = document.getElementById('closeFaqBtn');
+
+        let W, H, scale;
+        let score = 0, lives = 3;
+        let isGameOver = false;
+        let balloons = [], particles = [];
+        let slicePath = [];
+        let isSlicing = false;
+        let timeDilation = 1;
+
+        // Web Audio Synth
+        let audioCtx;
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function playPopSound(freq = 600, duration = 0.08) {
+            if (!audioCtx) return;
+            try {
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + duration);
+                gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        function resize() {
+            W = canvas.width = window.innerWidth;
+            H = canvas.height = window.innerHeight;
+            scale = Math.max(0.85, Math.min(W, H) / 500);
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Entities
+        class Balloon {
+            constructor() {
+                this.radius = (Math.random() * 15 + 25) * scale;
+                this.x = Math.random() * (W - this.radius * 2) + this.radius;
+                this.y = H + this.radius + Math.random() * 100;
+                this.speed = (Math.random() * 1.8 + 1.8) * scale;
+                this.wobble = Math.random() * Math.PI * 2;
+
+                // Types: normal (70%), gold (15%), freeze (10%), bomb (5%)
+                let rand = Math.random();
+                if (rand < 0.65) {
+                    this.type = 'normal';
+                    this.color = ['#ff00c8', '#00f0ff', '#00ffcc', '#aa00ff'][Math.floor(Math.random() * 4)];
+                    this.points = 10;
+                } else if (rand < 0.80) {
+                    this.type = 'gold';
+                    this.color = '#ffbb00';
+                    this.points = 30;
+                } else if (rand < 0.92) {
+                    this.type = 'freeze';
+                    this.color = '#00aaff';
+                    this.points = 15;
+                } else {
+                    this.type = 'bomb';
+                    this.color = '#ff0033';
+                    this.points = 0;
+                }
+            }
+
+            update() {
+                this.y -= this.speed * timeDilation;
+                this.wobble += 0.04;
+                this.x += Math.sin(this.wobble) * 0.8;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowColor = this.color;
+                ctx.shadowBlur = 18;
+                ctx.fill();
+
+                // Balloon Highlight
+                ctx.beginPath();
+                ctx.arc(this.x - this.radius * 0.3, this.y - this.radius * 0.3, this.radius * 0.25, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                ctx.fill();
+
+                // Bomb Icon
+                if (this.type === 'bomb') {
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = `${this.radius}px sans-serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText('💣', this.x, this.y);
+                }
+
+                ctx.restore();
+            }
+
+            containsPoint(px, py) {
+                let dx = px - this.x;
+                let dy = py - this.y;
+                return (dx * dx + dy * dy) <= (this.radius * this.radius * 1.5);
+            }
+        }
+
+        class PopParticle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.radius = Math.random() * 4 + 2;
+                this.vx = (Math.random() - 0.5) * 8;
+                this.vy = (Math.random() - 0.5) * 8;
+                this.alpha = 1;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= 0.03;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.alpha);
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function createPopEffect(x, y, color) {
+            for (let i = 0; i < 12; i++) {
+                particles.push(new PopParticle(x, y, color));
+            }
+        }
+
+        function initGame() {
+            score = 0;
+            lives = 3;
+            isGameOver = false;
+            balloons = [];
+            particles = [];
+            slicePath = [];
+            timeDilation = 1;
+
+            scoreVal.innerText = score;
+            livesVal.innerText = '❤️❤️❤️';
+
+            gameModal.classList.add('hidden');
+            faqModal.classList.add('hidden');
+        }
+
+        function popBalloon(b, index) {
+            createPopEffect(b.x, b.y, b.color);
+            balloons.splice(index, 1);
+
+            if (b.type === 'bomb') {
+                playPopSound(150, 0.2);
+                lives--;
+                updateLivesUI();
+                if (lives <= 0) triggerGameOver();
+            } else {
+                playPopSound(b.type === 'gold' ? 900 : 600, 0.1);
+                score += b.points;
+                scoreVal.innerText = score;
+
+                if (b.type === 'freeze') {
+                    timeDilation = 0.4;
+                    setTimeout(() => { timeDilation = 1; }, 4000);
+                }
+            }
+        }
+
+        function updateLivesUI() {
+            let h = '';
+            for (let i = 0; i < lives; i++) h += '❤️';
+            livesVal.innerText = h || '💔';
+        }
+
+        // Pointer / Slice Handlers
+        function getPos(e) {
+            let rect = canvas.getBoundingClientRect();
+            let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            return { x: clientX - rect.left, y: clientY - rect.top };
+        }
+
+        function onStart(e) {
+            initAudio();
+            if (isGameOver || !gameModal.classList.contains('hidden') || !faqModal.classList.contains('hidden')) return;
+            isSlicing = true;
+            let pos = getPos(e);
+            slicePath = [pos];
+            checkPopAt(pos.x, pos.y);
+        }
+
+        function onMove(e) {
+            if (!isSlicing) return;
+            let pos = getPos(e);
+            slicePath.push(pos);
+            if (slicePath.length > 8) slicePath.shift();
+            checkPopAt(pos.x, pos.y);
+        }
+
+        function onEnd() {
+            isSlicing = false;
+            slicePath = [];
+        }
+
+        function checkPopAt(px, py) {
+            for (let i = balloons.length - 1; i >= 0; i--) {
+                if (balloons[i].containsPoint(px, py)) {
+                    popBalloon(balloons[i], i);
+                }
+            }
+        }
+
+        canvas.addEventListener('pointerdown', onStart);
+        canvas.addEventListener('pointermove', onMove);
+        window.addEventListener('pointerup', onEnd);
+
+        function triggerGameOver() {
+            if (isGameOver) return;
+            isGameOver = true;
+            playPopSound(120, 0.3);
+            document.getElementById('modalTitle').innerText = "GAME OVER";
+            document.getElementById('modalDesc').innerText = `Final Score: ${score} Points!`;
+            gameModal.classList.remove('hidden');
+        }
+
+        startBtn.addEventListener('click', initGame);
+        faqBtn.addEventListener('click', () => { initAudio(); faqModal.classList.remove('hidden'); });
+        closeFaqBtn.addEventListener('click', () => { initAudio(); faqModal.classList.add('hidden'); });
+
+        // Main Game Loop
+        let spawnTimer = 0;
+        function gameLoop() {
+            ctx.clearRect(0, 0, W, H);
+
+            if (!isGameOver) {
+                // Spawn Balloons
+                spawnTimer++;
+                if (spawnTimer > Math.max(20, 45 - Math.floor(score / 50))) {
+                    balloons.push(new Balloon());
+                    spawnTimer = 0;
+                }
+
+                // Update & Draw Balloons
+                for (let i = balloons.length - 1; i >= 0; i--) {
+                    let b = balloons[i];
+                    b.update();
+                    b.draw();
+
+                    // Escaped Balloons
+                    if (b.y < -b.radius * 2) {
+                        balloons.splice(i, 1);
+                        if (b.type !== 'bomb') {
+                            lives--;
+                            updateLivesUI();
+                            if (lives <= 0) triggerGameOver();
+                        }
+                    }
+                }
+
+                // Update & Draw Pop Particles
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    let p = particles[i];
+                    p.update();
+                    p.draw();
+                    if (p.alpha <= 0) particles.splice(i, 1);
+                }
+
+                // Draw Slice Laser Trail
+                if (slicePath.length > 1) {
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.moveTo(slicePath[0].x, slicePath[0].y);
+                    for (let i = 1; i < slicePath.length; i++) {
+                        ctx.lineTo(slicePath[i].x, slicePath[i].y);
+                    }
+                    ctx.strokeStyle = '#00f0ff';
+                    ctx.lineWidth = 4 * scale;
+                    ctx.shadowColor = '#00f0ff';
+                    ctx.shadowBlur = 12;
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        initGame();
+        gameLoop();
+    </script>
+</body>
+</html>

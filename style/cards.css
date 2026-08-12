@@ -398,3 +398,137 @@
     transform: translateX(6px);
     stroke: #00f0ff;
 }
+
+/* ==========================================================================
+   CYBER BALLOON POP - HOMEPAGE CARD STYLES
+   ========================================================================== */
+
+.cbp-game-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 380px;
+    min-height: 240px;
+    padding: 24px;
+    border-radius: 16px;
+    text-decoration: none;
+    box-sizing: border-box;
+    overflow: hidden;
+    transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                box-shadow 0.35s ease, 
+                border-color 0.35s ease;
+    cursor: pointer;
+    font-family: 'Rajdhani', 'Segoe UI', system-ui, sans-serif;
+}
+
+.cbp-theme-neon {
+    background: radial-gradient(100% 100% at 0% 0%, rgba(255, 0, 200, 0.1) 0%, rgba(8, 8, 17, 0.95) 100%),
+                linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(0, 0, 0, 0.6) 100%);
+    border: 1px solid rgba(255, 0, 200, 0.35);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.8),
+                0 0 15px rgba(255, 0, 200, 0.05);
+    backdrop-filter: blur(12px);
+}
+
+.cbp-game-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    border-color: rgba(0, 240, 255, 0.8);
+    box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.9),
+                0 0 25px rgba(0, 240, 255, 0.35),
+                inset 0 0 15px rgba(255, 0, 200, 0.2);
+}
+
+.cbp-card-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    align-self: flex-start;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: rgba(255, 0, 200, 0.12);
+    border: 1px solid rgba(255, 0, 200, 0.4);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: #ff00c8;
+    text-transform: uppercase;
+    text-shadow: 0 0 8px rgba(255, 0, 200, 0.5);
+    margin-bottom: 16px;
+}
+
+.cbp-badge-pulse {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #00f0ff;
+    box-shadow: 0 0 10px #00f0ff;
+    animation: cbpGlowPulse 1.5s infinite ease-in-out;
+}
+
+@keyframes cbpGlowPulse {
+    0%, 100% {
+        transform: scale(0.9);
+        opacity: 0.7;
+        box-shadow: 0 0 6px #00f0ff;
+    }
+    50% {
+        transform: scale(1.3);
+        opacity: 1;
+        box-shadow: 0 0 14px #00f0ff, 0 0 22px #00f0ff;
+    }
+}
+
+.cbp-card-content h3 {
+    margin: 0 0 8px 0;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.45rem;
+    font-weight: 900;
+    letter-spacing: 1px;
+    background: linear-gradient(90deg, #ffffff 30%, #ff00c8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.cbp-card-content p {
+    margin: 0 0 20px 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: #a0a5c0;
+}
+
+.cbp-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-top: 12px;
+    border-top: 1px dashed rgba(255, 255, 255, 0.1);
+}
+
+.cbp-play-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #ff00c8;
+    letter-spacing: 1.2px;
+    transition: color 0.3s ease;
+}
+
+.cbp-arrow-icon {
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.cbp-game-card:hover .cbp-play-btn {
+    color: #00f0ff;
+    text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+}
+
+.cbp-game-card:hover .cbp-arrow-icon {
+    transform: translateX(6px);
+    stroke: #00f0ff;
+}
