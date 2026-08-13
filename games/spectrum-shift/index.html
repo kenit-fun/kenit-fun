@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: https://ogp.me/ns#">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <!-- Primary SEO Meta Tags -->
+    <title>Spectrum Shift - Chromatic Laser Phase Reflex Game</title>
+    <meta name="title" content="Spectrum Shift - Chromatic Laser Phase Reflex Game">
+    <meta name="description" content="Play Spectrum Shift! Shift your prism orb's color to phase through matching laser gates. A hyper-fast, unique HTML5 arcade reflex game.">
+    <meta name="keywords" content="spectrum shift, color match game, reflex game, arcade runner, html5 game, mobile browser game, free online game">
+    <meta name="author" content="KenitFun Studios">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#080811">
+
+    <!-- Open Graph SEO -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Spectrum Shift - Unique Chromatic Reflex Game">
+    <meta property="og:description" content="Match colors in milliseconds to pass through energy barriers! How high can you score?">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80">
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Spectrum Shift",
+      "operatingSystem": "Any Browser",
+      "applicationCategory": "GameApplication",
+      "genre": "Arcade Reflex",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            touch-action: none;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Rajdhani', sans-serif;
+            background-color: #080811;
+            color: #ffffff;
+            position: fixed;
+        }
+
+        #gameContainer {
+            position: relative;
+            width: 100vw;
+            height: 90vh;
+            background: radial-gradient(circle at center, #101222 0%, #040409 100%);
+        }
+
+        /* Clean SEO Title Bar Header */
+        .top-nav {
+            position: absolute;
+            top: 15px;
+            left: 0;
+            width: 100%;
+            padding: 0 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        .seo-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(0.95rem, 3.5vw, 1.35rem);
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-align: center;
+            background: linear-gradient(90deg, #00f0ff, #ff0088, #ffbb00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+        }
+
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 90vh;
+        }
+
+        /* HUD Overlay */
+        .hud {
+            position: absolute;
+            top: 55px;
+            left: 0;
+            width: 100%;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+            z-index: 10;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .hud-val {
+            font-size: clamp(0.85rem, 2.8vw, 1.2rem);
+            color: #00f0ff;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+            background: rgba(8, 8, 17, 0.4);
+            padding: 4px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            backdrop-filter: blur(4px);
+        }
+
+        /* Bottom Controls Container */
+        .controls-bar {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 30;
+            width: 90%;
+            max-width: 400px;
+            justify-content: center;
+        }
+
+        .color-btn {
+            flex: 1;
+            height: 52px;
+            border-radius: 26px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            font-size: 0.85rem;
+            color: #000;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .color-btn:active {
+            transform: scale(0.9);
+        }
+
+        .btn-cyan { background: #00f0ff; box-shadow: 0 0 15px rgba(0, 240, 255, 0.6); }
+        .btn-magenta { background: #ff0088; box-shadow: 0 0 15px rgba(255, 0, 136, 0.6); color: #fff; }
+        .btn-gold { background: #ffbb00; box-shadow: 0 0 15px rgba(255, 187, 0, 0.6); }
+
+        /* Modal Overlay */
+        .modal {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(8, 8, 17, 0.92);
+            backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .modal.hidden { display: none; }
+
+        .modal-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(0, 240, 255, 0.35);
+            border-radius: 20px;
+            padding: 28px 20px;
+            max-width: 390px;
+            width: 92%;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
+        }
+
+        .modal-card h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.4rem, 4.5vw, 1.9rem);
+            color: #00f0ff;
+            margin-bottom: 10px;
+        }
+
+        .modal-card p {
+            color: #a0a5c0;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .modal-btn-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            border: none;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            padding: 11px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            font-size: 0.82rem;
+            letter-spacing: 1px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #00f0ff, #ff0088);
+            color: #fff;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #ffffff;
+        }
+
+        .btn-home {
+            background: rgba(255, 0, 136, 0.15);
+            border: 1px solid rgba(255, 0, 136, 0.5);
+            color: #ff0088;
+        }
+
+        .btn-action:active { transform: scale(0.95); }
+
+        /* FAQ Popup Box */
+        .faq-card {
+            text-align: left;
+            max-height: 82vh;
+            overflow-y: auto;
+        }
+
+        .faq-card h3 {
+            font-family: 'Orbitron', sans-serif;
+            color: #00f0ff;
+            font-size: 1.25rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .faq-step {
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.04);
+            border-left: 3px solid #00f0ff;
+            padding: 8px 12px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .faq-step h4 {
+            font-size: 0.85rem;
+            color: #ffffff;
+            margin-bottom: 2px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .faq-step p {
+            font-size: 0.8rem;
+            color: #a0a5c0;
+            margin-bottom: 0;
+        }
+
+        .close-faq-btn {
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .hud { top: 48px; padding: 0 10px; }
+            .hud-val { font-size: 0.75rem; padding: 3px 8px; }
+            .color-btn { height: 46px; font-size: 0.75rem; }
+            .btn-action { padding: 10px 16px; font-size: 0.78rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="gameContainer">
+        <!-- Navigation Header -->
+        <header class="top-nav">
+            <h1 class="seo-title">SPECTRUM SHIFT</h1>
+        </header>
+
+        <!-- Top Score HUD -->
+        <div class="hud">
+            <div class="hud-val">SCORE: <span id="scoreVal">0</span></div>
+            <div class="hud-val">COMBO: <span id="comboVal">x1</span></div>
+        </div>
+
+        <!-- Canvas World -->
+        <canvas id="gameCanvas"></canvas>
+
+        <!-- Bottom Color Control Buttons -->
+        <div class="controls-bar">
+            <button class="color-btn btn-cyan" onclick="shiftColor('CYAN')">CYAN</button>
+            <button class="color-btn btn-magenta" onclick="shiftColor('MAGENTA')">MAGENTA</button>
+            <button class="color-btn btn-gold" onclick="shiftColor('GOLD')">GOLD</button>
+        </div>
+
+        <!-- Start / Game Over Modal -->
+        <div class="modal" id="gameModal">
+            <div class="modal-card">
+                <h2 id="modalTitle">SPECTRUM SHIFT</h2>
+                <p id="modalDesc">Shift your orb's color to phase through matching laser barriers before impact!</p>
+                
+                <div class="modal-btn-group">
+                    <button class="btn-action btn-primary" id="startBtn">START RUN</button>
+                    <button class="btn-action btn-secondary" id="faqBtn">❓ HOW TO PLAY</button>
+                    <!-- Back to Homepage / All Games Button -->
+                    <a href="../../index.html" class="btn-action btn-home" id="homeBtn">‹ Back to Games</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Modal -->
+        <div class="modal hidden" id="faqModal">
+            <div class="modal-card faq-card">
+                <h3>❓ HOW TO PLAY</h3>
+                
+                <div class="faq-step">
+                    <h4>1. 🎨 COLOR SHIFTING</h4>
+                    <p>Tap Cyan, Magenta, or Gold buttons at the bottom to shift your Orb's color instantly.</p>
+                </div>
+
+                <div class="faq-step">
+                    <h4>2. ⚡ PHASE THROUGH LASERS</h4>
+                    <p>Your Orb can ONLY pass through laser gates that match its CURRENT color.</p>
+                </div>
+
+                <div class="faq-step">
+                    <h4>3. 💥 COMBO MULTIPLIER</h4>
+                    <p>Pass through consecutive gates without mistakes to trigger Combo Score Multipliers!</p>
+                </div>
+
+                <div class="faq-step">
+                    <h4>4. 🚫 COLOR MISMATCH</h4>
+                    <p>Hitting a laser gate with the wrong color causes instant fragmentation!</p>
+                </div>
+
+                <button class="btn-action btn-primary close-faq-btn" id="closeFaqBtn">GOT IT!</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreVal = document.getElementById('scoreVal');
+        const comboVal = document.getElementById('comboVal');
+        const gameModal = document.getElementById('gameModal');
+        const faqModal = document.getElementById('faqModal');
+        const startBtn = document.getElementById('startBtn');
+        const faqBtn = document.getElementById('faqBtn');
+        const closeFaqBtn = document.getElementById('closeFaqBtn');
+
+        let W, H, scale;
+        let score = 0, combo = 1;
+        let isGameOver = false;
+
+        const COLOR_MAP = {
+            CYAN: '#00f0ff',
+            MAGENTA: '#ff0088',
+            GOLD: '#ffbb00'
+        };
+
+        let playerColor = 'CYAN';
+        let barriers = [], particles = [];
+
+        // Web Audio Synth
+        let audioCtx;
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function playSound(freq, type = 'sine', duration = 0.1) {
+            if (!audioCtx) return;
+            try {
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        function resize() {
+            W = canvas.width = window.innerWidth;
+            H = canvas.height = window.innerHeight;
+            scale = Math.max(0.85, Math.min(W, H) / 500);
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Entities
+        class PlayerOrb {
+            constructor() {
+                this.x = W / 2;
+                this.y = H * 0.72;
+                this.radius = 16 * scale;
+                this.pulse = 0;
+            }
+
+            draw() {
+                this.pulse += 0.08;
+                let cHex = COLOR_MAP[playerColor];
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = cHex;
+                ctx.shadowColor = cHex;
+                ctx.shadowBlur = 20 + Math.sin(this.pulse) * 5;
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.arc(this.x - 4, this.y - 4, this.radius * 0.35, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        class BarrierGate {
+            constructor() {
+                this.y = -40;
+                this.height = 16 * scale;
+                this.speed = (1.5 + Math.min(6, score / 150)) * scale;
+                const keys = ['CYAN', 'MAGENTA', 'GOLD'];
+                this.type = keys[Math.floor(Math.random() * keys.length)];
+                this.passed = false;
+            }
+
+            update() {
+                this.y += this.speed;
+            }
+
+            draw() {
+                let cHex = COLOR_MAP[this.type];
+                ctx.save();
+                ctx.fillStyle = cHex;
+                ctx.shadowColor = cHex;
+                ctx.shadowBlur = 18;
+                ctx.fillRect(0, this.y, W, this.height);
+
+                // Laser Core Pulse Line
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, this.y + this.height * 0.35, W, this.height * 0.3);
+                ctx.restore();
+            }
+        }
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                this.radius = Math.random() * 4 + 2;
+                this.vx = (Math.random() - 0.5) * 10;
+                this.vy = (Math.random() - 0.5) * 10;
+                this.alpha = 1;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= 0.03;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.alpha);
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        let player;
+
+        function shiftColor(colorName) {
+            initAudio();
+            if (isGameOver) return;
+            playerColor = colorName;
+            playSound(700, 'sine', 0.08);
+        }
+
+        function createBurst(x, y, colorHex) {
+            for (let i = 0; i < 16; i++) {
+                particles.push(new Particle(x, y, colorHex));
+            }
+        }
+
+        function initGame() {
+            score = 0;
+            combo = 1;
+            isGameOver = false;
+            playerColor = 'CYAN';
+            barriers = [];
+            particles = [];
+
+            scoreVal.innerText = score;
+            comboVal.innerText = 'x' + combo;
+
+            player = new PlayerOrb();
+            gameModal.classList.add('hidden');
+            faqModal.classList.add('hidden');
+        }
+
+        function triggerGameOver() {
+            if (isGameOver) return;
+            isGameOver = true;
+            playSound(150, 'sawtooth', 0.3);
+            createBurst(player.x, player.y, COLOR_MAP[playerColor]);
+
+            document.getElementById('modalTitle').innerText = "SPECTRUM SHIFTED";
+            document.getElementById('modalDesc').innerText = `Final Score: ${score} Points!`;
+            startBtn.innerText = "TRY AGAIN"; // Updated button text for retry
+            gameModal.classList.remove('hidden');
+        }
+
+        startBtn.addEventListener('click', initGame);
+        faqBtn.addEventListener('click', () => { initAudio(); faqModal.classList.remove('hidden'); });
+        closeFaqBtn.addEventListener('click', () => { initAudio(); faqModal.classList.add('hidden'); });
+
+        // Main Game Loop
+        let spawnTimer = 0;
+        function gameLoop() {
+            ctx.clearRect(0, 0, W, H);
+
+            if (!isGameOver) {
+                // Barrier Spawning
+                spawnTimer++;
+                let spawnInterval = Math.max(35, 75 - Math.floor(score / 40));
+                if (spawnTimer > spawnInterval) {
+                    barriers.push(new BarrierGate());
+                    spawnTimer = 0;
+                }
+
+                // Update & Render Barriers
+                for (let i = barriers.length - 1; i >= 0; i--) {
+                    let b = barriers[i];
+                    b.update();
+                    b.draw();
+
+                    // Collision Check
+                    if (!b.passed && b.y + b.height >= player.y - player.radius && b.y <= player.y + player.radius) {
+                        if (playerColor === b.type) {
+                            // Phase Passed!
+                            b.passed = true;
+                            score += 10 * combo;
+                            combo++;
+                            scoreVal.innerText = score;
+                            comboVal.innerText = 'x' + combo;
+                            playSound(880, 'triangle', 0.12);
+                            createBurst(player.x, player.y, COLOR_MAP[playerColor]);
+                        } else {
+                            // Mismatch Crash!
+                            triggerGameOver();
+                        }
+                    }
+
+                    // Remove offscreen
+                    if (b.y > H + 20) {
+                        barriers.splice(i, 1);
+                    }
+                }
+
+                player.draw();
+
+                // Update & Render Burst Particles
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    let p = particles[i];
+                    p.update();
+                    p.draw();
+                    if (p.alpha <= 0) particles.splice(i, 1);
+                }
+            }
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        initGame();
+        gameLoop();
+    </script>
+</body>
+</html>
