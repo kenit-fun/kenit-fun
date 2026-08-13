@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: https://ogp.me/ns#">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <title>The Chaos Engine - Endless Galaxy & Interactive Toy Playground</title>
+    <meta name="title" content="The Chaos Engine - Endless Galaxy & Interactive Toy Playground">
+    <meta name="description" content="An endless, continuous interactive web experiment set in deep space! Press the core button to trigger bouncing DVD logos, black holes, galactic warps, and infinite universe upgrades.">
+    <meta name="keywords" content="interactive toy, continuous web game, endless galaxy experiment, chaos engine, neal fun style, web app toy">
+    <meta name="author" content="KenitFun Studios">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#050512">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Rajdhani', sans-serif;
+            background-color: #030308;
+            color: #ffffff;
+            position: fixed;
+        }
+
+        /* Fullscreen Galaxy Canvas */
+        #canvasBg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 1;
+        }
+
+        /* Top Header Grid */
+        .top-nav {
+            position: absolute;
+            top: 12px;
+            left: 0;
+            width: 100%;
+            padding: 0 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        .seo-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(0.95rem, 3.5vw, 1.35rem);
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-align: center;
+            background: linear-gradient(90deg, #ff0055, #00f0ff, #ffbb00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+        }
+
+        /* HUD & Stats */
+        .hud-bar {
+            position: absolute;
+            top: 55px;
+            left: 0;
+            width: 100%;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+            z-index: 20;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .hud-val {
+            font-size: clamp(0.8rem, 2.5vw, 1.1rem);
+            color: #00f0ff;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.6);
+            background: rgba(8, 8, 25, 0.65);
+            padding: 5px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            backdrop-filter: blur(8px);
+        }
+
+        /* Main Core Interactive Button */
+        .center-stage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 30;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .chaos-btn {
+            width: clamp(140px, 35vw, 190px);
+            height: clamp(140px, 35vw, 190px);
+            border-radius: 50%;
+            background: radial-gradient(circle, #ff0055 0%, #4a0020 100%);
+            border: 4px solid #00f0ff;
+            color: #ffffff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(0.9rem, 3vw, 1.2rem);
+            font-weight: 900;
+            letter-spacing: 2px;
+            cursor: pointer;
+            box-shadow: 0 0 35px rgba(255, 0, 85, 0.8), inset 0 0 20px rgba(0, 240, 255, 0.6);
+            transition: transform 0.1s ease, box-shadow 0.2s ease;
+            outline: none;
+        }
+
+        .chaos-btn:active {
+            transform: scale(0.88);
+            box-shadow: 0 0 60px #00f0ff, inset 0 0 35px #ff0055;
+        }
+
+        .event-banner {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(0.85rem, 2.8vw, 1.15rem);
+            color: #ffbb00;
+            text-shadow: 0 0 12px rgba(255, 187, 0, 0.8);
+            text-align: center;
+            min-height: 30px;
+            background: rgba(3, 3, 12, 0.5);
+            padding: 4px 16px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
+        }
+
+        /* Toast / Achievement Popup */
+        .achievement-toast {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(8, 8, 25, 0.95);
+            border: 1px solid #00f0ff;
+            box-shadow: 0 0 25px rgba(0, 240, 255, 0.5);
+            padding: 12px 24px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Orbitron', sans-serif;
+            z-index: 40;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+        }
+
+        .achievement-toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Bouncing DVD Toy Elements */
+        .dvd-logo {
+            position: absolute;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.1rem;
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 2px solid;
+            pointer-events: none;
+            z-index: 10;
+            white-space: nowrap;
+            backdrop-filter: blur(4px);
+        }
+
+        /* Modal Overlay */
+        .modal {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 5, 15, 0.94);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .modal.hidden { display: none; }
+
+        .modal-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 0, 85, 0.4);
+            border-radius: 20px;
+            padding: 28px 20px;
+            max-width: 390px;
+            width: 92%;
+            box-shadow: 0 0 30px rgba(255, 0, 85, 0.3);
+        }
+
+        .btn-action {
+            border: none;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            padding: 11px 22px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            font-size: 0.82rem;
+            letter-spacing: 1px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(90deg, #ff0055, #00f0ff);
+            color: #fff;
+            box-shadow: 0 0 20px rgba(255, 0, 85, 0.4);
+        }
+
+        .btn-home {
+            background: rgba(255, 0, 85, 0.15);
+            border: 1px solid rgba(255, 0, 85, 0.5);
+            color: #ff0055;
+        }
+        @media screen and (max-width: 640px) {
+            .achievement-toast {transform: translateX(-50%) translateY(150px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="gameContainer">
+        <!-- Canvas Galaxy View -->
+        <canvas id="canvasBg"></canvas>
+
+        <!-- Top Nav Header -->
+        <header class="top-nav">
+            <h1 class="seo-title">THE CHAOS ENGINE</h1>
+        </header>
+
+        <!-- Stats Bar -->
+        <div class="hud-bar">
+            <div class="hud-val">CHAOS LEVEL: <span id="chaosVal">1</span></div>
+            <div class="hud-val">UNIVERSE PRESSES: <span id="pressVal">0</span></div>
+        </div>
+
+        <!-- Center Interactive Stage -->
+        <div class="center-stage">
+            <button class="chaos-btn" id="coreBtn">PRESS ME</button>
+            <div class="event-banner" id="eventText">PRESS THE CORE TO IGNITE THE GALAXY</div>
+        </div>
+
+        <!-- Achievement Notification -->
+        <div class="achievement-toast" id="toast">
+            <span style="font-size: 1.5rem;">🏆</span>
+            <div>
+                <div style="font-size: 0.7rem; color: #a0a5c0;">ACHIEVEMENT UNLOCKED</div>
+                <div id="toastText" style="font-size: 0.85rem; color: #00f0ff;">UNIVERSE BORN!</div>
+            </div>
+        </div>
+
+        <!-- FAQ Modal -->
+        <div class="modal hidden" id="faqModal">
+            <div class="modal-card">
+                <h2 style="font-family: 'Orbitron'; color: #ff0055; margin-bottom: 12px;">🌀 GALACTIC CHAOS ENGINE</h2>
+                <p style="color: #a0a5c0; margin-bottom: 20px; line-height: 1.4;">There are no game-over screens here! Every press speeds up galaxy stars, spawns bouncing DVD elements, triggers nebula blasts, and unlocks absurd cosmic milestones!</p>
+                
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button class="btn-action btn-primary" id="closeFaqBtn">KEEP PLAYING</button>
+                    <a href="../../index.html" class="btn-action btn-home">‹ ALL GAMES</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvasBg');
+        const ctx = canvas.getContext('2d');
+        const coreBtn = document.getElementById('coreBtn');
+        const chaosVal = document.getElementById('chaosVal');
+        const pressVal = document.getElementById('pressVal');
+        const eventText = document.getElementById('eventText');
+        const toast = document.getElementById('toast');
+        const toastText = document.getElementById('toastText');
+        const faqModal = document.getElementById('faqModal');
+        const closeFaqBtn = document.getElementById('closeFaqBtn');
+
+        let W, H;
+        let presses = 0;
+        let chaosLevel = 1;
+        let stars = [], particles = [], dvdElements = [];
+        let warpSpeed = 1;
+
+        // Web Audio Synth
+        let audioCtx;
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function playTone(freq, type = 'sine', duration = 0.1) {
+            if (!audioCtx) return;
+            try {
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        function resize() {
+            W = canvas.width = window.innerWidth;
+            H = canvas.height = window.innerHeight;
+            initStars();
+        }
+
+        // Procedural Starfield Galaxy Setup
+        class Star {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = (Math.random() - 0.5) * W * 2;
+                this.y = (Math.random() - 0.5) * H * 2;
+                this.z = Math.random() * W;
+                this.size = Math.random() * 1.8 + 0.5;
+                const colors = ['#ffffff', '#00f0ff', '#ff0055', '#aa00ff', '#ffbb00'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            update() {
+                this.z -= (2 + warpSpeed * 3);
+                if (this.z <= 0) {
+                    this.reset();
+                    this.z = W;
+                }
+            }
+
+            draw() {
+                let k = 128 / this.z;
+                let px = this.x * k + W / 2;
+                let py = this.y * k + H / 2;
+
+                if (px >= 0 && px <= W && py >= 0 && py <= H) {
+                    let s = Math.max(0.1, (1 - this.z / W) * this.size * 2.5);
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(px, py, s, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.shadowColor = this.color;
+                    ctx.shadowBlur = 8;
+                    ctx.fill();
+                    ctx.restore();
+                }
+            }
+        }
+
+        function initStars() {
+            stars = [];
+            for (let i = 0; i < 220; i++) stars.push(new Star());
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        // Particles Engine (Explosion FX)
+        class Particle {
+            constructor(x, y) {
+                this.x = x || W / 2;
+                this.y = y || H / 2;
+                this.vx = (Math.random() - 0.5) * (8 + chaosLevel);
+                this.vy = (Math.random() - 0.5) * (8 + chaosLevel);
+                this.radius = Math.random() * 4 + 2;
+                const colors = ['#ff0055', '#00f0ff', '#ffbb00', '#aa00ff'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+                this.alpha = 1;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= 0.015;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.alpha);
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowColor = this.color;
+                ctx.shadowBlur = 12;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        // DVD Bouncing Physics Object
+        class DVDLogo {
+            constructor() {
+                this.el = document.createElement('div');
+                this.el.className = 'dvd-logo';
+                this.el.innerText = '📀 CHAOS';
+                document.body.appendChild(this.el);
+
+                this.x = Math.random() * (W - 100);
+                this.y = Math.random() * (H - 50);
+                this.vx = (Math.random() > 0.5 ? 2.5 : -2.5) * (1 + chaosLevel * 0.1);
+                this.vy = (Math.random() > 0.5 ? 2.5 : -2.5) * (1 + chaosLevel * 0.1);
+                this.colors = ['#ff0055', '#00f0ff', '#ffbb00', '#00ffcc', '#aa00ff'];
+                this.changeColor();
+            }
+
+            changeColor() {
+                let c = this.colors[Math.floor(Math.random() * this.colors.length)];
+                this.el.style.borderColor = c;
+                this.el.style.color = c;
+                this.el.style.boxShadow = `0 0 15px ${c}`;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x <= 0 || this.x >= W - 100) { this.vx *= -1; this.changeColor(); }
+                if (this.y <= 0 || this.y >= H - 40) { this.vy *= -1; this.changeColor(); }
+
+                this.el.style.left = this.x + 'px';
+                this.el.style.top = this.y + 'px';
+            }
+        }
+
+        function triggerAchievement(text) {
+            toastText.innerText = text;
+            toast.classList.add('show');
+            playTone(880, 'triangle', 0.25);
+            setTimeout(() => { toast.classList.remove('show'); }, 3000);
+        }
+
+        const chaosEvents = [
+            "GALAXY HYPER-WARP ACTIVATED!",
+            "FLOATING DVD LOGO SPAWNED!",
+            "COSMIC NEBULA EXPLOSION!",
+            "BLACK HOLE GRAVITY SHIFT!",
+            "DIMENSION OVERCLOCK!",
+            "NEON CORE EXPANDED!"
+        ];
+
+        coreBtn.addEventListener('click', () => {
+            initAudio();
+            presses++;
+            pressVal.innerText = presses;
+
+            if (presses % 5 === 0) {
+                chaosLevel++;
+                chaosVal.innerText = chaosLevel;
+            }
+
+            // Galaxy Speed Boost Temporary Warp
+            warpSpeed = 4 + chaosLevel * 0.5;
+            setTimeout(() => { warpSpeed = 1; }, 600);
+
+            playTone(300 + (presses * 15) % 600, 'square', 0.1);
+
+            for (let i = 0; i < 25; i++) particles.push(new Particle());
+
+            let evt = chaosEvents[Math.floor(Math.random() * chaosEvents.length)];
+            eventText.innerText = evt;
+
+            if (presses % 7 === 0 && dvdElements.length < 8) {
+                dvdElements.push(new DVDLogo());
+            }
+
+            if (presses === 1) triggerAchievement("THE UNIVERSE AWAKENS!");
+            if (presses === 10) triggerAchievement("GALAXY WARP MASTER!");
+            if (presses === 25) triggerAchievement("CHAOS LORD UNLOCKED!");
+            if (presses === 50) triggerAchievement("INFINITE COSMOS REACHED!");
+        });
+
+        closeFaqBtn.addEventListener('click', () => { faqModal.classList.add('hidden'); });
+
+        // Galactic Loop Render
+        function animate() {
+            // Draw Deep Space Radial Nebula Background
+            ctx.fillStyle = 'rgba(5, 5, 18, 0.25)';
+            ctx.fillRect(0, 0, W, H);
+
+            // Glowing Cosmic Core Glow
+            let gradient = ctx.createRadialGradient(W / 2, H / 2, 10, W / 2, H / 2, Math.max(W, H) * 0.65);
+            gradient.addColorStop(0, 'rgba(170, 0, 255, 0.08)');
+            gradient.addColorStop(0.5, 'rgba(0, 240, 255, 0.04)');
+            gradient.addColorStop(1, 'rgba(3, 3, 8, 0.8)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, W, H);
+
+            // Update & Render Starfield
+            stars.forEach(star => {
+                star.update();
+                star.draw();
+            });
+
+            // Update & Render Explosion Particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.update();
+                p.draw();
+                if (p.alpha <= 0) particles.splice(i, 1);
+            }
+
+            // Update DVD Bouncers
+            dvdElements.forEach(dvd => dvd.update());
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>

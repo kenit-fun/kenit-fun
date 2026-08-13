@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: https://ogp.me/ns#">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <title>Reality Slider - Interactive Glitch Playground</title>
+    <meta name="title" content="Reality Slider - Interactive Glitch Playground">
+    <meta name="description" content="An out-of-the-box interactive web experiment. Shift reality dimensions, overload fake crypto wealth, and break web physics!">
+    <meta name="keywords" content="web experiment, interactive toy, glitch simulator, anti game, html5 canvas toy, fun web apps">
+    <meta name="author" content="KenitFun Studios">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#080811">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Share+Tech+Mono&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Share Tech Mono', monospace;
+            background-color: #05050a;
+            color: #00f0ff;
+        }
+
+        #canvasBg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        .ui-wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            pointer-events: none;
+        }
+
+        .ui-element {
+            pointer-events: auto;
+        }
+
+        /* SEO Title */
+        .seo-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1rem, 4vw, 1.6rem);
+            font-weight: 900;
+            letter-spacing: 2px;
+            text-align: center;
+            background: linear-gradient(90deg, #00f0ff, #aa00ff, #ff0055);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.4);
+        }
+
+        /* Fake Infinite Crypto Wallet */
+        .fake-wallet-box {
+            background: rgba(8, 8, 17, 0.7);
+            border: 1px solid #aa00ff;
+            box-shadow: 0 0 20px rgba(170, 0, 255, 0.3);
+            border-radius: 12px;
+            padding: 12px 20px;
+            text-align: center;
+            backdrop-filter: blur(8px);
+            margin-top: 10px;
+        }
+
+        .wallet-label {
+            font-size: 0.75rem;
+            color: #a0a5c0;
+            letter-spacing: 1px;
+        }
+
+        .wallet-amount {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.2rem, 4.5vw, 2.2rem);
+            color: #00f0ff;
+            text-shadow: 0 0 12px #00f0ff;
+        }
+
+        /* Main Control Slider Stage */
+        .stage-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            max-width: 420px;
+            width: 100%;
+        }
+
+        .slider-label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            color: #ff0055;
+            text-shadow: 0 0 10px #ff0055;
+        }
+
+        .glitch-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 15px;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #00f0ff, #aa00ff, #ff0055);
+            outline: none;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+            cursor: pointer;
+        }
+
+        .glitch-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #ffffff;
+            box-shadow: 0 0 15px #00f0ff, 0 0 30px #ff0055;
+            cursor: pointer;
+            border: 2px solid #000;
+        }
+
+        /* Interactive Action Buttons */
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .fun-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid #00f0ff;
+            color: #00f0ff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 10px 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .fun-btn:active {
+            transform: scale(0.92);
+            background: #00f0ff;
+            color: #000;
+        }
+
+        .btn-nuke {
+            border-color: #ff0055;
+            color: #ff0055;
+            box-shadow: 0 0 10px rgba(255, 0, 85, 0.3);
+        }
+
+        /* Modal Popup for FAQ */
+        .modal {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(8, 8, 17, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .modal.hidden { display: none; }
+
+        .modal-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(170, 0, 255, 0.4);
+            border-radius: 20px;
+            padding: 25px;
+            max-width: 380px;
+            width: 90%;
+            box-shadow: 0 0 30px rgba(170, 0, 255, 0.3);
+        }
+
+        .modal-card h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #aa00ff;
+            margin-bottom: 12px;
+        }
+
+        .modal-card p {
+            color: #a0a5c0;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .btn-home {
+            background: rgba(255, 0, 85, 0.15);
+            border: 1px solid #ff0055;
+            color: #ff0055;
+            text-decoration: none;
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="canvasBg"></canvas>
+
+    <div class="ui-wrapper">
+        <!-- Top Nav Header -->
+        <header style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
+            <a href="../../index.html" class="fun-btn ui-element" style="text-decoration: none;">‹ ALL EXPERIMENTS</a>
+            <h1 class="seo-title">REALITY SLIDER</h1>
+            <button class="fun-btn ui-element" id="faqBtn">❓ WHAT IS THIS?</button>
+        </header>
+
+        <!-- Fake Infinite Wallet -->
+        <div class="fake-wallet-box ui-element">
+            <div class="wallet-label">⚡ INFINITE FAKE BALANCE</div>
+            <div class="wallet-amount" id="walletVal">$ 999,999,999,999,999</div>
+        </div>
+
+        <!-- Center Interactive Controls -->
+        <div class="stage-center ui-element">
+            <div class="slider-label">DIMENSION WARP: <span id="warpVal">0%</span></div>
+            <input type="range" min="0" max="100" value="0" class="glitch-slider" id="realitySlider">
+
+            <div class="btn-group">
+                <button class="fun-btn" id="boostMoneyBtn">💸 OVERLOAD WALLET</button>
+                <button class="fun-btn btn-nuke" id="glitchCrashBtn">💥 OVERCLOCK REALITY</button>
+            </div>
+        </div>
+
+        <div style="font-size: 0.75rem; color: rgba(255,255,255,0.5);">SLIDE TO DISTORT REALITY • NO SCORES • PURE VISUAL FUN</div>
+    </div>
+
+    <!-- FAQ Modal -->
+    <div class="modal hidden" id="faqModal">
+        <div class="modal-card ui-element">
+            <h2>🌀 REALITY SLIDER</h2>
+            <p>This is an anti-game interactive experiment! There are no high scores or rules. Drag the slider to bend web graphics, trigger infinite fake money glitches, and explode system particles!</p>
+            <button class="fun-btn" id="closeFaqBtn">EXPLORE NOW</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvasBg');
+        const ctx = canvas.getContext('2d');
+        const realitySlider = document.getElementById('realitySlider');
+        const warpVal = document.getElementById('warpVal');
+        const walletVal = document.getElementById('walletVal');
+        const boostMoneyBtn = document.getElementById('boostMoneyBtn');
+        const glitchCrashBtn = document.getElementById('glitchCrashBtn');
+        const faqBtn = document.getElementById('faqBtn');
+        const faqModal = document.getElementById('faqModal');
+        const closeFaqBtn = document.getElementById('closeFaqBtn');
+
+        let W, H;
+        let warpLevel = 0;
+        let fakeBalance = 999999999999;
+        let particles = [];
+
+        // Audio Synth
+        let audioCtx;
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function playSound(freq, duration = 0.1) {
+            if (!audioCtx) return;
+            try {
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        function resize() {
+            W = canvas.width = window.innerWidth;
+            H = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor(x, y) {
+                this.x = x || Math.random() * W;
+                this.y = y || Math.random() * H;
+                this.vx = (Math.random() - 0.5) * (4 + warpLevel * 0.1);
+                this.vy = (Math.random() - 0.5) * (4 + warpLevel * 0.1);
+                this.size = Math.random() * 4 + 2;
+                const colors = ['#00f0ff', '#aa00ff', '#ff0055', '#ffbb00'];
+                this.color = colors[Math.floor(Math.random() * colors.length)];
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+
+                if (this.x < 0 || this.x > W) this.vx *= -1;
+                if (this.y < 0 || this.y > H) this.vy *= -1;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.shadowColor = this.color;
+                ctx.shadowBlur = 10 + warpLevel * 0.2;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        for (let i = 0; i < 60; i++) particles.push(new Particle());
+
+        // Slider Warp Listener
+        realitySlider.addEventListener('input', (e) => {
+            initAudio();
+            warpLevel = parseInt(e.target.value);
+            warpVal.innerText = warpLevel + '%';
+            playSound(200 + warpLevel * 8, 0.05);
+        });
+
+        // Money Overload Action
+        boostMoneyBtn.addEventListener('click', () => {
+            initAudio();
+            fakeBalance += Math.floor(Math.random() * 500000000000);
+            walletVal.innerText = '$ ' + fakeBalance.toLocaleString();
+            playSound(880, 0.15);
+            for (let i = 0; i < 20; i++) particles.push(new Particle(W / 2, H / 3));
+        });
+
+        // Glitch Crash Explosion Action
+        glitchCrashBtn.addEventListener('click', () => {
+            initAudio();
+            playSound(120, 0.4);
+            for (let i = 0; i < 50; i++) particles.push(new Particle(W / 2, H / 2));
+            document.body.style.filter = 'invert(1) hue-rotate(180deg)';
+            setTimeout(() => { document.body.style.filter = 'none'; }, 400);
+        });
+
+        faqBtn.addEventListener('click', () => { initAudio(); faqModal.classList.remove('hidden'); });
+        closeFaqBtn.addEventListener('click', () => { initAudio(); faqModal.classList.add('hidden'); });
+
+        // Animation Loop
+        function animate() {
+            // Glitch visual trail background
+            ctx.fillStyle = `rgba(5, 5, 10, ${Math.max(0.05, 0.3 - warpLevel * 0.002)})`;
+            ctx.fillRect(0, 0, W, H);
+
+            // Matrix / Dimension Grid Warp
+            if (warpLevel > 0) {
+                ctx.strokeStyle = 'rgba(0, 240, 255, ' + (warpLevel * 0.005) + ')';
+                ctx.lineWidth = 1;
+                for (let x = 0; x < W; x += 40 - warpLevel * 0.2) {
+                    ctx.beginPath();
+                    ctx.moveTo(x + Math.sin(Date.now() * 0.003) * warpLevel, 0);
+                    ctx.lineTo(x, H);
+                    ctx.stroke();
+                }
+            }
+
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
