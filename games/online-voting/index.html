@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: https://ogp.me/ns#">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    
+    <title>BJP vs CJP - Live Hourly Poll Arena</title>
+    <meta name="title" content="BJP vs CJP - Live Hourly Poll Arena">
+    <meta name="description" content="Cast your vote every hour in the live battle between BJP and CJP. Winner announced at the 59th minute!">
+    <meta name="author" content="KenitFun Studios">
+    <meta name="theme-color" content="#050512">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            font-family: 'Rajdhani', sans-serif;
+            background-color: #050510;
+            background-image: url("../../assets/voters.jpg");
+            background-position: bottom right;
+            background-blend-mode: lighten;
+            color: #ffffff;
+        }
+
+        #bgCanvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 1;
+        }
+
+        .app-container {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 15px 30px 15px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .main-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.2rem, 5vw, 2.2rem);
+            font-weight: 900;
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #6eff00, #261376, #101a79);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255, 153, 51, 0.3);
+        }
+
+        .revisit-alert {
+            margin-top: 10px;
+            background: rgba(255, 187, 0, 0.12);
+            border: 1px solid rgba(255, 187, 0, 0.5);
+            border-radius: 20px;
+            padding: 8px 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: clamp(0.78rem, 2.8vw, 0.95rem);
+            color: #2c2922;
+            text-shadow: 0 0 8px rgba(255, 187, 0, 0.4);
+            backdrop-filter: blur(8px);
+        }
+
+        .timer-box {
+            margin: 15px 0;
+            text-align: center;
+            background: rgba(8, 8, 25, 0.85);
+            border: 1px solid rgba(255, 153, 51, 0.4);
+            padding: 12px 24px;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .timer-title {
+            font-size: 0.75rem;
+            letter-spacing: 1.5px;
+            color: #a0a5c0;
+            text-transform: uppercase;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .timer-digits {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.4rem, 6vw, 2.2rem);
+            font-weight: 900;
+            color: #FF9933;
+            text-shadow: 0 0 15px rgba(255, 153, 51, 0.6);
+        }
+
+        .arena {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .faction-card {
+            background: rgba(12, 12, 28, 0.85);
+            border-radius: 20px;
+            padding: 20px 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 280px;
+            border: 2px solid transparent;
+            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* BJP Card Styling */
+        .faction-bjp {
+            border-color: rgba(255, 153, 51, 0.5);
+            box-shadow: 0 0 20px rgba(255, 153, 51, 0.2);
+        }
+
+        .faction-bjp:hover {
+            border-color: #FF9933;
+            box-shadow: 0 0 30px rgba(255, 153, 51, 0.5);
+        }
+
+        /* CJP Card Styling */
+        .faction-cjp {
+            border-color: rgba(0, 150, 255, 0.5);
+            box-shadow: 0 0 20px rgba(0, 150, 255, 0.2);
+        }
+
+        .faction-cjp:hover {
+            border-color: #0096FF;
+            box-shadow: 0 0 30px rgba(0, 150, 255, 0.5);
+        }
+
+        /* Flag Graphics */
+        .flag-box {
+            width: 80px;
+            height: 52px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 12px rgba(0,0,0,0.5);
+            margin-bottom: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* BJP Flag SVG Graphic */
+        .bjp-flag-graphic {
+            width: 100%;
+            height: 100%;
+            display: flex;
+        }
+        .bjp-saffron { flex: 2; background: #FF9933; display: flex; align-items: center; justify-content: center; }
+        .bjp-green { flex: 1; background: #138808; }
+        .lotus-symbol { font-size: 20px; line-height: 1; }
+
+        /* CJP Flag Graphic */
+        .cjp-flag-graphic {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .cjp-top { flex: 1; background: #138808; }
+        .cjp-mid { flex: 1; background: #ffffff; display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; font-size: 10px; }
+        .cjp-bot { flex: 1; background: #0056b3; }
+
+        .faction-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.1rem, 4vw, 1.5rem);
+            font-weight: 900;
+            text-align: center;
+        }
+
+        .faction-bjp .faction-name { color: #FF9933; text-shadow: 0 0 10px rgba(255, 153, 51, 0.6); }
+        .faction-cjp .faction-name { color: #0096FF; text-shadow: 0 0 10px rgba(0, 150, 255, 0.6); }
+
+        .vote-count {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1.5rem, 6vw, 2.5rem);
+            font-weight: 900;
+            margin: 10px 0;
+            color: #ffffff;
+        }
+
+        .vote-btn {
+            width: 100%;
+            padding: 12px 10px;
+            border-radius: 30px;
+            border: none;
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(0.75rem, 2.8vw, 0.9rem);
+            font-weight: 900;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+            outline: none;
+        }
+
+        .btn-bjp {
+            background: linear-gradient(90deg, #FF9933, #e67300);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255, 153, 51, 0.5);
+        }
+
+        .btn-cjp {
+            background: linear-gradient(90deg, #0096FF, #0056b3);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(0, 150, 255, 0.5);
+        }
+
+        .vote-btn:active {
+            transform: scale(0.92);
+        }
+
+        .vote-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .progress-wrapper {
+            width: 100%;
+            height: 18px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            overflow: hidden;
+            display: flex;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .bar-a {
+            height: 100%;
+            background: linear-gradient(90deg, #FF9933, #ffad5c);
+            width: 50%;
+            transition: width 0.4s ease;
+        }
+
+        .bar-b {
+            height: 100%;
+            background: linear-gradient(90deg, #0056b3, #0096FF);
+            width: 50%;
+            transition: width 0.4s ease;
+        }
+
+        .daily-tally {
+            width: 100%;
+            background: rgba(8, 8, 25, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            padding: 16px;
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        .tally-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.85rem;
+            color: #ffbb00;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .tally-grid {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .tally-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .tally-wins {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 900;
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 5, 15, 0.92);
+            backdrop-filter: blur(12px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .winner-card {
+            background: rgba(15, 15, 35, 0.95);
+            border: 2px solid #ffbb00;
+            box-shadow: 0 0 40px rgba(255, 187, 0, 0.4);
+            border-radius: 24px;
+            padding: 30px 20px;
+            text-align: center;
+            max-width: 380px;
+            width: 90%;
+        }
+
+        .winner-crown {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            animation: bounceCrown 1.5s infinite ease-in-out;
+        }
+
+        @keyframes bounceCrown {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .back-link {
+            color: #a0a5c0;
+            text-decoration: none;
+            font-size: 0.85rem;
+            margin-top: 15px;
+            display: inline-block;
+            transition: color 0.2s ease;
+        }
+
+        .back-link:hover { color: #FF9933; }
+    </style>
+</head>
+<body>
+
+    <canvas id="bgCanvas"></canvas>
+
+    <div class="app-container">
+        <header>
+            <h1 class="main-title">BJP VS CJP HOURLY POLL</h1>
+            <div class="revisit-alert">
+                <span>⏰</span> Cast your vote & <strong>revisit at the 59th minute</strong> to see the winner!
+            </div>
+        </header>
+
+        <div class="timer-box">
+            <div class="timer-title" id="timerStatus">HOURLY BATTLE ENDS IN</div>
+            <div class="timer-digits" id="countdown">58m : 42s</div>
+        </div>
+
+        <div class="arena">
+            <!-- BJP Card -->
+            <div class="faction-card faction-bjp">
+                <div class="flag-box">
+                    <div class="bjp-flag-graphic">
+                        <div class="bjp-saffron">
+                            <span class="lotus-symbol">🌷</span>
+                        </div>
+                        <div class="bjp-green"></div>
+                    </div>
+                </div>
+                <div class="faction-name">BJP</div>
+                <div class="vote-count" id="countA">0</div>
+                <button class="vote-btn btn-bjp" id="voteBtnA">VOTE BJP</button>
+            </div>
+
+            <!-- CJP Card -->
+            <div class="faction-card faction-cjp">
+                <div class="flag-box">
+                    <div class="cjp-flag-graphic">
+                        <div class="cjp-top"></div>
+                        <div class="cjp-mid">🐜</div>
+                        <div class="cjp-bot"></div>
+                    </div>
+                </div>
+                <div class="faction-name">CJP</div>
+                <div class="vote-count" id="countB">0</div>
+                <button class="vote-btn btn-cjp" id="voteBtnB">VOTE CJP</button>
+            </div>
+        </div>
+
+        <div class="progress-wrapper">
+            <div class="bar-a" id="barA"></div>
+            <div class="bar-b" id="barB"></div>
+        </div>
+
+        <div class="daily-tally">
+            <div class="tally-title">🏆 TODAY'S HOURLY VICTORIES</div>
+            <div class="tally-grid">
+                <div class="tally-item">
+                    <span style="color: #FF9933; font-weight: bold;">BJP</span>
+                    <span class="tally-wins" id="todayWinsA" style="color: #FF9933;">0</span>
+                </div>
+                <div style="color: #a0a5c0; font-family: 'Orbitron';">VS</div>
+                <div class="tally-item">
+                    <span style="color: #0096FF; font-weight: bold;">CJP</span>
+                    <span class="tally-wins" id="todayWinsB" style="color: #0096FF;">0</span>
+                </div>
+            </div>
+        </div>
+
+        <a href="../../index.html" class="back-link">‹ Back to All Games</a>
+    </div>
+
+    <div class="modal-overlay" id="winnerModal">
+        <div class="winner-card">
+            <div class="winner-crown">👑</div>
+            <h2 style="font-family: 'Orbitron'; color: #ffbb00; font-size: 1.4rem; margin-bottom: 8px;">HOURLY CHAMPION!</h2>
+            <div id="winnerText" style="font-family: 'Orbitron'; font-size: 1.8rem; font-weight: 900; margin: 12px 0;">BJP</div>
+            <p style="color: #a0a5c0; font-size: 0.9rem; margin-bottom: 20px;" id="winnerDetail">With 142 total votes this hour!</p>
+            <button class="vote-btn btn-cjp" onclick="closeWinnerModal()">CONTINUE TO NEXT HOUR</button>
+        </div>
+    </div>
+
+    <script>
+        // Starfield Canvas Background
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+        let W, H, stars = [];
+
+        function resizeCanvas() {
+            W = canvas.width = window.innerWidth;
+            H = canvas.height = window.innerHeight;
+            stars = [];
+            for(let i = 0; i < 120; i++) {
+                stars.push({
+                    x: Math.random() * W,
+                    y: Math.random() * H,
+                    radius: Math.random() * 1.5 + 0.5,
+                    alpha: Math.random(),
+                    speed: Math.random() * 0.02 + 0.005
+                });
+            }
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function drawStars() {
+            ctx.clearRect(0, 0, W, H);
+            stars.forEach(s => {
+                s.alpha += s.speed;
+                if(s.alpha > 1 || s.alpha < 0) s.speed = -s.speed;
+                ctx.save();
+                ctx.globalAlpha = Math.abs(s.alpha);
+                ctx.beginPath();
+                ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#FF9933';
+                ctx.shadowColor = '#FF9933';
+                ctx.shadowBlur = 6;
+                ctx.fill();
+                ctx.restore();
+            });
+            requestAnimationFrame(drawStars);
+        }
+        drawStars();
+
+        /* ==========================================================================
+           CENTRAL CLOUD SYNC ENGINE (JSONBIN.IO INTEGRATION)
+           ========================================================================== */
+        
+        const JSONBIN_ID = "6a7e9db2da38895dfee2d51f";
+        const JSONBIN_KEY = "$2a$10$ulIZtSSR1ilcTAtQxd9/mOO42T/z5x6YTpFwfV.7w6hjnwh5PVw0O";
+        const API_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
+
+        let votesA = 0;
+        let votesB = 0;
+        let winsA = 0;
+        let winsB = 0;
+        let hasVotedThisHour = false;
+        let isSyncing = false;
+
+        let audioCtx;
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        function playSound(freq, duration = 0.15) {
+            if (!audioCtx) return;
+            try {
+                let osc = audioCtx.createOscillator();
+                let gain = audioCtx.createGain();
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) {}
+        }
+
+        function getCurrentHourKey() {
+            const now = new Date();
+            return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}-H${now.getHours()}`;
+        }
+
+        // function getCurrentHourKey() {
+        //     const now = new Date();
+        //     // Replaces hourly key with a minute-by-minute key: YYYY-MM-DD-H14-M32
+        //     return `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}-H${now.getHours()}-M${now.getMinutes()}`;
+        // }
+
+        async function fetchGlobalData() {
+            if (isSyncing) return;
+
+            try {
+                const res = await fetch(`${API_URL}/latest`, {
+                    method: 'GET',
+                    headers: { 
+                        'X-Master-Key': JSONBIN_KEY 
+                    }
+                });
+
+                if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+
+                const json = await res.json();
+                const record = json.record;
+                console.log('json', JSON.stringify(record))
+                if (!record) return;
+
+                const hourKey = getCurrentHourKey();
+
+                if (record.currentHour && record.currentHour !== hourKey) {
+                    votesA = 0;
+                    votesB = 0;
+                    winsA = Number(record.winsA) || 0;
+                    winsB = Number(record.winsB) || 0;
+                    await pushToCloud(0, 0, winsA, winsB, hourKey);
+                } else {
+                    votesA = Number(record.votesA) || 0;
+                    votesB = Number(record.votesB) || 0;
+                    winsA = Number(record.winsA) || 0;
+                    winsB = Number(record.winsB) || 0;
+                }
+
+                hasVotedThisHour = localStorage.getItem('hvc_voted_' + hourKey) === 'true';
+                updateUI();
+
+            } catch(err) {
+                console.error("Cloud Fetch Error:", err);
+            }
+        }
+
+        async function pushToCloud(vA, vB, wA, wB, hourKey) {
+            const payload = {
+                votesA: vA,
+                votesB: vB,
+                winsA: wA,
+                winsB: wB,
+                currentHour: hourKey
+            };
+
+            const res = await fetch(API_URL, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Master-Key': JSONBIN_KEY
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!res.ok) {
+                const errorText = await res.text();
+                throw new Error(`JSONBin PUT failed with status ${res.status}: ${errorText}`);
+            }
+
+            return await res.json();
+        }
+
+        async function castVote(faction) {
+            initAudio();
+            if (hasVotedThisHour || isSyncing) return;
+
+            isSyncing = true;
+            const hourKey = getCurrentHourKey();
+
+            try {
+                const res = await fetch(`${API_URL}/latest`, {
+                    headers: { 'X-Master-Key': JSONBIN_KEY }
+                });
+                const json = await res.json();
+                console.log('json', JSON.stringify(json))
+                const record = json.record || {};
+
+                let currentA = Number(record.votesA) || 0;
+                let currentB = Number(record.votesB) || 0;
+                let currentWinsA = Number(record.winsA) || 0;
+                let currentWinsB = Number(record.winsB) || 0;
+
+                if (faction === 'A') currentA++;
+                if (faction === 'B') currentB++;
+
+                await pushToCloud(currentA, currentB, currentWinsA, currentWinsB, hourKey);
+
+                votesA = currentA;
+                votesB = currentB;
+                winsA = currentWinsA;
+                winsB = currentWinsB;
+                
+                hasVotedThisHour = true;
+                localStorage.setItem('hvc_voted_' + hourKey, 'true');
+
+                if (faction === 'A') playSound(523, 0.2);
+                else playSound(659, 0.2);
+
+                updateUI();
+
+            } catch (err) {
+                console.error("Failed to submit vote:", err);
+            } finally {
+                isSyncing = false;
+            }
+        }
+
+        function updateUI() {
+            document.getElementById('countA').innerText = votesA;
+            document.getElementById('countB').innerText = votesB;
+            document.getElementById('todayWinsA').innerText = winsA;
+            document.getElementById('todayWinsB').innerText = winsB;
+
+            const total = votesA + votesB;
+            const pctA = total === 0 ? 50 : Math.round((votesA / total) * 100);
+
+            document.getElementById('barA').style.width = pctA + '%';
+            document.getElementById('barB').style.width = (100 - pctA) + '%';
+
+            const btnA = document.getElementById('voteBtnA');
+            const btnB = document.getElementById('voteBtnB');
+
+            if (hasVotedThisHour) {
+                btnA.disabled = true;
+                btnB.disabled = true;
+                btnA.innerText = 'VOTED';
+                btnB.innerText = 'VOTED';
+            } else {
+                btnA.disabled = false;
+                btnB.disabled = false;
+                btnA.innerText = 'VOTE BJP';
+                btnB.innerText = 'VOTE CJP';
+            }
+        }
+
+        document.getElementById('voteBtnA').addEventListener('click', () => castVote('A'));
+        document.getElementById('voteBtnB').addEventListener('click', () => castVote('B'));
+
+        let resultCrownedThisHour = false;
+
+        function tickTimer() {
+            const now = new Date();
+            const mins = now.getMinutes();
+            const secs = now.getSeconds();
+
+            const remainMins = 59 - mins;
+            const remainSecs = 59 - secs;
+
+            const formatM = String(remainMins).padStart(2, '0');
+            const formatS = String(remainSecs).padStart(2, '0');
+
+            document.getElementById('countdown').innerText = `${formatM}m : ${formatS}s`;
+
+            if (mins === 59) {
+                document.getElementById('timerStatus').innerText = '🔥 HOURLY RESULT RELEASED!';
+                if (!resultCrownedThisHour) {
+                    crownWinner();
+                    resultCrownedThisHour = true;
+                }
+            } else {
+                document.getElementById('timerStatus').innerText = 'HOURLY BATTLE ENDS IN';
+                resultCrownedThisHour = false;
+            }
+        }
+// function tickTimer() {
+//     const now = new Date();
+//     const secs = now.getSeconds();
+
+//     // 60-second countdown cycle
+//     const remainSecs = 59 - secs;
+//     const formatS = String(remainSecs).padStart(2, '0');
+
+//     document.getElementById('countdown').innerText = `00m : ${formatS}s`;
+
+//     // Trigger winner reveal in the last second of every minute
+//     if (secs === 59) {
+//         document.getElementById('timerStatus').innerText = '🔥 MINUTE RESULT RELEASED!';
+//         if (!resultCrownedThisHour) {
+//             crownWinner();
+//             resultCrownedThisHour = true;
+//         }
+//     } else {
+//         document.getElementById('timerStatus').innerText = 'MINUTE BATTLE ENDS IN';
+//         resultCrownedThisHour = false;
+//     }
+// }
+        function crownWinner() {
+            let winnerName = "";
+            let winnerColor = "";
+            let detail = "";
+
+            let newWinsA = winsA;
+            let newWinsB = winsB;
+
+            if (votesA > votesB) {
+                winnerName = "BJP";
+                winnerColor = "#FF9933";
+                detail = `Won with ${votesA} votes vs ${votesB}!`;
+                newWinsA++;
+            } else if (votesB > votesA) {
+                winnerName = "CJP";
+                winnerColor = "#0096FF";
+                detail = `Won with ${votesB} votes vs ${votesA}!`;
+                newWinsB++;
+            } else {
+                winnerName = "IT'S A DRAW!";
+                winnerColor = "#ffbb00";
+                detail = `Both parties tied at ${votesA} votes!`;
+            }
+
+            pushToCloud(votesA, votesB, newWinsA, newWinsB, getCurrentHourKey());
+
+            document.getElementById('winnerText').innerText = winnerName;
+            document.getElementById('winnerText').style.color = winnerColor;
+            document.getElementById('winnerDetail').innerText = detail;
+            document.getElementById('winnerModal').classList.add('active');
+
+            playSound(880, 0.4);
+        }
+
+        function closeWinnerModal() {
+            document.getElementById('winnerModal').classList.remove('active');
+        }
+
+        fetchGlobalData();
+        setInterval(fetchGlobalData, 3000);
+        setInterval(tickTimer, 1000);
+        tickTimer();
+    </script>
+</body>
+</html>
