@@ -1189,3 +1189,67 @@ a.is-new::before {
     transform: translateX(5px);
     stroke: #050510;
 }
+
+
+.ao-theme-trading {
+    background: rgba(255, 0, 85, 0.85)!important;
+    border: 1px solid rgba(0, 240, 255, 0.25)!important;
+    box-shadow: 0 8px 24px rgba(0, 240, 255, 0.1)!important;
+}
+
+.ao-theme-trading .ngd-badge-pulse {
+    background-color: #ffbb00;
+}
+
+.ao-theme-trading:hover {
+    border-color: #00f0ff;
+    box-shadow: 0 12px 30px rgba(0, 240, 255, 0.25);
+}
+
+.ngd-card-chart-preview {
+    background: rgba(0, 240, 255, 0.04);
+    border: 1px dashed rgba(0, 240, 255, 0.2);
+    border-radius: 12px;
+    padding: 10px;
+    margin: 12px 0;
+}
+
+.ngd-chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.ngd-ticker {
+    color: #fff;
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+.ngd-price-up {
+    color: #00ff88;
+    font-family: 'Orbitron', sans-serif;
+}
+
+.ngd-mini-graph {
+    margin-top: 8px;
+    height: 35px;
+    width: 100%;
+}
+
+.ngd-graph-svg {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+@keyframes pulseDot {
+    0% { r: 3; opacity: 1; }
+    50% { r: 6; opacity: 0.5; }
+    100% { r: 3; opacity: 1; }
+}
+
+.ngd-ping-dot {
+    animation: pulseDot 1.2s infinite ease-in-out;
+}

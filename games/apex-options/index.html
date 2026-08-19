@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Apex Options | Dynamic Fake Share Market Simulator</title>
+    
+    <!-- Fonts & Chart.js -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            background-color: #070913;
+            color: #ffffff;
+            font-family: 'Space Grotesk', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        .trader-app {
+            width: 100vw;
+            height: 100vh;
+            max-width: 480px;
+            max-height: 900px;
+            background: #0d1124;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.15);
+        }
+
+        @media (min-height: 700px) and (min-width: 500px) {
+            .trader-app {
+                height: 94vh;
+                border-radius: 24px;
+                border: 1px solid rgba(0, 240, 255, 0.2);
+            }
+        }
+
+        /* Top Header */
+        .header {
+            background: rgba(18, 24, 48, 0.95);
+            padding: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .asset-info h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            color: #00f0ff;
+            letter-spacing: 0.5px;
+        }
+
+        .live-price {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 800;
+            transition: color 0.3s;
+        }
+
+        .price-up { color: #00ff88; }
+        .price-down { color: #ff0055; }
+
+        .wallet-card {
+            text-align: right;
+            background: rgba(0, 240, 255, 0.05);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            padding: 6px 12px;
+            border-radius: 12px;
+        }
+
+        .wallet-label {
+            font-size: 0.65rem;
+            color: #7b8cae;
+            text-transform: uppercase;
+        }
+
+        .wallet-amount {
+            font-family: 'Orbitron', sans-serif;
+            color: #00f0ff;
+            font-size: 1rem;
+            font-weight: 800;
+        }
+
+        /* Chart Canvas Area */
+        .chart-container {
+            flex: 1;
+            padding: 10px;
+            position: relative;
+            min-height: 250px;
+            background: radial-gradient(circle at center, rgba(0, 240, 255, 0.03) 0%, transparent 70%);
+        }
+
+        /* Control Panel */
+        .control-panel {
+            background: #121830;
+            padding: 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .options-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .input-group label {
+            font-size: 0.7rem;
+            color: #7b8cae;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .input-group select, .input-group input {
+            background: #090d1f;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            outline: none;
+        }
+
+        /* Action Buttons */
+        .trade-btns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .btn-call {
+            background: linear-gradient(135deg, #00b060, #00ff88);
+            color: #000;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+            transition: transform 0.1s;
+        }
+
+        .btn-put {
+            background: linear-gradient(135deg, #b0003a, #ff0055);
+            color: #fff;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 0, 85, 0.3);
+            transition: transform 0.1s;
+        }
+
+        .btn-call:active, .btn-put:active { transform: scale(0.96); }
+
+        /* Active Trade Bar */
+        .active-trade-bar {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 12px;
+            padding: 10px 14px;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .active-trade-bar.show { display: flex; }
+
+        .trade-info { font-size: 0.8rem; }
+        .pnl-text { font-family: 'Orbitron', sans-serif; font-weight: 800; }
+
+        .btn-close-trade {
+            background: #ff0055;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+
+        /* Overlay Game Over Modal */
+        .modal {
+            position: absolute;
+            inset: 0;
+            background: rgba(7, 9, 19, 0.95);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+            z-index: 100;
+        }
+
+        .modal.show { display: flex; }
+
+        .modal h2 {
+            font-family: 'Orbitron', sans-serif;
+            color: #ff0055;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .modal p { color: #a0aabf; margin-bottom: 20px; }
+
+        .btn-reset {
+            background: linear-gradient(90deg, #00f0ff, #7000ff);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="trader-app">
+        <!-- Header -->
+        <header class="header">
+            <div class="asset-info">
+                <h2>NIFTY_FAKE 50</h2>
+                <div class="live-price price-up" id="livePrice">18,500.00</div>
+            </div>
+            <a href="../../index.html" class="btn-action btn-home" style="color:#fff">‹ Back</a>
+            <div class="wallet-card">
+                <div class="wallet-label">Demo Balance</div>
+                <div class="wallet-amount" id="walletVal">₡ 10,000</div>
+            </div>
+        </header>
+
+        <!-- Dynamic Chart -->
+        <div class="chart-container">
+            <canvas id="marketChart"></canvas>
+        </div>
+
+        <!-- Active Position Card (if trade ongoing) -->
+        <div style="padding: 0 16px;">
+            <div class="active-trade-bar" id="activeTradeBar">
+                <div class="trade-info">
+                    <span id="tradeTypeBadge" style="font-weight:800;">CALL</span> @ <span id="strikePrice">0.00</span>
+                    <br>
+                    <span style="color:#7b8cae; font-size:0.7rem;">Timer: <b id="timerCountdown">--</b>s</span>
+                </div>
+                <div>
+                    <span class="pnl-text" id="livePnl">₡ +0.00</span>
+                </div>
+                <button class="btn-close-trade" id="btnCloseTrade">SELL NOW</button>
+            </div>
+        </div>
+
+        <!-- Trading Controls -->
+        <footer class="control-panel">
+            <div class="options-row">
+                <div class="input-group">
+                    <label>Trade Amount (₡)</label>
+                    <input type="number" id="tradeAmount" value="500" min="100" step="100">
+                </div>
+                <div class="input-group">
+                    <label>Expiry Mode</label>
+                    <select id="expiryTime">
+                        <option value="10">10 Seconds</option>
+                        <option value="30" selected>30 Seconds</option>
+                        <option value="60">1 Minute</option>
+                        <option value="0">Manual Sell Only</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="trade-btns">
+                <button class="btn-call" onclick="placeTrade('CALL')">▲ CALL (UP)</button>
+                <button class="btn-put" onclick="placeTrade('PUT')">▼ PUT (DOWN)</button>
+            </div>
+        </footer>
+
+        <!-- Game Over Modal -->
+        <div class="modal" id="bankruptModal">
+            <h2>BANKRUPT!</h2>
+            <p>Aapka wallet balance ₡0 ho gaya hai!</p>
+            <button class="btn-reset" onclick="resetWallet()">RESET BALANCE (₡ 10,000)</button>
+        </div>
+    </div>
+
+    <script>
+        let wallet = 10000;
+        let currentPrice = 18500.00;
+        let priceHistory = Array(20).fill(18500.00);
+        let timeLabels = Array(20).fill('');
+
+        let activePosition = null;
+        let tradeTimer = null;
+        let remainingSeconds = 0;
+
+        // Elements
+        const livePriceEl = document.getElementById('livePrice');
+        const walletValEl = document.getElementById('walletVal');
+        const activeTradeBar = document.getElementById('activeTradeBar');
+        const tradeTypeBadge = document.getElementById('tradeTypeBadge');
+        const strikePriceEl = document.getElementById('strikePrice');
+        const timerCountdownEl = document.getElementById('timerCountdown');
+        const livePnlEl = document.getElementById('livePnl');
+        const btnCloseTrade = document.getElementById('btnCloseTrade');
+        const bankruptModal = document.getElementById('bankruptModal');
+
+        // Setup Chart.js
+        const ctx = document.getElementById('marketChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: timeLabels,
+                datasets: [{
+                    label: 'Market Price',
+                    data: priceHistory,
+                    borderColor: '#00f0ff',
+                    borderWidth: 2,
+                    fill: true,
+                    backgroundColor: 'rgba(0, 240, 255, 0.05)',
+                    tension: 0.2,
+                    pointRadius: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false,
+                scales: {
+                    x: { display: false },
+                    y: {
+                        grid: { color: 'rgba(255,255,255,0.05)' },
+                        ticks: { color: '#7b8cae', font: { family: 'Space Grotesk' } }
+                    }
+                },
+                plugins: { legend: { display: false } }
+            }
+        });
+
+        // Market Price Generator (Simulating tick updates)
+        setInterval(() => {
+            const change = (Math.random() - 0.49) * 12.5; // Random price shift
+            const prevPrice = currentPrice;
+            currentPrice = Math.max(1000, currentPrice + change);
+
+            // Update UI Price Text & Color
+            livePriceEl.innerText = currentPrice.toFixed(2);
+            if (currentPrice >= prevPrice) {
+                livePriceEl.className = 'live-price price-up';
+            } else {
+                livePriceEl.className = 'live-price price-down';
+            }
+
+            // Update Chart
+            priceHistory.push(currentPrice);
+            priceHistory.shift();
+            chart.data.datasets[0].data = priceHistory;
+            
+            // Dynamic chart line color based on direction
+            chart.data.datasets[0].borderColor = currentPrice >= priceHistory[priceHistory.length - 2] ? '#00ff88' : '#ff0055';
+            chart.update();
+
+            // Evaluate ongoing trade
+            if (activePosition) {
+                updatePnl();
+            }
+        }, 800);
+
+        function updateWalletUI() {
+            walletValEl.innerText = `₡ ${Math.max(0, wallet).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            if (wallet <= 0 && !activePosition) {
+                bankruptModal.classList.add('show');
+            }
+        }
+
+        function placeTrade(type) {
+            if (activePosition) {
+                alert('Ek waqt par ek hi trade open ho sakti hai!');
+                return;
+            }
+
+            const amount = parseFloat(document.getElementById('tradeAmount').value);
+            const duration = parseInt(document.getElementById('expiryTime').value);
+
+            if (isNaN(amount) || amount <= 0) {
+                alert('Sahi amount daalein!');
+                return;
+            }
+
+            if (amount > wallet) {
+                alert('Aapke wallet me itna balance nahi hai!');
+                return;
+            }
+
+            // Deduct initial stake
+            wallet -= amount;
+            updateWalletUI();
+
+            activePosition = {
+                type: type,
+                strike: currentPrice,
+                amount: amount,
+                expiry: duration
+            };
+
+            // UI Setup for Active Trade
+            tradeTypeBadge.innerText = type;
+            tradeTypeBadge.style.color = type === 'CALL' ? '#00ff88' : '#ff0055';
+            strikePriceEl.innerText = currentPrice.toFixed(2);
+            activeTradeBar.classList.add('show');
+
+            if (duration > 0) {
+                remainingSeconds = duration;
+                timerCountdownEl.innerText = remainingSeconds;
+                tradeTimer = setInterval(() => {
+                    remainingSeconds--;
+                    timerCountdownEl.innerText = remainingSeconds;
+                    if (remainingSeconds <= 0) {
+                        settleTrade();
+                    }
+                }, 1000);
+            } else {
+                timerCountdownEl.innerText = '∞ (Manual)';
+            }
+        }
+
+        function calculateCurrentPnl() {
+            if (!activePosition) return 0;
+
+            const priceDiff = currentPrice - activePosition.strike;
+            const percentageChange = priceDiff / activePosition.strike;
+
+            if (activePosition.type === 'CALL') {
+                return activePosition.amount + (activePosition.amount * percentageChange * 50); // 50x multiplier for volatility
+            } else {
+                return activePosition.amount - (activePosition.amount * percentageChange * 50);
+            }
+        }
+
+        function updatePnl() {
+            const currentPayout = calculateCurrentPnl();
+            const netProfit = currentPayout - activePosition.amount;
+
+            if (netProfit >= 0) {
+                livePnlEl.innerText = `₡ +${netProfit.toFixed(2)}`;
+                livePnlEl.style.color = '#00ff88';
+            } else {
+                livePnlEl.innerText = `₡ ${netProfit.toFixed(2)}`;
+                livePnlEl.style.color = '#ff0055';
+            }
+        }
+
+        function settleTrade() {
+            if (!activePosition) return;
+
+            if (tradeTimer) clearInterval(tradeTimer);
+
+            const finalPayout = Math.max(0, calculateCurrentPnl());
+            wallet += finalPayout;
+
+            activePosition = null;
+            tradeTimer = null;
+            activeTradeBar.classList.remove('show');
+
+            updateWalletUI();
+        }
+
+        btnCloseTrade.addEventListener('click', () => {
+            settleTrade();
+        });
+
+        function resetWallet() {
+            wallet = 10000;
+            bankruptModal.classList.remove('show');
+            updateWalletUI();
+        }
+
+        updateWalletUI();
+    </script>
+</body>
+</html>

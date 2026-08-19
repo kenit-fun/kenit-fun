@@ -1544,11 +1544,11 @@ p.subtitle {
 
     background:
         radial-gradient(circle at 100% 0%, rgba(143, 211, 184, 0.07), transparent 42%),
-        linear-gradient(145deg, rgba(29, 42, 59, 0.96), rgba(18, 27, 40, 0.96)) !important;
+        linear-gradient(145deg, rgba(29, 42, 59, 0.96), rgba(18, 27, 40, 0.96));
 
-    border: 1px solid var(--kf-line) !important;
-    border-radius: var(--kf-radius) !important;
-    clip-path: none !important;
+    border: 1px solid var(--kf-line);
+    border-radius: var(--kf-radius);
+    clip-path: none;
 
     color: var(--kf-text);
     text-decoration: none;
