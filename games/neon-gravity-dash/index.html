@@ -5,36 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     
-    <!-- Primary SEO Meta Tags -->
-    <title>Neon Gravity Dash - Endless Cyber Orbital Runner</title>
-    <meta name="title" content="Neon Gravity Dash - Endless Cyber Orbital Runner">
-    <meta name="description" content="Play Neon Gravity Dash! Hook onto orbital gravity nodes, slingshot through endless space, collect energy orbs, and beat high scores in this addictive HTML5 runner.">
-    <meta name="keywords" content="endless runner, gravity slingshot, arcade physics, html5 game, cyber runner, mobile browser game, free online game">
+    <title>Sky Glide Dash - Daylight Flying Adventure</title>
+    <meta name="title" content="Sky Glide Dash - Daylight Flying Adventure">
+    <meta name="description" content="Glide your orb through vibrant sky obstacles! Avoid floating crystal hazards and level up speed every 1,000m.">
     <meta name="author" content="KenitFun Studios">
-    <meta name="robots" content="index, follow">
-    <meta name="theme-color" content="#080811">
-
-    <!-- Open Graph SEO -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="Neon Gravity Dash - Infinite Cyber Physics Runner">
-    <meta property="og:description" content="How far can you slingshot? Tap and hold to tether gravity rings and launch through endless space.">
-    <meta property="og:image" content="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80">
-
-    <!-- Structured Data (JSON-LD) -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "Neon Gravity Dash",
-      "operatingSystem": "Any Browser",
-      "applicationCategory": "GameApplication",
-      "genre": "Endless Physics Runner",
-      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
-    }
-    </script>
+    <meta name="theme-color" content="#4fc3f7">
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Quicksand:wght@600;700&display=swap');
 
         * {
             box-sizing: border-box;
@@ -50,9 +28,9 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            font-family: 'Rajdhani', sans-serif;
-            background-color: #080811;
-            color: #ffffff;
+            font-family: 'Quicksand', sans-serif;
+            background: #80deea;
+            color: #263238;
             position: fixed;
         }
 
@@ -60,10 +38,9 @@
             position: relative;
             width: 100vw;
             height: 100vh;
-            background: radial-gradient(circle at center, #101428 0%, #040409 100%);
+            background: linear-gradient(180deg, #81d4fa 0%, #b2ebf2 60%, #e0f7fa 100%);
         }
 
-        /* Responsive Top Bar Header (No Overlap Grid) */
         .top-nav {
             position: absolute;
             top: 12px;
@@ -80,50 +57,44 @@
 
         .back-home-btn {
             pointer-events: auto;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(0, 255, 204, 0.4);
-            padding: 6px 14px;
-            color: #00ffcc;
+            background: rgba(255, 255, 255, 0.85);
+            border: 2px solid #0288d1;
+            padding: 6px 16px;
+            color: #0277bd;
             text-decoration: none;
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Fredoka', sans-serif;
             font-weight: 700;
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             border-radius: 20px;
-            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 10px rgba(2, 136, 209, 0.15);
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            box-shadow: 0 0 10px rgba(0, 255, 204, 0.2);
             transition: all 0.2s ease;
             white-space: nowrap;
-            min-height: 36px;
+            min-height: 38px;
         }
 
         .back-home-btn:active {
             transform: scale(0.95);
-            background: rgba(0, 255, 204, 0.25);
+            background: #ffffff;
         }
 
-        /* Responsive SEO Title Bar */
         .seo-title {
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(0.85rem, 3.2vw, 1.25rem);
-            font-weight: 900;
-            letter-spacing: 1.5px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: clamp(0.9rem, 3.5vw, 1.35rem);
+            font-weight: 700;
+            letter-spacing: 1px;
             text-align: center;
-            background: linear-gradient(90deg, #ffffff 30%, #00ffcc 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            color: #01579b;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             padding: 0 5px;
+            text-shadow: 0 2px 4px rgba(255, 255, 255, 0.8);
         }
 
-        /* Header Right Spacer/Balance Element */
-        .nav-spacer {
-            width: 70px; /* Balances center title on desktop */
-        }
+        .nav-spacer { width: 70px; }
 
         canvas {
             display: block;
@@ -131,10 +102,9 @@
             height: 100vh;
         }
 
-        /* HUD Overlay */
         .hud {
             position: absolute;
-            top: 58px;
+            top: 60px;
             left: 0;
             width: 100%;
             padding: 0 20px;
@@ -142,44 +112,51 @@
             justify-content: space-between;
             pointer-events: none;
             z-index: 10;
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Fredoka', sans-serif;
         }
 
         .hud-val {
-            font-size: clamp(0.85rem, 2.8vw, 1.2rem);
-            color: #00ffcc;
-            text-shadow: 0 0 10px rgba(0, 255, 204, 0.6);
-            background: rgba(8, 8, 17, 0.4);
-            padding: 4px 10px;
-            border-radius: 12px;
-            border: 1px solid rgba(0, 255, 204, 0.15);
+            font-size: clamp(0.85rem, 2.8vw, 1.15rem);
+            color: #0277bd;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 6px 14px;
+            border-radius: 16px;
+            border: 2px solid #b3e5fc;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
             backdrop-filter: blur(4px);
+        }
+
+        .level-badge {
+            color: #f57c00;
+            border-color: #ffe0b2;
+            background: rgba(255, 248, 225, 0.95);
         }
 
         .help-text {
             position: absolute;
-            bottom: 20px;
+            bottom: 22px;
             width: 100%;
             padding: 0 10px;
             text-align: center;
-            font-size: clamp(0.75rem, 2.6vw, 1rem);
-            color: rgba(255, 255, 255, 0.75);
-            letter-spacing: 1.2px;
+            font-size: clamp(0.8rem, 2.8vw, 1.05rem);
+            font-weight: 700;
+            color: #0277bd;
+            letter-spacing: 0.8px;
             pointer-events: none;
-            animation: pulseText 2s infinite ease-in-out;
+            animation: bounceText 1.8s infinite ease-in-out;
             z-index: 10;
+            text-shadow: 0 2px 4px rgba(255, 255, 255, 0.9);
         }
 
-        @keyframes pulseText {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 0.9; }
+        @keyframes bounceText {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
 
-        /* Modal Overlay */
         .modal {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(8, 8, 17, 0.92);
+            background: rgba(224, 247, 250, 0.88);
             backdrop-filter: blur(8px);
             display: flex;
             flex-direction: column;
@@ -193,27 +170,28 @@
         .modal.hidden { display: none; }
 
         .modal-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(0, 255, 204, 0.3);
-            border-radius: 20px;
-            padding: 28px 20px;
-            max-width: 390px;
+            background: #ffffff;
+            border: 3px solid #81d4fa;
+            border-radius: 24px;
+            padding: 30px 22px;
+            max-width: 400px;
             width: 92%;
-            box-shadow: 0 0 30px rgba(0, 255, 204, 0.2);
+            box-shadow: 0 10px 30px rgba(2, 136, 209, 0.18);
         }
 
         .modal-card h2 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: clamp(1.4rem, 4.5vw, 1.9rem);
-            color: #00ffcc;
-            margin-bottom: 10px;
+            font-family: 'Fredoka', sans-serif;
+            font-size: clamp(1.5rem, 4.8vw, 2.1rem);
+            color: #0288d1;
+            margin-bottom: 8px;
         }
 
         .modal-card p {
-            color: #a0a5c0;
-            font-size: 0.95rem;
-            margin-bottom: 20px;
-            line-height: 1.4;
+            color: #546e7a;
+            font-size: 0.98rem;
+            margin-bottom: 22px;
+            line-height: 1.45;
+            font-weight: 600;
         }
 
         .modal-btn-group {
@@ -225,31 +203,43 @@
 
         .btn-action {
             border: none;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 800;
-            padding: 11px 22px;
+            font-family: 'Fredoka', sans-serif;
+            font-weight: 700;
+            padding: 12px 20px;
             border-radius: 30px;
             cursor: pointer;
-            transition: transform 0.2s ease;
-            font-size: 0.82rem;
-            letter-spacing: 1px;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn-primary {
-            background: linear-gradient(90deg, #00ffcc, #00f0ff);
-            color: #000;
-            box-shadow: 0 0 20px rgba(0, 255, 204, 0.4);
+            background: linear-gradient(180deg, #ff9800 0%, #f57c00 100%);
+            color: #ffffff;
+            box-shadow: 0 6px 16px rgba(245, 124, 0, 0.35);
+            flex: 1 1 100%;
         }
 
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: #ffffff;
+            background: #e1f5fe;
+            border: 2px solid #81d4fa;
+            color: #0288d1;
+            flex: 1;
         }
 
-        .btn-action:active { transform: scale(0.95); }
+        .btn-home-modal {
+            background: #f5f5f5;
+            border: 2px solid #b0bec5;
+            color: #455a64;
+            flex: 1;
+        }
 
-        /* FAQ Popup Box */
+        .btn-action:active { transform: scale(0.94); }
+
         .faq-card {
             text-align: left;
             max-height: 82vh;
@@ -257,125 +247,102 @@
         }
 
         .faq-card h3 {
-            font-family: 'Orbitron', sans-serif;
-            color: #00ffcc;
-            font-size: 1.25rem;
+            font-family: 'Fredoka', sans-serif;
+            color: #0288d1;
+            font-size: 1.35rem;
             margin-bottom: 15px;
             text-align: center;
         }
 
         .faq-step {
-            margin-bottom: 10px;
-            background: rgba(255, 255, 255, 0.04);
-            border-left: 3px solid #00ffcc;
-            padding: 8px 12px;
-            border-radius: 0 8px 8px 0;
+            margin-bottom: 12px;
+            background: #f1f8e9;
+            border-left: 4px solid #7cb342;
+            padding: 10px 14px;
+            border-radius: 0 12px 12px 0;
         }
 
         .faq-step h4 {
-            font-size: 0.85rem;
-            color: #ffffff;
+            font-size: 0.9rem;
+            color: #33691e;
             margin-bottom: 2px;
-            font-family: 'Orbitron', sans-serif;
+            font-family: 'Fredoka', sans-serif;
         }
 
         .faq-step p {
-            font-size: 0.8rem;
-            color: #a0a5c0;
+            font-size: 0.85rem;
+            color: #558b2f;
             margin-bottom: 0;
         }
 
         .close-faq-btn {
             width: 100%;
-            margin-top: 12px;
+            margin-top: 14px;
         }
 
-        /* Mobile Responsive Media Queries */
         @media (max-width: 480px) {
-            .top-nav {
-                grid-template-columns: auto 1fr; /* Drop spacer on mobile */
-                padding: 0 10px;
-            }
-            .nav-spacer {
-                display: none;
-            }
-            .seo-title {
-                text-align: right; /* Right align on small screens to give room to back button */
-                font-size: 0.8rem;
-            }
-            .hud {
-                top: 52px;
-                padding: 0 10px;
-            }
-            .hud-val {
-                font-size: 0.75rem;
-                padding: 3px 8px;
-            }
+            .top-nav { grid-template-columns: auto 1fr; padding: 0 10px; }
+            .nav-spacer { display: none; }
+            .seo-title { text-align: right; font-size: 0.85rem; }
+            .hud { top: 54px; padding: 0 10px; }
+            .hud-val { font-size: 0.75rem; padding: 4px 8px; }
         }
     </style>
 </head>
 <body>
 
     <div id="gameContainer">
-        <!-- Responsive Navigation Header (No Overlap) -->
         <header class="top-nav">
             <a href="../../index.html" class="back-home-btn" aria-label="Go to Homepage">
                 ‹ HOME
             </a>
-            <h1 class="seo-title">NEON GRAVITY DASH</h1>
-            <div class="nav-spacer"></div> <!-- Spacer element -->
+            <h1 class="seo-title">SKY GLIDE DASH</h1>
+            <div class="nav-spacer"></div>
         </header>
 
-        <!-- Top Score HUD -->
         <div class="hud">
             <div class="hud-val">DIST: <span id="distVal">0</span>m</div>
+            <div class="hud-val level-badge">LEVEL: <span id="levelVal">1</span></div>
             <div class="hud-val">BEST: <span id="bestVal">0</span>m</div>
         </div>
 
-        <p class="help-text">HOLD SCREEN TO HOOK & ORBIT • RELEASE TO LAUNCH</p>
+        <p class="help-text">TOUCH & HOLD TO FLY UP • GENTLY GLIDE BETWEEN ASTEROIDS</p>
 
-        <!-- Game Canvas -->
         <canvas id="gameCanvas"></canvas>
 
-        <!-- Start / Game Over Modal -->
         <div class="modal" id="gameModal">
             <div class="modal-card">
-                <h2 id="modalTitle">ORBITAL RUNNER</h2>
-                <p id="modalDesc">Hook onto gravity nodes to dodge hazards and launch into deep space!</p>
+                <h2 id="modalTitle">SKY GLIDE DASH</h2>
+                <p id="modalDesc">Fly smoothly through the sky! Gently navigate between floating asteroids.</p>
                 
                 <div class="modal-btn-group">
-                    <button class="btn-action btn-primary" id="startBtn">START RUN</button>
+                    <button class="btn-action btn-primary" id="startBtn">START FLYING</button>
                     <button class="btn-action btn-secondary" id="faqBtn">❓ HOW TO PLAY</button>
+                    <a href="../../index.html" class="btn-action btn-home-modal" id="modalHomeBtn">🏠 HOME</a>
                 </div>
             </div>
         </div>
 
-        <!-- FAQ How-To-Play Modal -->
         <div class="modal hidden" id="faqModal">
             <div class="modal-card faq-card">
                 <h3>❓ HOW TO PLAY</h3>
                 
                 <div class="faq-step">
-                    <h4>1. 🎯 HOOK GRAVITY NODES</h4>
-                    <p>Tap and Hold anywhere on the screen when your orb is near a blue glowing gravity node to lock a tether beam.</p>
+                    <h4>1. 👆 SOFT TOUCH CONTROL</h4>
+                    <p>Touch and hold anywhere to softly float upward. Release to fall gently.</p>
                 </div>
 
                 <div class="faq-step">
-                    <h4>2. 🔄 ORBIT & GAIN SPEED</h4>
-                    <p>Holding down makes your orb swing around the node in a high-speed orbital arc.</p>
+                    <h4>2. 🪨 DODGE ASTEROIDS</h4>
+                    <p>Asteroids float above and below. Glide cleanly through the middle gap!</p>
                 </div>
 
                 <div class="faq-step">
-                    <h4>3. 🚀 RELEASE TO SLINGSHOT</h4>
-                    <p>Release your finger/mouse at the right angle to launch forward using centrifugal momentum.</p>
+                    <h4>3. ⚡ GRADUAL LEVEL PROGRESSION</h4>
+                    <p>Enjoy a relaxed starting pace that gently increases every 1,000 meters!</p>
                 </div>
 
-                <div class="faq-step">
-                    <h4>4. ⚠️ DODGE RED HAZARDS</h4>
-                    <p>Avoid touching red plasma spheres or falling off screen limits!</p>
-                </div>
-
-                <button class="btn-action btn-primary close-faq-btn" id="closeFaqBtn">GOT IT!</button>
+                <button class="btn-action btn-primary close-faq-btn" id="closeFaqBtn">LET'S FLY!</button>
             </div>
         </div>
     </div>
@@ -384,6 +351,7 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const distVal = document.getElementById('distVal');
+        const levelVal = document.getElementById('levelVal');
         const bestVal = document.getElementById('bestVal');
         const gameModal = document.getElementById('gameModal');
         const faqModal = document.getElementById('faqModal');
@@ -392,10 +360,11 @@
         const closeFaqBtn = document.getElementById('closeFaqBtn');
 
         let W, H, scale;
-        let distance = 0, bestDistance = 0;
+        let distance = 0, currentLevel = 1, bestDistance = localStorage.getItem('sgd_best_dist') || 0;
+        bestVal.innerText = bestDistance;
+
         let isGameOver = false, isHolding = false;
 
-        // Audio Synth
         let audioCtx;
         function initAudio() {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -409,7 +378,7 @@
                 let gain = audioCtx.createGain();
                 osc.type = type;
                 osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
                 gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
                 osc.connect(gain);
                 gain.connect(audioCtx.destination);
@@ -426,252 +395,328 @@
         window.addEventListener('resize', resize);
         resize();
 
-        // Game World Entities
-        class OrbPlayer {
-            constructor() {
-                this.x = 100 * scale;
-                this.y = H / 2;
-                this.vx = 4 * scale;
-                this.vy = 0;
-                this.radius = 12 * scale;
-                this.tetherNode = null;
-                this.tetherDist = 0;
+        class Cloud {
+            constructor(x) {
+                this.x = x || Math.random() * W;
+                this.y = Math.random() * (H * 0.55);
+                this.speed = (Math.random() * 0.3 + 0.2) * scale;
+                this.radius = (Math.random() * 25 + 20) * scale;
+            }
+
+            update(camSpeed) {
+                this.x -= this.speed + (camSpeed * 0.12);
+                if (this.x < -100 * scale) {
+                    this.x = W + 100 * scale;
+                    this.y = Math.random() * (H * 0.55);
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.arc(this.x + this.radius * 0.7, this.y - this.radius * 0.2, this.radius * 0.7, 0, Math.PI * 2);
+                ctx.arc(this.x - this.radius * 0.7, this.y + this.radius * 0.1, this.radius * 0.6, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        class SparkParticle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.vx = (Math.random() - 0.5) * 3 * scale;
+                this.vy = (Math.random() - 0.5) * 3 * scale;
+                this.radius = Math.random() * 3 * scale + 2;
+                this.alpha = 1;
+                this.color = color;
             }
 
             update() {
-                if (this.tetherNode) {
-                    // Orbit Math
-                    let dx = this.x - this.tetherNode.x;
-                    let dy = this.y - this.tetherNode.y;
-                    let angle = Math.atan2(dy, dx);
-                    
-                    let speed = Math.hypot(this.vx, this.vy);
-                    speed = Math.max(5 * scale, speed * 1.005); // Gravity acceleration
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= 0.025;
+            }
 
-                    angle += (speed / this.tetherDist);
-                    this.x = this.tetherNode.x + Math.cos(angle) * this.tetherDist;
-                    this.y = this.tetherNode.y + Math.sin(angle) * this.tetherDist;
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.alpha);
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
 
-                    this.vx = -Math.sin(angle) * speed;
-                    this.vy = Math.cos(angle) * speed;
-                } else {
-                    // Free flight
-                    this.x += this.vx;
-                    this.y += this.vy;
-                    this.vy += 0.08 * scale; // Gravity drift
+        class PlayerOrb {
+            constructor() {
+                this.x = 120 * scale;
+                this.y = H / 2;
+                this.vy = 0;
+                // Soft, highly accurate physics settings
+                this.gravity = 0.22 * scale;
+                this.lift = -0.48 * scale;
+                this.radius = 12 * scale;
+                // Slower baseline forward speed
+                this.baseSpeed = 2.1 * scale;
+                this.speed = this.baseSpeed;
+            }
+
+            update() {
+                this.speed = this.baseSpeed + (currentLevel - 1) * (0.6 * scale);
+
+                if (isHolding) {
+                    this.vy += this.lift;
+                }
+                this.vy += this.gravity;
+                // Smooth speed cap
+                this.vy = Math.max(-4.5 * scale, Math.min(4.5 * scale, this.vy));
+
+                this.x += this.speed;
+                this.y += this.vy;
+
+                let topBoundary = 48 * scale;
+                let bottomBoundary = H - (40 * scale);
+
+                if (this.y - this.radius < topBoundary) {
+                    this.y = topBoundary + this.radius;
+                    this.vy = 0;
+                }
+                if (this.y + this.radius > bottomBoundary) {
+                    this.y = bottomBoundary - this.radius;
+                    this.vy = 0;
                 }
 
-                // Bounds Check
-                if (this.y < -50 || this.y > H + 50) {
+                if (isHolding && Math.random() > 0.4) {
+                    particles.push(new SparkParticle(this.x - this.radius, this.y, '#ffb74d'));
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius + 6 * scale, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 183, 77, 0.35)';
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fillStyle = '#f57c00';
+                ctx.fill();
+
+                ctx.beginPath();
+                ctx.arc(this.x - 3 * scale, this.y - 3 * scale, this.radius * 0.45, 0, Math.PI * 2);
+                ctx.fillStyle = '#fff3e0';
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        class AsteroidHazard {
+            constructor(x) {
+                this.x = x;
+                this.gapSize = (Math.random() * 30 + 180) * scale; // Generous clear gap
+                this.centerY = Math.random() * (H * 0.5) + H * 0.25;
+                
+                this.topY = this.centerY - (this.gapSize / 2);
+                this.bottomY = this.centerY + (this.gapSize / 2);
+
+                this.topRadius = (Math.random() * 20 + 38) * scale;
+                this.bottomRadius = (Math.random() * 20 + 38) * scale;
+
+                this.topAsteroidY = Math.max(70 * scale, this.topY - this.topRadius);
+                this.bottomAsteroidY = Math.min(H - 50 * scale, this.bottomY + this.bottomRadius);
+            }
+
+            drawAsteroidShape(cx, cy, r, seed) {
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.fillStyle = '#78909c';
+                ctx.strokeStyle = '#37474f';
+                ctx.lineWidth = 3 * scale;
+
+                ctx.beginPath();
+                let points = 8;
+                for (let i = 0; i < points; i++) {
+                    let angle = (i / points) * Math.PI * 2;
+                    let variance = Math.sin(i * 3 + seed) * 0.2 + 1;
+                    let pr = r * variance;
+                    let px = Math.cos(angle) * pr;
+                    let py = Math.sin(angle) * pr;
+                    if (i === 0) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                }
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                ctx.fillStyle = '#546e7a';
+                ctx.beginPath();
+                ctx.arc(-r * 0.2, -r * 0.2, r * 0.22, 0, Math.PI * 2);
+                ctx.arc(r * 0.25, r * 0.15, r * 0.18, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.restore();
+            }
+
+            draw() {
+                this.drawAsteroidShape(this.x, this.topAsteroidY, this.topRadius, 1);
+                this.drawAsteroidShape(this.x, this.bottomAsteroidY, this.bottomRadius, 2);
+            }
+
+            checkCollision(player) {
+                let dx1 = player.x - this.x;
+                let dy1 = player.y - this.topAsteroidY;
+                let dist1 = Math.sqrt(dx1 * dx1 + dy1 * dy1);
+
+                let dx2 = player.x - this.x;
+                let dy2 = player.y - this.bottomAsteroidY;
+                let dist2 = Math.sqrt(dx2 * dx2 + dy2 * dy2);
+
+                if (dist1 < player.radius + (this.topRadius * 0.8) || dist2 < player.radius + (this.bottomRadius * 0.8)) {
                     triggerGameOver();
                 }
-            }
-
-            draw() {
-                if (this.tetherNode) {
-                    // Tether Beam
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.moveTo(this.x, this.y);
-                    ctx.lineTo(this.tetherNode.x, this.tetherNode.y);
-                    ctx.strokeStyle = '#00ffcc';
-                    ctx.lineWidth = 2.5;
-                    ctx.shadowColor = '#00ffcc';
-                    ctx.shadowBlur = 10;
-                    ctx.stroke();
-                    ctx.restore();
-                }
-
-                // Orb Body
-                ctx.save();
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = '#ff0055';
-                ctx.shadowColor = '#ff0055';
-                ctx.shadowBlur = 15;
-                ctx.fill();
-                ctx.restore();
-            }
-        }
-
-        class GravityNode {
-            constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                this.radius = (Math.random() * 15 + 20) * scale;
-                this.pulse = 0;
-            }
-
-            draw() {
-                this.pulse += 0.05;
-                ctx.save();
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-                ctx.fillStyle = '#00f0ff';
-                ctx.shadowColor = '#00f0ff';
-                ctx.shadowBlur = 15 + Math.sin(this.pulse) * 5;
-                ctx.fill();
-
-                // Outer Ring
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius + 12 * scale, 0, Math.PI * 2);
-                ctx.strokeStyle = 'rgba(0, 240, 255, 0.25)';
-                ctx.lineWidth = 2;
-                ctx.stroke();
-                ctx.restore();
-            }
-        }
-
-        class Hazard {
-            constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                this.size = 18 * scale;
-            }
-
-            draw() {
-                ctx.save();
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = '#ff0055';
-                ctx.shadowColor = '#ff0055';
-                ctx.shadowBlur = 12;
-                ctx.fill();
-                ctx.restore();
             }
         }
 
         let player;
-        let nodes = [];
-        let hazards = [];
+        let obstacles = [];
+        let particles = [];
+        let clouds = [];
         let cameraX = 0;
 
         function initGame() {
             distance = 0;
+            currentLevel = 1;
+            distVal.innerText = 0;
+            levelVal.innerText = 1;
+
             isGameOver = false;
             isHolding = false;
             gameModal.classList.add('hidden');
             faqModal.classList.add('hidden');
 
-            player = new OrbPlayer();
-            nodes = [];
-            hazards = [];
+            player = new PlayerOrb();
+            obstacles = [];
+            particles = [];
+            
+            if (clouds.length === 0) {
+                for (let i = 0; i < 6; i++) clouds.push(new Cloud());
+            }
+
             cameraX = 0;
 
-            // Generate Initial Infinite World Track
-            let currentX = 250 * scale;
-            for (let i = 0; i < 8; i++) {
-                spawnNodeTrack(currentX);
-                currentX += (Math.random() * 100 + 200) * scale;
+            let startX = 400 * scale;
+            for (let i = 0; i < 5; i++) {
+                obstacles.push(new AsteroidHazard(startX));
+                startX += (Math.random() * 80 + 300) * scale;
             }
         }
 
-        function spawnNodeTrack(x) {
-            let y = Math.random() * (H * 0.6) + (H * 0.2);
-            nodes.push(new GravityNode(x, y));
-
-            // Hazard Chance
-            if (Math.random() > 0.4 && nodes.length > 2) {
-                hazards.push(new Hazard(x + 100 * scale, y + (Math.random() - 0.5) * 150 * scale));
-            }
-        }
-
-        function findClosestNode() {
-            let closest = null;
-            let minDist = Infinity;
-            nodes.forEach(n => {
-                let d = Math.hypot(player.x - n.x, player.y - n.y);
-                if (d < minDist && d < 250 * scale) {
-                    minDist = d;
-                    closest = n;
-                }
-            });
-            return { node: closest, dist: minDist };
-        }
-
-        // Pointer Controls
-        function onStart(e) {
+        function handleInputStart(e) {
             initAudio();
-            if (isGameOver || !gameModal.classList.contains('hidden') || !faqModal.classList.contains('hidden')) return;
+            if (e.target.closest('.modal') || e.target.closest('.back-home-btn') || e.target.closest('a')) return;
+            if (e.cancelable && e.type.startsWith('touch')) e.preventDefault();
+            if (isGameOver) return;
             isHolding = true;
-
-            let result = findClosestNode();
-            if (result.node) {
-                player.tetherNode = result.node;
-                player.tetherDist = result.dist;
-                playSound(600, 0.1, 'sine');
-            }
+            playSound(360, 0.08, 'sine');
         }
 
-        function onEnd() {
+        function handleInputEnd(e) {
             isHolding = false;
-            if (player.tetherNode) {
-                player.tetherNode = null;
-                playSound(880, 0.1, 'triangle'); // Slingshot Launch Sound
-            }
         }
 
-        canvas.addEventListener('pointerdown', onStart);
-        window.addEventListener('pointerup', onEnd);
+        window.addEventListener('touchstart', handleInputStart, { passive: false });
+        window.addEventListener('touchend', handleInputEnd, { passive: false });
+        window.addEventListener('touchcancel', handleInputEnd, { passive: false });
+        window.addEventListener('mousedown', handleInputStart);
+        window.addEventListener('mouseup', handleInputEnd);
 
         function triggerGameOver() {
             if (isGameOver) return;
             isGameOver = true;
             playSound(150, 0.3, 'sawtooth');
-            if (distance > bestDistance) bestDistance = distance;
+
+            for (let i = 0; i < 28; i++) {
+                particles.push(new SparkParticle(player.x, player.y, '#d32f2f'));
+            }
+
+            if (distance > bestDistance) {
+                bestDistance = distance;
+                localStorage.setItem('sgd_best_dist', bestDistance);
+            }
             bestVal.innerText = bestDistance;
-            document.getElementById('modalTitle').innerText = "RUN ENDED";
-            document.getElementById('modalDesc').innerText = `Distance Reached: ${distance}m`;
+
+            document.getElementById('modalTitle').innerText = "RUN COMPLETED";
+            document.getElementById('modalDesc').innerText = `Distance Reached: ${distance}m (Level ${currentLevel})`;
             gameModal.classList.remove('hidden');
         }
 
-        startBtn.addEventListener('click', initGame);
+        startBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            initGame();
+        });
 
-        // FAQ Modal Controls
-        faqBtn.addEventListener('click', () => {
+        faqBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
             initAudio();
             faqModal.classList.remove('hidden');
         });
 
-        closeFaqBtn.addEventListener('click', () => {
+        closeFaqBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
             initAudio();
             faqModal.classList.add('hidden');
         });
 
-        // Infinite Loop Game Engine
         function gameLoop() {
             ctx.clearRect(0, 0, W, H);
+
+            clouds.forEach(c => {
+                c.update(player ? player.speed : 1.5);
+                c.draw();
+            });
 
             if (!isGameOver) {
                 player.update();
 
-                // Camera follow player horizontally
-                cameraX = W * 0.25 - player.x;
                 distance = Math.floor(player.x / 10);
                 distVal.innerText = distance;
 
-                // Infinite Procedural Generation
-                let lastNode = nodes[nodes.length - 1];
-                if (lastNode.x + cameraX < W + 200) {
-                    spawnNodeTrack(lastNode.x + (Math.random() * 80 + 220) * scale);
+                let newLevel = Math.floor(distance / 1000) + 1;
+                if (newLevel > currentLevel) {
+                    currentLevel = newLevel;
+                    levelVal.innerText = currentLevel;
+                    playSound(880, 0.25, 'triangle');
                 }
 
-                // Collision Checks
-                hazards.forEach(h => {
-                    let d = Math.hypot(player.x - h.x, player.y - h.y);
-                    if (d < player.radius + h.size) {
-                        triggerGameOver();
-                    }
-                });
+                cameraX = W * 0.22 - player.x;
+
+                let lastObs = obstacles[obstacles.length - 1];
+                if (lastObs.x + cameraX < W + 200) {
+                    obstacles.push(new AsteroidHazard(lastObs.x + (Math.random() * 80 + 290) * scale));
+                }
+
+                obstacles.forEach(o => o.checkCollision(player));
             }
 
-            // Render World with Camera Offset
             ctx.save();
             ctx.translate(cameraX, 0);
 
-            nodes.forEach(n => n.draw());
-            hazards.forEach(h => h.draw());
-            player.draw();
+            obstacles.forEach(o => o.draw());
+
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                particles[i].draw();
+                if (particles[i].alpha <= 0) particles.splice(i, 1);
+            }
+
+            if (!isGameOver) {
+                player.draw();
+            }
 
             ctx.restore();
 
