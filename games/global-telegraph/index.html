@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>Global Telegraph - Live Worldwide Ticker | KenitFun</title>
+    <meta name="description" content="Send live dispatches across the globe on a shared vintage terminal. Real-time messages from actual online users worldwide with auto-detected country flags on KenitFun.">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Special+Elite&display=swap');
+
+        :root {
+            --bg-color: #0b0e14;
+            --paper-bg: #fbf8ee;
+            --paper-border: #2a3441;
+            --ink-black: #18181b;
+            --accent-orange: #f97316;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(249, 115, 22, 0.08) 0%, transparent 45%),
+                radial-gradient(circle at 90% 80%, rgba(251, 191, 36, 0.06) 0%, transparent 45%),
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 28px 28px, 28px 28px;
+            font-family: 'Special Elite', cursive, serif;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem 1rem;
+            user-select: none;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 820px;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .back-btn {
+            background: rgba(18, 24, 34, 0.85);
+            border: 1px solid rgba(249, 115, 22, 0.3);
+            padding: 0.65rem 1.2rem;
+            color: var(--text-main);
+            text-decoration: none;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            transition: all 0.25s ease;
+            backdrop-filter: blur(8px);
+        }
+
+        .back-btn:hover {
+            background: var(--accent-orange);
+            color: #080b10;
+            border-color: var(--accent-orange);
+            transform: translateY(-2px);
+        }
+
+        .global-stats {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(18, 24, 34, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            backdrop-filter: blur(8px);
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #22c55e;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #22c55e;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 12px #22c55e; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 820px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .paper-deck {
+            background: var(--paper-bg);
+            width: 100%;
+            min-height: 420px;
+            border: 2px solid var(--paper-border);
+            border-radius: 12px;
+            box-shadow: 
+                0 25px 50px -12px rgba(0, 0, 0, 0.8),
+                0 0 30px rgba(249, 115, 22, 0.1);
+            padding: 2.5rem 3rem;
+            position: relative;
+            cursor: text;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .paper-deck::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(
+                transparent,
+                transparent 31px,
+                rgba(148, 163, 184, 0.15) 31px,
+                rgba(148, 163, 184, 0.15) 32px
+            );
+            pointer-events: none;
+        }
+
+        .feed-area {
+            flex-grow: 1;
+            overflow-y: auto;
+            max-height: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-right: 5px;
+            margin-bottom: 1.5rem;
+            z-index: 2;
+            scroll-behavior: smooth;
+        }
+
+        .feed-item {
+            font-size: 1.1rem;
+            line-height: 28px;
+            color: var(--ink-black);
+            border-bottom: 1px dashed rgba(0, 0, 0, 0.1);
+            padding-bottom: 6px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .feed-content {
+            word-break: break-word;
+            flex-grow: 1;
+            padding-right: 15px;
+        }
+
+        .feed-meta {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #475569;
+            background: rgba(0, 0, 0, 0.06);
+            padding: 2px 8px;
+            border-radius: 6px;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .composer-box {
+            display: flex;
+            gap: 10px;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        #paperInput {
+            flex-grow: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            font-family: 'Special Elite', cursive, serif;
+            font-size: 1.2rem;
+            color: var(--ink-black);
+        }
+
+        .dispatch-btn {
+            background: var(--ink-black);
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .dispatch-btn:hover {
+            background: var(--accent-orange);
+            color: #080b10;
+        }
+
+        .ribbon-indicator {
+            position: absolute;
+            bottom: 10px;
+            right: 20px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            color: #475569;
+            background: rgba(0, 0, 0, 0.05);
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            text-transform: uppercase;
+        }
+
+        .system-notice {
+            color: #64748b;
+            font-style: italic;
+            text-align: center;
+            font-size: 0.95rem;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../../index.html" class="back-btn">&larr; KENITFUN</a>
+        <div class="global-stats">
+            <div class="pulse-dot"></div>
+            <span id="connectionStatus">Connecting Worldwide...</span>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <div class="paper-deck">
+            <div class="feed-area" id="feedArea">
+                <div class="system-notice" id="emptyNotice">
+                    [ Line open. Waiting for live audience from around the world... ]
+                </div>
+            </div>
+
+            <div class="composer-box">
+                <input type="text" id="paperInput" placeholder="Type a live message and press Enter..." maxlength="140" autocomplete="off">
+                <button class="dispatch-btn" id="dispatchBtn">Send</button>
+            </div>
+
+            <div class="ribbon-indicator" id="userLocationBadge">🌐 GLOBAL TRANSMITTER</div>
+        </div>
+    </div>
+
+    <!-- MQTT Client Library for Global WebSocket Communication -->
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <script>
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playKeyClick() {
+            initAudio();
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            const bufferSize = audioCtx.sampleRate * 0.03;
+            const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+            const noise = audioCtx.createBufferSource();
+            noise.buffer = buffer;
+            const noiseFilter = audioCtx.createBiquadFilter();
+            noiseFilter.type = 'bandpass';
+            noiseFilter.frequency.setValueAtTime(1200 + Math.random() * 300, now);
+            noiseFilter.Q.setValueAtTime(3, now);
+
+            const noiseGain = audioCtx.createGain();
+            noiseGain.gain.setValueAtTime(0.4, now);
+            noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.025);
+
+            noise.connect(noiseFilter);
+            noiseFilter.connect(noiseGain);
+            noiseGain.connect(audioCtx.destination);
+            noise.start(now);
+            noise.stop(now + 0.03);
+        }
+
+        function playBell() {
+            initAudio();
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+            const bell = audioCtx.createOscillator();
+            const bellGain = audioCtx.createGain();
+
+            bell.type = 'sine';
+            bell.frequency.setValueAtTime(1560, now);
+            bellGain.gain.setValueAtTime(0.3, now);
+            bellGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.4);
+
+            bell.connect(bellGain);
+            bellGain.connect(audioCtx.destination);
+            bell.start(now);
+            bell.stop(now + 0.4);
+        }
+
+        let userCountryString = "🇮🇳 India"; // Default fallback
+        const feedArea = document.getElementById('feedArea');
+        const paperInput = document.getElementById('paperInput');
+        const dispatchBtn = document.getElementById('dispatchBtn');
+        const connectionStatus = document.getElementById('connectionStatus');
+        const userLocationBadge = document.getElementById('userLocationBadge');
+        const emptyNotice = document.getElementById('emptyNotice');
+
+        function countryCodeToFlag(code) {
+            if (!code || code.length !== 2) return "🌍";
+            return code.toUpperCase().replace(/./g, char => 
+                String.fromCodePoint(127397 + char.charCodeAt(0))
+            );
+        }
+
+        // Fast geolocation detection via IP
+        fetch('https://ipapi.co/json/')
+            .then(res => res.json())
+            .then(data => {
+                if (data && data.country_name) {
+                    const flag = countryCodeToFlag(data.country_code);
+                    userCountryString = `${flag} ${data.country_name}`;
+                    userLocationBadge.textContent = `${userCountryString} TRANSMITTER`;
+                }
+            })
+            .catch(() => {});
+
+        // Connect to Global Public MQTT Broker via Secure WebSockets
+        const client = mqtt.connect('wss://broker.hivemq.com:8884/mqtt', {
+            clientId: 'kenitfun_telegraph_' + Math.random().toString(16).substring(2, 8)
+        });
+
+        const topicName = 'kenitfun/global/telegraph/v1';
+
+        client.on('connect', () => {
+            connectionStatus.textContent = "Connected Worldwide Live";
+            client.subscribe(topicName, (err) => {
+                if (!err) {
+                    console.log("Subscribed to global channel");
+                }
+            });
+        });
+
+        client.on('reconnect', () => {
+            connectionStatus.textContent = "Reconnecting Live...";
+        });
+
+        client.on('message', (topic, payload) => {
+            try {
+                const msgData = JSON.parse(payload.toString());
+                if (msgData && msgData.text && msgData.country) {
+                    if (emptyNotice && emptyNotice.parentNode) {
+                        emptyNotice.remove();
+                    }
+                    appendMessageToFeed(msgData.text, msgData.country, true);
+                }
+            } catch (e) {}
+        });
+
+        function appendMessageToFeed(text, country, playSound) {
+            const item = document.createElement('div');
+            item.className = 'feed-item';
+            
+            const contentSpan = document.createElement('span');
+            contentSpan.className = 'feed-content';
+            contentSpan.textContent = text;
+
+            const metaSpan = document.createElement('span');
+            metaSpan.className = 'feed-meta';
+            metaSpan.textContent = country;
+
+            item.appendChild(contentSpan);
+            item.appendChild(metaSpan);
+            feedArea.appendChild(item);
+            feedArea.scrollTop = feedArea.scrollHeight;
+
+            if (playSound) {
+                playBell();
+            }
+        }
+
+        function sendDispatch() {
+            const text = paperInput.value.trim();
+            if (!text) return;
+
+            const payload = JSON.stringify({
+                text: text,
+                country: userCountryString
+            });
+
+            // Publish message across the world via global broker
+            client.publish(topicName, payload, {}, (err) => {
+                if (!err) {
+                    paperInput.value = '';
+                    paperInput.focus();
+                }
+            });
+        }
+
+        dispatchBtn.addEventListener('click', sendDispatch);
+        paperInput.addEventListener('keydown', (e) => {
+            initAudio();
+            if (e.key === 'Enter') {
+                sendDispatch();
+            } else if (e.key.length === 1 || e.key === 'Backspace') {
+                playKeyClick();
+            }
+        });
+    </script>
+</body>
+</html>
