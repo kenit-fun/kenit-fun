@@ -67,6 +67,52 @@ p.subtitle {
     letter-spacing: 1px;
 }
 
+.site-nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.75rem 1.25rem;
+    margin-top: 1.5rem;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.site-nav a,
+.site-intro a {
+    color: var(--neon-cyan);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.site-nav a:hover,
+.site-intro a:hover {
+    color: #fff;
+}
+
+.site-intro {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto 2rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    background: rgba(20, 24, 33, 0.75);
+    color: var(--text-secondary);
+    line-height: 1.6;
+    text-align: center;
+}
+
+.site-intro h2 {
+    margin-bottom: 0.6rem;
+    color: #fff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.25rem;
+}
+
+.site-intro p {
+    margin-bottom: 0.8rem;
+}
+
 .arcade-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
