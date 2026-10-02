@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#101916">
+  <meta name="description" content="Switch lanes, dodge solar debris, and collect light in Orbit Outrun, a free one-thumb arcade survival game for mobile browsers.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://www.kenit.fun/games/orbit-outrun/">
+  <title>Orbit Outrun - One-Thumb Space Survival Game | KenitFun</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4487122369232669" crossorigin="anonymous"></script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #101916;
+      --panel: #19231f;
+      --line: #35433b;
+      --paper: #eff2df;
+      --muted: #b0b9a6;
+      --lime: #d5fa68;
+      --coral: #ff8066;
+      --aqua: #62ddd1;
+    }
+    * { box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 18px 14px 28px;
+      color: var(--paper);
+      background: radial-gradient(ellipse at 50% 0%, #334638 0, var(--ink) 52rem);
+      font-family: "Space Grotesk", sans-serif;
+    }
+    button, a { font: inherit; }
+    button { touch-action: manipulation; }
+    .game-shell { width: min(100%, 560px); margin: 0 auto; }
+    .topline { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 16px; }
+    .back-link { min-height: 44px; display: inline-flex; align-items: center; gap: 8px; color: var(--muted); text-decoration: none; font-size: 14px; font-weight: 600; }
+    .back-link:hover, .back-link:focus-visible { color: var(--lime); }
+    .edition { color: var(--lime); font: 11px "DM Mono", monospace; letter-spacing: 1px; text-transform: uppercase; }
+    h1 { margin: 0; font-size: 30px; line-height: 1.08; letter-spacing: 0; }
+    .deck { max-width: 42ch; margin: 8px 0 18px; color: var(--muted); font-size: 14px; line-height: 1.5; }
+    .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; margin-bottom: 10px; }
+    .stat { min-width: 0; padding: 9px 10px; border: 1px solid var(--line); background: rgba(25, 35, 31, .92); }
+    .stat-label { display: block; color: var(--muted); font: 10px "DM Mono", monospace; letter-spacing: .4px; text-transform: uppercase; }
+    .stat-value { display: block; margin-top: 3px; overflow: hidden; color: var(--paper); font-size: 19px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+    .stat:first-child .stat-value { color: var(--lime); }
+    .run-progress { display: flex; align-items: center; gap: 10px; margin: 0 0 9px; color: var(--muted); font: 10px "DM Mono", monospace; text-transform: uppercase; }
+    .run-progress-track { flex: 1; height: 5px; overflow: hidden; background: #35433b; }
+    .run-progress-fill { width: 0; height: 100%; background: var(--aqua); transition: width .18s ease; }
+    .track { position: relative; height: clamp(360px, 58svh, 590px); overflow: hidden; border: 1px solid #566351; background: #111c19; touch-action: none; }
+    canvas { display: block; width: 100%; height: 100%; }
+    .run-overlay { position: absolute; inset: 0; display: grid; place-items: center; padding: 22px; background: rgba(11, 18, 16, .64); }
+    .run-overlay[hidden] { display: none; }
+    .overlay-panel { width: min(100%, 350px); padding: 22px; border: 1px solid #73816a; background: #18231f; text-align: left; box-shadow: 8px 8px 0 rgba(0, 0, 0, .24); }
+    .overlay-kicker { color: var(--lime); font: 11px "DM Mono", monospace; letter-spacing: 1px; text-transform: uppercase; }
+    .overlay-panel h2 { margin: 10px 0 8px; font-size: 24px; line-height: 1.1; }
+    .overlay-panel p { margin: 0 0 17px; color: var(--muted); font-size: 14px; line-height: 1.5; }
+    .primary-button, .control-button { min-height: 50px; border: 0; cursor: pointer; font-weight: 700; }
+    .primary-button { width: 100%; padding: 0 16px; color: var(--ink); background: var(--lime); }
+    .primary-button:hover { background: #e3ff9b; }
+    .controls { display: grid; grid-template-columns: 1fr 1fr 1.25fr; gap: 8px; margin-top: 10px; }
+    .control-button { padding: 8px; border: 1px solid var(--line); color: var(--paper); background: var(--panel); }
+    .control-button:active { border-color: var(--lime); background: #29372e; }
+    .control-button:disabled { color: #7a8379; cursor: default; opacity: .65; }
+    .howto { margin: 10px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; text-align: center; }
+    .howto strong { color: var(--paper); }
+    @media (max-height: 720px) {
+      .track { height: 46svh; min-height: 300px; }
+      body { padding-top: 10px; }
+      .deck { margin-bottom: 12px; }
+    }
+    @media (max-width: 360px) {
+      body { padding-right: 10px; padding-left: 10px; }
+      .stats { gap: 5px; }
+      .stat { padding: 8px 7px; }
+      .stat-value { font-size: 17px; }
+      h1 { font-size: 27px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="game-shell">
+    <div class="topline">
+      <a class="back-link" href="../../index.html" aria-label="Back to KenitFun home">&larr; KenitFun</a>
+      <span class="edition">New launch / 01</span>
+    </div>
+    <h1>Orbit Outrun</h1>
+    <p class="deck">Three lanes. One lightship. Read the stream, slip past the debris, and see how long your signal lasts.</p>
+
+    <section class="stats" aria-label="Run statistics">
+      <div class="stat"><span class="stat-label">Score</span><span class="stat-value" id="scoreValue">0</span></div>
+      <div class="stat"><span class="stat-label">Stage</span><span class="stat-value" id="stageValue">1</span></div>
+      <div class="stat"><span class="stat-label">Record</span><span class="stat-value" id="bestValue">0</span></div>
+      <div class="stat"><span class="stat-label">Hull</span><span class="stat-value" id="hullValue">3</span></div>
+    </section>
+    <div class="run-progress" aria-label="Fragments collected toward next stage">
+      <span>Next stage</span><span id="shardValue">0 / 6</span>
+      <div class="run-progress-track"><div class="run-progress-fill" id="shardFill"></div></div>
+    </div>
+
+    <div class="track" id="track">
+      <canvas id="scene" aria-label="Orbit Outrun game field. Tap left or right, or swipe, to switch lanes."></canvas>
+      <div class="run-overlay" id="overlay">
+        <div class="overlay-panel">
+          <span class="overlay-kicker" id="overlayKicker">One-thumb arcade</span>
+          <h2 id="overlayTitle">Stay in the stream.</h2>
+          <p id="overlayText">Tap either side or swipe to change lanes. Dodge coral debris, collect light shards, and build your score. Six shards push you into the next stage.</p>
+          <button class="primary-button" id="startButton" type="button">Start run</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls" aria-label="Game controls">
+      <button class="control-button" id="leftButton" type="button" aria-label="Move one lane left">&larr; Left</button>
+      <button class="control-button" id="rightButton" type="button" aria-label="Move one lane right">Right &rarr;</button>
+      <button class="control-button" id="shieldButton" type="button" disabled>Shield 0</button>
+    </div>
+    <p class="howto"><strong>Swipe or tap</strong> to switch lanes. Collect aqua shields to block one collision. Your best run is saved on this device.</p>
+  </main>
+
+  <script>
+    (() => {
+      const canvas = document.getElementById("scene");
+      const context = canvas.getContext("2d");
+      const track = document.getElementById("track");
+      const overlay = document.getElementById("overlay");
+      const scoreElement = document.getElementById("scoreValue");
+      const stageElement = document.getElementById("stageValue");
+      const bestElement = document.getElementById("bestValue");
+      const hullElement = document.getElementById("hullValue");
+      const shardElement = document.getElementById("shardValue");
+      const shardFill = document.getElementById("shardFill");
+      const shieldButton = document.getElementById("shieldButton");
+      const palette = { ink: "#111c19", rail: "rgba(213,250,104,.14)", lime: "#d5fa68", coral: "#ff8066", aqua: "#62ddd1", paper: "#eff2df" };
+      const storageKey = "kenitfun-orbit-outrun-v1";
+      let width = 0;
+      let height = 0;
+      let pixelRatio = 1;
+      let state = "ready";
+      let lane = 1;
+      let lanePosition = 1;
+      let objects = [];
+      let stars = [];
+      let score = 0;
+      let best = readBest();
+      let stage = 1;
+      let hull = 3;
+      let shards = 0;
+      let shields = 0;
+      let shieldUntil = 0;
+      let elapsed = 0;
+      let spawnClock = 0;
+      let previousFrame = 0;
+      let bannerText = "";
+      let bannerUntil = 0;
+
+      function readBest() {
+        try { return Number(localStorage.getItem(storageKey)) || 0; } catch (_) { return 0; }
+      }
+
+      function saveBest() {
+        try { localStorage.setItem(storageKey, String(best)); } catch (_) { /* Storage can be unavailable in private mode. */ }
+      }
+
+      function resize() {
+        const bounds = track.getBoundingClientRect();
+        width = bounds.width;
+        height = bounds.height;
+        pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.round(width * pixelRatio);
+        canvas.height = Math.round(height * pixelRatio);
+        context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+        stars = Array.from({ length: Math.round(width * height / 6200) }, (_, index) => ({
+          x: (index * 73.17 % 1), y: (index * 29.73 % 1), size: 1 + (index % 3) * .45, phase: index * .8
+        }));
+        if (state !== "playing") draw();
+      }
+
+      function laneX(index) { return width * (0.2 + index * 0.3); }
+      function playerY() { return height * 0.79; }
+
+      function roundRect(x, y, w, h, radius) {
+        context.beginPath();
+        context.roundRect(x, y, w, h, radius);
+      }
+
+      function draw(now = 0) {
+        if (!width || !height) return;
+        context.clearRect(0, 0, width, height);
+        const background = context.createLinearGradient(0, 0, 0, height);
+        background.addColorStop(0, "#1b2b24");
+        background.addColorStop(1, palette.ink);
+        context.fillStyle = background;
+        context.fillRect(0, 0, width, height);
+
+        for (const star of stars) {
+          context.globalAlpha = .22 + (Math.sin(now / 750 + star.phase) + 1) * .2;
+          context.fillStyle = star.phase % 2 > 1 ? palette.aqua : palette.paper;
+          context.beginPath();
+          context.arc(star.x * width, star.y * height, star.size, 0, Math.PI * 2);
+          context.fill();
+        }
+        context.globalAlpha = 1;
+
+        for (let index = 0; index < 3; index += 1) {
+          const x = laneX(index);
+          context.strokeStyle = palette.rail;
+          context.lineWidth = 1;
+          context.setLineDash([3, 10]);
+          context.beginPath();
+          context.moveTo(x, 22);
+          context.lineTo(x, height - 18);
+          context.stroke();
+        }
+        context.setLineDash([]);
+
+        for (const object of objects) drawObject(object);
+        drawShip(now);
+
+        if (now < bannerUntil && bannerText) {
+          context.globalAlpha = Math.min(1, (bannerUntil - now) / 240);
+          context.fillStyle = palette.lime;
+          context.font = "700 16px 'DM Mono', monospace";
+          context.textAlign = "center";
+          context.fillText(bannerText, width / 2, height * .3);
+          context.globalAlpha = 1;
+        }
+      }
+
+      function drawObject(object) {
+        const x = laneX(object.lane);
+        context.save();
+        context.translate(x, object.y);
+        if (object.kind === "hazard") {
+          context.rotate(Math.PI / 4);
+          context.shadowColor = palette.coral;
+          context.shadowBlur = 14;
+          context.fillStyle = palette.coral;
+          roundRect(-11, -11, 22, 22, 4);
+          context.fill();
+          context.shadowBlur = 0;
+          context.fillStyle = "#492a25";
+          roundRect(-5, -5, 10, 10, 2);
+          context.fill();
+        } else {
+          context.shadowColor = object.kind === "shield" ? palette.aqua : palette.lime;
+          context.shadowBlur = 18;
+          context.strokeStyle = object.kind === "shield" ? palette.aqua : palette.lime;
+          context.lineWidth = 3;
+          context.beginPath();
+          context.arc(0, 0, object.kind === "shield" ? 10 : 8, 0, Math.PI * 2);
+          context.stroke();
+          context.fillStyle = object.kind === "shield" ? palette.aqua : palette.lime;
+          context.beginPath();
+          context.arc(0, 0, 3, 0, Math.PI * 2);
+          context.fill();
+        }
+        context.restore();
+      }
+
+      function drawShip(now) {
+        const x = laneX(lanePosition);
+        const y = playerY();
+        context.save();
+        context.translate(x, y + Math.sin(now / 130) * 2);
+        context.shadowColor = palette.lime;
+        context.shadowBlur = 18;
+        context.fillStyle = palette.lime;
+        context.beginPath();
+        context.moveTo(0, -15);
+        context.lineTo(12, 12);
+        context.lineTo(0, 7);
+        context.lineTo(-12, 12);
+        context.closePath();
+        context.fill();
+        context.shadowBlur = 0;
+        context.fillStyle = palette.ink;
+        context.beginPath();
+        context.arc(0, -2, 3, 0, Math.PI * 2);
+        context.fill();
+        if (now < shieldUntil) {
+          context.strokeStyle = palette.aqua;
+          context.lineWidth = 2;
+          context.beginPath();
+          context.arc(0, 0, 22 + Math.sin(now / 90) * 2, 0, Math.PI * 2);
+          context.stroke();
+        }
+        context.restore();
+      }
+
+      function refreshHud() {
+        scoreElement.textContent = String(score);
+        stageElement.textContent = String(stage);
+        bestElement.textContent = String(best);
+        hullElement.textContent = "♥".repeat(Math.max(0, hull)) || "0";
+        shardElement.textContent = `${shards} / 6`;
+        shardFill.style.width = `${shards / 6 * 100}%`;
+        shieldButton.textContent = `Shield ${shields}`;
+        shieldButton.disabled = state !== "playing" || shields < 1 || Date.now() < shieldUntil;
+      }
+
+      function startRun() {
+        score = 0;
+        stage = 1;
+        hull = 3;
+        shards = 0;
+        shields = 0;
+        shieldUntil = 0;
+        elapsed = 0;
+        spawnClock = .35;
+        lane = 1;
+        lanePosition = 1;
+        objects = [];
+        state = "playing";
+        overlay.hidden = true;
+        refreshHud();
+        previousFrame = performance.now();
+        requestAnimationFrame(loop);
+      }
+
+      function finishRun() {
+        state = "finished";
+        if (score > best) best = score;
+        saveBest();
+        document.getElementById("overlayKicker").textContent = `Stage ${stage} complete`;
+        document.getElementById("overlayTitle").textContent = "Signal lost. Run it back?";
+        document.getElementById("overlayText").textContent = `You scored ${score} and collected ${shards} light shards. Your best is ${best}. One more run can beat it.`;
+        document.getElementById("startButton").textContent = "Run it back";
+        overlay.hidden = false;
+        refreshHud();
+      }
+
+      function moveLane(direction) {
+        if (state !== "playing") return;
+        lane = Math.max(0, Math.min(2, lane + direction));
+        if (navigator.vibrate) navigator.vibrate(7);
+      }
+
+      function activateShield() {
+        if (state !== "playing" || shields < 1 || Date.now() < shieldUntil) return;
+        shields -= 1;
+        shieldUntil = Date.now() + 4200;
+        refreshHud();
+      }
+
+      function spawnObject() {
+        const roll = Math.random();
+        const kind = roll < .69 ? "hazard" : roll < .94 ? "shard" : "shield";
+        objects.push({ lane: Math.floor(Math.random() * 3), y: -24, kind, resolved: false });
+      }
+
+      function awardShard() {
+        shards += 1;
+        score += 25;
+        if (shards >= 6) {
+          shards = 0;
+          stage += 1;
+          hull = Math.min(3, hull + 1);
+          score += 100;
+          bannerText = `STAGE ${stage} / HULL RESTORED`;
+          bannerUntil = performance.now() + 1050;
+        }
+      }
+
+      function loop(now) {
+        if (state !== "playing") return;
+        const dt = Math.min((now - previousFrame) / 1000, .04);
+        previousFrame = now;
+        elapsed += dt;
+        spawnClock -= dt;
+        if (spawnClock <= 0) {
+          spawnObject();
+          spawnClock = Math.max(.49, 1.08 - elapsed * .006);
+        }
+        lanePosition += (lane - lanePosition) * Math.min(1, dt * 15);
+        const speed = 160 + Math.min(elapsed * 4, 150);
+        const y = playerY();
+        for (const object of objects) {
+          object.y += speed * dt;
+          if (!object.resolved && object.y >= y - 14) {
+            object.resolved = true;
+            const aligned = object.lane === lane;
+            if (aligned && object.kind === "hazard") {
+              if (Date.now() < shieldUntil) {
+                shieldUntil = 0;
+                bannerText = "SHIELD ABSORBED THE HIT";
+                bannerUntil = now + 700;
+              } else {
+                hull -= 1;
+                bannerText = "HULL HIT";
+                bannerUntil = now + 650;
+                if (navigator.vibrate) navigator.vibrate([25, 30, 25]);
+              }
+            } else if (aligned && object.kind === "shard") {
+              awardShard();
+              bannerText = "LIGHT SHARD +25";
+              bannerUntil = now + 650;
+            } else if (aligned && object.kind === "shield") {
+              shields = Math.min(2, shields + 1);
+              score += 10;
+              bannerText = "SHIELD CHARGED";
+              bannerUntil = now + 650;
+            } else if (object.kind === "hazard") {
+              score += 12;
+            }
+          }
+        }
+        objects = objects.filter(object => object.y < height + 28);
+        if (score > best) {
+          best = score;
+          saveBest();
+        }
+        refreshHud();
+        draw(now);
+        if (hull <= 0) {
+          finishRun();
+          return;
+        }
+        requestAnimationFrame(loop);
+      }
+
+      let touchStart = null;
+      canvas.addEventListener("pointerdown", event => {
+        if (state !== "playing") return;
+        touchStart = { x: event.clientX, y: event.clientY };
+        canvas.setPointerCapture(event.pointerId);
+      });
+      canvas.addEventListener("pointerup", event => {
+        if (!touchStart || state !== "playing") return;
+        const dx = event.clientX - touchStart.x;
+        if (Math.abs(dx) > 25) {
+          moveLane(dx < 0 ? -1 : 1);
+        } else {
+          const bounds = canvas.getBoundingClientRect();
+          const tapX = event.clientX - bounds.left;
+          moveLane(tapX < bounds.width / 2 ? -1 : 1);
+        }
+        touchStart = null;
+      });
+      canvas.addEventListener("pointercancel", () => { touchStart = null; });
+      document.getElementById("leftButton").addEventListener("click", () => moveLane(-1));
+      document.getElementById("rightButton").addEventListener("click", () => moveLane(1));
+      shieldButton.addEventListener("click", activateShield);
+      document.getElementById("startButton").addEventListener("click", startRun);
+      window.addEventListener("resize", resize);
+      window.addEventListener("keydown", event => {
+        if (event.key === "ArrowLeft" || event.key.toLowerCase() === "a") moveLane(-1);
+        if (event.key === "ArrowRight" || event.key.toLowerCase() === "d") moveLane(1);
+      });
+
+      bestElement.textContent = String(best);
+      resize();
+      refreshHud();
+      draw();
+    })();
+  </script>
+</body>
+</html>

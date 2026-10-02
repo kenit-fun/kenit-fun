@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#182128">
+  <meta name="description" content="Tap matching crystal clusters, build chain bonuses, and clear each score goal in Prism Pop, a free mobile-friendly puzzle game.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://www.kenit.fun/games/prism-pop/">
+  <title>Prism Pop - Crystal Cluster Puzzle Game | KenitFun</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4487122369232669" crossorigin="anonymous"></script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #182128;
+      --panel: #222e35;
+      --line: #3d4c53;
+      --paper: #f3f0df;
+      --muted: #b2c0bd;
+      --coral: #ff8066;
+      --gold: #f2ca64;
+      --aqua: #75d9d0;
+      --leaf: #b8dc73;
+      --violet: #c3a3ee;
+    }
+    * { box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 16px 12px 26px;
+      color: var(--paper);
+      background: radial-gradient(ellipse at 50% -10%, #3c514a 0, var(--ink) 42rem);
+      font-family: "Space Grotesk", sans-serif;
+    }
+    button, a { font: inherit; }
+    button { touch-action: manipulation; }
+    .game-shell { width: min(100%, 480px); margin: 0 auto; }
+    .topline { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+    .back-link { min-height: 44px; display: inline-flex; align-items: center; color: var(--muted); font-size: 14px; font-weight: 600; text-decoration: none; }
+    .back-link:hover, .back-link:focus-visible { color: var(--gold); }
+    .launch-tag { color: var(--gold); font: 11px "DM Mono", monospace; letter-spacing: .8px; text-transform: uppercase; }
+    h1 { margin: 0; font-size: 30px; line-height: 1.1; letter-spacing: 0; }
+    .deck { margin: 7px 0 14px; color: var(--muted); font-size: 14px; line-height: 1.45; }
+    .scoreboard { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; margin-bottom: 8px; }
+    .stat { min-width: 0; padding: 8px 10px; border: 1px solid var(--line); background: rgba(34, 46, 53, .94); }
+    .stat-label { display: block; color: var(--muted); font: 10px "DM Mono", monospace; letter-spacing: .4px; text-transform: uppercase; }
+    .stat-value { display: block; margin-top: 2px; overflow: hidden; color: var(--paper); font-size: 19px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+    .stat:first-child .stat-value { color: var(--gold); }
+    .goal-line { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0 1px 7px; color: var(--muted); font: 11px "DM Mono", monospace; text-transform: uppercase; }
+    .goal-track { height: 5px; overflow: hidden; background: #334149; }
+    .goal-fill { width: 0; height: 100%; background: linear-gradient(90deg, var(--aqua), var(--gold)); transition: width .22s ease; }
+    .board-frame { position: relative; width: 100%; padding: 8px; border: 1px solid #60716c; background: #202c31; box-shadow: 7px 7px 0 rgba(0, 0, 0, .18); }
+    .board { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 5px; width: 100%; }
+    .gem {
+      display: grid;
+      place-items: center;
+      min-width: 0;
+      aspect-ratio: 1;
+      padding: 0;
+      border: 1px solid rgba(255, 255, 255, .24);
+      border-radius: 10px;
+      color: #182128;
+      cursor: pointer;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, .38), 0 3px 0 rgba(0, 0, 0, .22);
+      transition: transform .12s ease, filter .12s ease, opacity .14s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .gem:hover { filter: brightness(1.12); transform: translateY(-2px); }
+    .gem:active { transform: scale(.92); }
+    .gem:focus-visible { outline: 3px solid var(--paper); outline-offset: 1px; }
+    .gem-shape { font-size: clamp(18px, 7vw, 29px); line-height: 1; }
+    .gem-0 { background: var(--coral); }
+    .gem-1 { background: var(--gold); }
+    .gem-2 { background: var(--aqua); }
+    .gem-3 { background: var(--leaf); }
+    .gem-4 { background: var(--violet); }
+    .gem.clearing { opacity: 0; transform: scale(.4) rotate(14deg); }
+    .gem[disabled] { cursor: default; }
+    .game-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+    .action-button { min-height: 50px; padding: 9px 12px; border: 1px solid var(--line); color: var(--paper); background: var(--panel); font-size: 13px; font-weight: 700; cursor: pointer; }
+    .action-button:active { background: #33464a; }
+    .action-button:disabled { color: #85918d; cursor: default; opacity: .7; }
+    .action-button.primary { border-color: var(--gold); color: var(--ink); background: var(--gold); }
+    .action-button.armed { border-color: var(--aqua); color: var(--ink); background: var(--aqua); }
+    .game-message { min-height: 22px; margin: 8px 2px 0; color: var(--muted); font-size: 12px; line-height: 1.4; text-align: center; }
+    .game-message strong { color: var(--paper); }
+    .rules { margin: 10px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; text-align: center; }
+    .overlay { position: fixed; inset: 0; z-index: 5; display: grid; place-items: center; padding: 18px; background: rgba(11, 17, 20, .72); }
+    .overlay[hidden] { display: none; }
+    .overlay-card { width: min(100%, 370px); padding: 22px; border: 1px solid #71817a; background: #202c31; box-shadow: 8px 8px 0 rgba(0, 0, 0, .24); }
+    .overlay-kicker { color: var(--gold); font: 11px "DM Mono", monospace; letter-spacing: .8px; text-transform: uppercase; }
+    .overlay-card h2 { margin: 9px 0 8px; font-size: 25px; line-height: 1.1; }
+    .overlay-card p { margin: 0 0 17px; color: var(--muted); font-size: 14px; line-height: 1.55; }
+    .overlay-action { width: 100%; min-height: 50px; border: 0; color: var(--ink); background: var(--gold); font-weight: 700; cursor: pointer; }
+    @media (max-width: 360px) {
+      body { padding: 10px 6px 20px; }
+      .board-frame { padding: 5px; }
+      .board { gap: 3px; }
+      .gem { border-radius: 8px; }
+      .stat { padding: 7px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="game-shell">
+    <div class="topline">
+      <a class="back-link" href="../../index.html" aria-label="Back to KenitFun home">&larr; KenitFun</a>
+      <span class="launch-tag">New launch / 02</span>
+    </div>
+    <h1>Prism Pop</h1>
+    <p class="deck">Clear matching crystal clusters, chain big pops, and reach the score goal before your moves run out.</p>
+
+    <section class="scoreboard" aria-label="Puzzle statistics">
+      <div class="stat"><span class="stat-label">Score</span><span class="stat-value" id="scoreValue">0</span></div>
+      <div class="stat"><span class="stat-label">Goal</span><span class="stat-value" id="goalValue">850</span></div>
+      <div class="stat"><span class="stat-label">Best level</span><span class="stat-value" id="bestValue">1</span></div>
+    </section>
+    <div class="goal-line"><span id="levelLabel">Level 1</span><span id="movesValue">18 moves</span></div>
+    <div class="goal-track" aria-label="Score goal progress"><div class="goal-fill" id="goalFill"></div></div>
+
+    <section class="board-frame" aria-label="Prism Pop puzzle board">
+      <div class="board" id="board" role="grid" aria-label="Six by six crystal board"></div>
+    </section>
+    <div class="game-actions">
+      <button class="action-button primary" id="burstButton" type="button">Prism burst x1</button>
+      <button class="action-button" id="restartButton" type="button">Restart level</button>
+    </div>
+    <p class="game-message" id="message" aria-live="polite"><strong>Find a cluster.</strong> Tap any group of two or more matching crystals.</p>
+    <p class="rules">Bigger groups score more. Clear five crystals at once to earn a Prism Burst and wipe one color from the board.</p>
+  </main>
+
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="overlayTitle">
+    <div class="overlay-card">
+      <span class="overlay-kicker" id="overlayKicker">One more turn?</span>
+      <h2 id="overlayTitle">Make the big pop.</h2>
+      <p id="overlayText">Tap a connected group of two or more matching crystals. Larger groups score more; five or more earn a color-clearing Prism Burst. Reach 850 points in 18 moves.</p>
+      <button class="overlay-action" id="overlayButton" type="button">Start puzzle</button>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      const size = 6;
+      const symbols = ["✦", "●", "◆", "▲", "⬟"];
+      const names = ["coral star", "gold circle", "aqua diamond", "leaf triangle", "violet gem"];
+      const storageKey = "kenitfun-prism-pop-v1";
+      const boardElement = document.getElementById("board");
+      const scoreElement = document.getElementById("scoreValue");
+      const goalElement = document.getElementById("goalValue");
+      const bestElement = document.getElementById("bestValue");
+      const levelElement = document.getElementById("levelLabel");
+      const movesElement = document.getElementById("movesValue");
+      const goalFill = document.getElementById("goalFill");
+      const burstButton = document.getElementById("burstButton");
+      const message = document.getElementById("message");
+      const overlay = document.getElementById("overlay");
+      let board = [];
+      let level = 1;
+      let goal = 850;
+      let score = 0;
+      let moves = 18;
+      let charges = 1;
+      let chain = 0;
+      let state = "ready";
+      let busy = false;
+      let burstArmed = false;
+      let bestLevel = 1;
+      let bestScore = 0;
+
+      function readRecord() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
+          bestLevel = Number(saved.level) || 1;
+          bestScore = Number(saved.score) || 0;
+        } catch (_) {
+          bestLevel = 1;
+          bestScore = 0;
+        }
+      }
+
+      function saveRecord() {
+        try { localStorage.setItem(storageKey, JSON.stringify({ level: bestLevel, score: bestScore })); } catch (_) { /* Storage may be disabled by the browser. */ }
+      }
+
+      function randomColor() { return Math.floor(Math.random() * symbols.length); }
+      function makeBoard() { return Array.from({ length: size * size }, randomColor); }
+
+      function neighbors(index) {
+        const row = Math.floor(index / size);
+        const column = index % size;
+        const result = [];
+        if (row > 0) result.push(index - size);
+        if (row < size - 1) result.push(index + size);
+        if (column > 0) result.push(index - 1);
+        if (column < size - 1) result.push(index + 1);
+        return result;
+      }
+
+      function groupAt(start) {
+        const color = board[start];
+        const found = new Set([start]);
+        const pending = [start];
+        while (pending.length) {
+          const current = pending.pop();
+          for (const adjacent of neighbors(current)) {
+            if (!found.has(adjacent) && board[adjacent] === color) {
+              found.add(adjacent);
+              pending.push(adjacent);
+            }
+          }
+        }
+        return [...found];
+      }
+
+      function hasMove() {
+        return board.some((color, index) => neighbors(index).some(adjacent => board[adjacent] === color));
+      }
+
+      function updateHud() {
+        scoreElement.textContent = String(score);
+        goalElement.textContent = String(goal);
+        bestElement.textContent = String(bestLevel);
+        levelElement.textContent = `Level ${level}`;
+        movesElement.textContent = `${moves} moves`;
+        goalFill.style.width = `${Math.min(100, score / goal * 100)}%`;
+        burstButton.textContent = burstArmed ? "Choose a color" : `Prism burst x${charges}`;
+        burstButton.disabled = state !== "playing" || (!charges && !burstArmed);
+        document.getElementById("restartButton").disabled = state !== "playing" || busy;
+        burstButton.classList.toggle("armed", burstArmed);
+      }
+
+      function renderBoard() {
+        boardElement.replaceChildren();
+        board.forEach((color, index) => {
+          const tile = document.createElement("button");
+          tile.type = "button";
+          tile.className = `gem gem-${color}`;
+          tile.setAttribute("role", "gridcell");
+          tile.setAttribute("aria-label", `${names[color]} crystal, row ${Math.floor(index / size) + 1}, column ${index % size + 1}`);
+          tile.innerHTML = `<span class="gem-shape" aria-hidden="true">${symbols[color]}</span>`;
+          tile.disabled = state !== "playing" || busy;
+          tile.addEventListener("click", () => selectTile(index, tile));
+          boardElement.appendChild(tile);
+        });
+        updateHud();
+      }
+
+      function startLevel(nextLevel) {
+        level = nextLevel;
+        goal = 850 + (level - 1) * 230;
+        score = 0;
+        moves = 18;
+        charges = 1;
+        chain = 0;
+        busy = false;
+        burstArmed = false;
+        state = "playing";
+        board = makeBoard();
+        while (!hasMove()) board = makeBoard();
+        overlay.hidden = true;
+        message.innerHTML = "<strong>Find a cluster.</strong> Tap any group of two or more matching crystals.";
+        renderBoard();
+      }
+
+      function showOverlay(kicker, title, text, buttonText, nextLevel) {
+        state = "finished";
+        overlay.dataset.nextLevel = String(nextLevel || 0);
+        document.getElementById("overlayKicker").textContent = kicker;
+        document.getElementById("overlayTitle").textContent = title;
+        document.getElementById("overlayText").textContent = text;
+        document.getElementById("overlayButton").textContent = buttonText;
+        overlay.hidden = false;
+        renderBoard();
+      }
+
+      function resolveIndices(indices, color, usedBurst) {
+        if (busy || state !== "playing") return;
+        busy = true;
+        burstArmed = false;
+        updateHud();
+        const tiles = [...boardElement.children];
+        indices.forEach(index => tiles[index]?.classList.add("clearing"));
+        const groupSize = indices.length;
+        const largeGroup = groupSize >= 4;
+        chain = largeGroup ? chain + 1 : 0;
+        const multiplier = 1 + Math.min(chain, 3) * .18;
+        const points = Math.round((groupSize * groupSize * 10 + Math.max(0, groupSize - 3) * 35) * multiplier);
+
+        window.setTimeout(() => {
+          const removed = new Set(indices);
+          const nextBoard = Array(size * size).fill(null);
+          for (let column = 0; column < size; column += 1) {
+            const survivors = [];
+            for (let row = size - 1; row >= 0; row -= 1) {
+              const index = row * size + column;
+              if (!removed.has(index)) survivors.push(board[index]);
+            }
+            while (survivors.length < size) survivors.push(randomColor());
+            for (let offset = 0; offset < size; offset += 1) {
+              nextBoard[(size - 1 - offset) * size + column] = survivors[offset];
+            }
+          }
+          board = nextBoard;
+          score += points;
+          moves -= 1;
+          if (!usedBurst && groupSize >= 5) charges = Math.min(2, charges + 1);
+          if (score > bestScore) {
+            bestScore = score;
+            saveRecord();
+          }
+          if (!hasMove()) board = makeBoard();
+          busy = false;
+          renderBoard();
+          if (navigator.vibrate) navigator.vibrate(groupSize >= 5 ? [14, 25, 14] : 12);
+
+          if (score >= goal) {
+            bestLevel = Math.max(bestLevel, level + 1);
+            saveRecord();
+            message.innerHTML = `<strong>Level clear.</strong> ${points} points from that pop.`;
+            showOverlay(`Level ${level} cleared`, "Cascade on.", `You reached ${score} points with ${moves} moves left. Level ${level + 1} has a higher goal and a fresh board.`, "Next level", level + 1);
+          } else if (moves <= 0) {
+            message.innerHTML = `<strong>Board settled.</strong> Reach the goal to advance.`;
+            showOverlay("Round complete", "One more try?", `You scored ${score} of ${goal} points on Level ${level}. Look for bigger groups to build your score faster.`, "Retry level", level);
+          } else if (usedBurst) {
+            message.innerHTML = `<strong>Prism burst.</strong> Cleared ${groupSize} ${names[color]} crystals for ${points} points.`;
+          } else {
+            message.innerHTML = largeGroup
+              ? `<strong>Chain x${chain}.</strong> ${groupSize} crystals cleared for ${points} points.`
+              : `<strong>${groupSize} crystals cleared.</strong> ${points} points. Find a larger group for a chain.`;
+          }
+        }, 160);
+      }
+
+      function selectTile(index, tile) {
+        if (state !== "playing" || busy) return;
+        const color = board[index];
+        if (burstArmed) {
+          const matches = [];
+          board.forEach((tileColor, tileIndex) => { if (tileColor === color) matches.push(tileIndex); });
+          if (matches.length < 2) {
+            burstArmed = false;
+            updateHud();
+            message.innerHTML = "<strong>Not enough of that color.</strong> Choose another crystal.";
+            return;
+          }
+          charges -= 1;
+          resolveIndices(matches, color, true);
+          return;
+        }
+        const group = groupAt(index);
+        if (group.length < 2) {
+          tile.classList.add("clearing");
+          window.setTimeout(() => tile.classList.remove("clearing"), 140);
+          message.innerHTML = "<strong>Need a neighbor.</strong> Pick a connected group of two or more.";
+          return;
+        }
+        resolveIndices(group, color, false);
+      }
+
+      document.getElementById("overlayButton").addEventListener("click", () => {
+        const nextLevel = Number(overlay.dataset.nextLevel) || 1;
+        startLevel(nextLevel);
+      });
+      burstButton.addEventListener("click", () => {
+        if (!charges || state !== "playing") return;
+        burstArmed = !burstArmed;
+        message.innerHTML = burstArmed
+          ? "<strong>Prism armed.</strong> Tap any crystal color to clear every crystal of that color."
+          : "<strong>Prism saved.</strong> Keep it for a bigger board clear.";
+        updateHud();
+      });
+      document.getElementById("restartButton").addEventListener("click", () => startLevel(level));
+
+      readRecord();
+      board = makeBoard();
+      while (!hasMove()) board = makeBoard();
+      updateHud();
+      renderBoard();
+    })();
+  </script>
+</body>
+</html>
