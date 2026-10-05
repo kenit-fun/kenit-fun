@@ -22,6 +22,14 @@
         .game-list li { background: var(--panel); border: 1px solid var(--line); padding: 1.25rem; min-height: 130px; }
         .game-list h2 { margin: 0 0 0.5rem; font-size: 1.15rem; }
         .game-list p { margin: 0; color: var(--muted); line-height: 1.5; }
+        .library-guide { margin: 0 0 2rem; padding: 1.5rem; border: 1px solid var(--line); background: var(--panel); }
+        .library-guide h2, .catalog-heading { margin: 0 0 1rem; font-size: 1.5rem; }
+        .guide-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1rem; }
+        .guide-grid article { padding: 1rem; border: 1px solid var(--line); }
+        .guide-grid h3 { margin: 0 0 0.5rem; color: var(--accent); font-size: 1.05rem; }
+        .guide-grid p, .library-note { margin: 0; color: var(--muted); line-height: 1.55; }
+        .library-note { margin-top: 1rem; }
+        .catalog-heading { margin-top: 2rem; }
         footer { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--line); color: var(--muted); }
         footer a { margin-right: 1rem; }
     </style>
@@ -30,7 +38,7 @@
     <main>
         <header>
             <h1>KenitFun Game Library</h1>
-            <p>Explore free, lightweight browser games and interactive experiments. Every game opens directly in your browser with no account or download required.</p>
+            <p>This catalog brings together word and logic puzzles, short arcade challenges, quizzes, and interactive toys made for a browser break. Games open without an account or download; each page explains its own controls and objective. Some games save scores in this browser, while Global Telegraph uses a public live message channel.</p>
             <nav aria-label="Site navigation">
                 <a href="../index.html">KenitFun home</a>
                 <a href="../privacy-policy.html">Privacy policy</a>
@@ -39,6 +47,41 @@
             </nav>
         </header>
 
+        <section class="library-guide" aria-labelledby="find-your-game">
+            <h2 id="find-your-game">Find a game that fits your break</h2>
+            <div class="guide-grid">
+                <article>
+                    <h3>Words and clues</h3>
+                    <p>Connect meanings in <a href="oneword/index.html">Triple Threat</a>, solve a timed anagram in
+                        <a href="wordcipher/index.html">Word Cipher</a>, or work through
+                        <a href="riddle/index.html">The Riddle Vault</a>.</p>
+                </article>
+                <article>
+                    <h3>Timing and movement</h3>
+                    <p>Read the gaps in <a href="orbit-outrun/index.html">Orbit Outrun</a>, test your response in
+                        <a href="cyber-reflex/index.html">Cyber Reflex</a>, or aim each shot in
+                        <a href="neon-cyber-dunk/index.html">Neon Cyber Dunk</a>.</p>
+                </article>
+                <article>
+                    <h3>Quieter puzzles</h3>
+                    <p>Remember revealed pairs in <a href="vintageartifactscard/index.html">Zen Stone Memory Match</a>,
+                        plan a cluster clear in <a href="prism-pop/index.html">Prism Pop</a>, or balance stones in
+                        <a href="stacker/index.html">Zen Stone Balancer</a>.</p>
+                </article>
+                <article>
+                    <h3>Stories and playful tools</h3>
+                    <p>Choose your route through <a href="station/index.html">Midnight Station</a>, explore the
+                        interactive <a href="rotary/index.html">Rotary Phone</a>, or experiment without a score in
+                        <a href="reality-slider/index.html">Reality Slider</a>.</p>
+                </article>
+            </div>
+            <p class="library-note">The games are independent experiments, not a single account-based service. A few
+                titles connect to external services: Global Telegraph publishes messages to a shared public stream,
+                and the hourly poll is an informal, non-scientific demo. Check each game's guide and the
+                <a href="../privacy-policy.html">privacy policy</a> before using those features.</p>
+        </section>
+
+        <h2 class="catalog-heading">Browse all games</h2>
         <ul class="game-list">
             <li><h2><a href="orbit-outrun/index.html">Orbit Outrun</a></h2><p>Switch lanes, dodge solar debris, and collect light in a one-thumb survival run.</p></li>
             <li><h2><a href="prism-pop/index.html">Prism Pop</a></h2><p>Clear matching crystal clusters, build chain bonuses, and beat each score goal.</p></li>

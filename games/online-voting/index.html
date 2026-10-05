@@ -364,6 +364,7 @@
 
         .back-link:hover { color: #FF9933; }
     </style>
+    <link rel="stylesheet" href="../../style/game-guides.css">
 </head>
 <body>
 
@@ -768,5 +769,11 @@
         setInterval(tickTimer, 1000);
         tickTimer();
     </script>
-</body>
+        <section class="editorial-guide" aria-labelledby="game-guide-title">
+            <h2 id="game-guide-title">About this hourly poll demo</h2>
+            <p>The BJP vs CJP page is an informal hourly poll demonstration. Choose one of the two displayed options to add a vote, then return later to see the current tally. It is not a representative survey, verified election, or reliable measure of public opinion.</p>
+            <p>The poll uses an external JSONBin service to read and update shared totals. A local browser flag discourages repeat voting from the same browser during an hour, but it is not identity verification and cannot ensure that each person votes only once. Counts can be delayed, changed, or unavailable if the external service is down.</p>
+            <p>No money or real-world outcome is involved. Please treat the tally as a casual demo, not factual polling data.</p>
+        </section>
+    </body>
 </html>
