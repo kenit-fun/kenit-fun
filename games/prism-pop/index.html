@@ -57,6 +57,7 @@
     .gem {
       display: grid;
       place-items: center;
+      position: relative;
       min-width: 0;
       aspect-ratio: 1;
       padding: 0;
@@ -65,7 +66,7 @@
       color: #182128;
       cursor: pointer;
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, .38), 0 3px 0 rgba(0, 0, 0, .22);
-      transition: transform .12s ease, filter .12s ease, opacity .14s ease;
+      transition: transform .12s ease, filter .12s ease;
       -webkit-tap-highlight-color: transparent;
     }
     .gem:hover { filter: brightness(1.12); transform: translateY(-2px); }
@@ -77,7 +78,40 @@
     .gem-2 { background: var(--aqua); }
     .gem-3 { background: var(--leaf); }
     .gem-4 { background: var(--violet); }
-    .gem.clearing { opacity: 0; transform: scale(.4) rotate(14deg); }
+    .gem.clearing { z-index: 1; animation: prism-blast .36s cubic-bezier(.2, .75, .35, 1) forwards; }
+    .gem.clearing::before,
+    .gem.clearing::after { position: absolute; z-index: 2; pointer-events: none; }
+    .gem.clearing::before {
+      content: "";
+      inset: -3px;
+      border: 2px solid rgba(255, 255, 255, .9);
+      border-radius: 12px;
+      animation: prism-ring .36s ease-out forwards;
+    }
+    .gem.clearing::after {
+      content: "✦";
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: #fff8cb;
+      font-size: clamp(19px, 7vw, 30px);
+      text-shadow: 0 0 8px #fff, 0 0 18px #f2ca64;
+      animation: prism-spark .36s ease-out forwards;
+    }
+    @keyframes prism-blast {
+      0% { opacity: 1; transform: scale(1) rotate(0); filter: brightness(1); }
+      28% { opacity: 1; transform: scale(1.18) rotate(-8deg); filter: brightness(1.9); }
+      100% { opacity: 0; transform: scale(.18) rotate(28deg); filter: brightness(2.2); }
+    }
+    @keyframes prism-ring {
+      0% { opacity: .95; transform: scale(.55); }
+      100% { opacity: 0; transform: scale(1.8); }
+    }
+    @keyframes prism-spark {
+      0% { opacity: 0; transform: scale(.2) rotate(0); }
+      30% { opacity: 1; transform: scale(1.3) rotate(40deg); }
+      100% { opacity: 0; transform: scale(1.8) rotate(100deg); }
+    }
     .gem[disabled] { cursor: default; }
     .game-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
     .action-button { min-height: 50px; padding: 9px 12px; border: 1px solid var(--line); color: var(--paper); background: var(--panel); font-size: 13px; font-weight: 700; cursor: pointer; }
@@ -103,7 +137,7 @@
       .stat { padding: 7px; }
     }
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; }
     }
   </style>
 </head>
@@ -172,6 +206,34 @@
       let burstArmed = false;
       let bestLevel = 1;
       let bestScore = 0;
+      let audioContext;
+
+      function playMatchSound(groupSize, usedBurst) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) return;
+        audioContext ||= new AudioContextClass();
+        if (audioContext.state === "suspended") audioContext.resume();
+
+        const now = audioContext.currentTime;
+        const oscillator = audioContext.createOscillator();
+        const volume = audioContext.createGain();
+        const filter = audioContext.createBiquadFilter();
+        const intensity = Math.min(1, .45 + groupSize / 18 + (usedBurst ? .2 : 0));
+        oscillator.type = "triangle";
+        oscillator.frequency.setValueAtTime(620 + groupSize * 24, now);
+        oscillator.frequency.exponentialRampToValueAtTime(115, now + .24);
+        filter.type = "lowpass";
+        filter.frequency.setValueAtTime(1800, now);
+        filter.frequency.exponentialRampToValueAtTime(500, now + .24);
+        volume.gain.setValueAtTime(.0001, now);
+        volume.gain.exponentialRampToValueAtTime(.16 * intensity, now + .012);
+        volume.gain.exponentialRampToValueAtTime(.0001, now + .25);
+        oscillator.connect(filter);
+        filter.connect(volume);
+        volume.connect(audioContext.destination);
+        oscillator.start(now);
+        oscillator.stop(now + .26);
+      }
 
       function readRecord() {
         try {
@@ -287,6 +349,7 @@
         const tiles = [...boardElement.children];
         indices.forEach(index => tiles[index]?.classList.add("clearing"));
         const groupSize = indices.length;
+        playMatchSound(groupSize, usedBurst);
         const largeGroup = groupSize >= 4;
         chain = largeGroup ? chain + 1 : 0;
         const multiplier = 1 + Math.min(chain, 3) * .18;
@@ -334,7 +397,7 @@
               ? `<strong>Chain x${chain}.</strong> ${groupSize} crystals cleared for ${points} points.`
               : `<strong>${groupSize} crystals cleared.</strong> ${points} points. Find a larger group for a chain.`;
           }
-        }, 160);
+        }, 360);
       }
 
       function selectTile(index, tile) {
