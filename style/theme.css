@@ -113,9 +113,124 @@ p.subtitle {
     margin-bottom: 0.8rem;
 }
 
+.ninja-feature {
+    display: grid;
+    width: 100%;
+    max-width: 1100px;
+    min-height: 285px;
+    grid-template-columns: minmax(0, 1.05fr) minmax(260px, 0.95fr);
+    align-items: stretch;
+    overflow: hidden;
+    margin: 0 auto 1.5rem;
+    border: 1px solid rgba(192, 132, 252, 0.75);
+    background:
+        radial-gradient(ellipse at 7% 0%, rgba(192, 38, 211, 0.22), transparent 60%),
+        linear-gradient(115deg, #171126, #10151e 72%);
+    color: var(--text-primary);
+    text-decoration: none;
+    box-shadow: 0 18px 48px rgba(3, 5, 12, 0.42), 0 0 30px rgba(168, 85, 247, 0.12);
+    transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+
+.ninja-feature:hover,
+.ninja-feature:focus-visible {
+    transform: translateY(-3px);
+    border-color: #e879f9;
+    box-shadow: 0 22px 52px rgba(3, 5, 12, 0.52), 0 0 36px rgba(168, 85, 247, 0.22);
+    outline: 2px solid #e879f9;
+    outline-offset: 3px;
+}
+
+.ninja-feature-art {
+    position: relative;
+    display: block;
+    min-height: 285px;
+    overflow: hidden;
+    background: #100d1b;
+}
+
+.ninja-feature-art::after {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 72%, #12141d 100%), linear-gradient(0deg, rgba(9, 8, 17, 0.45), transparent 52%);
+    content: '';
+    pointer-events: none;
+}
+
+.ninja-feature-art img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    inset: 0;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.45s ease;
+}
+
+.ninja-feature:hover .ninja-feature-art img {
+    transform: scale(1.045);
+}
+
+.ninja-art-label {
+    position: absolute;
+    z-index: 1;
+    top: 1rem;
+    left: 1rem;
+    padding: 0.45rem 0.7rem;
+    border: 1px solid rgba(255, 255, 255, 0.42);
+    background: rgba(14, 8, 27, 0.8);
+    color: #f0abfc;
+    font: 800 0.72rem 'Orbitron', sans-serif;
+    letter-spacing: 0.12em;
+}
+
+.ninja-feature-copy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0.8rem;
+    padding: clamp(1.3rem, 4vw, 2.4rem);
+}
+
+.ninja-feature-kicker {
+    color: #f0abfc;
+    font: 700 0.73rem 'Rajdhani', sans-serif;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+}
+
+.ninja-feature-title {
+    color: #fff;
+    font: 900 clamp(1.55rem, 3.7vw, 2.55rem)/1.14 'Orbitron', sans-serif;
+    text-shadow: 0 0 22px rgba(192, 38, 211, 0.35);
+}
+
+.ninja-feature-description {
+    max-width: 42rem;
+    color: #c7c6d4;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.ninja-feature-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-top: 0.15rem;
+    padding: 0.72rem 1rem;
+    border: 1px solid #d946ef;
+    background: linear-gradient(100deg, #a21caf, #7c3aed);
+    color: #fff;
+    font: 800 0.78rem 'Orbitron', sans-serif;
+    letter-spacing: 0.04em;
+    box-shadow: 0 5px 20px rgba(168, 85, 247, 0.28);
+}
+
 .new-launches {
     width: 100%;
-    max-width: 900px;
+    max-width: 1100px;
     margin: 0 auto 1.5rem;
 }
 
@@ -148,7 +263,7 @@ p.subtitle {
 
 .launch-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.8rem;
 }
 
@@ -172,6 +287,7 @@ p.subtitle {
 
 .launch-orbit { --launch-accent: #b8dc73; --launch-bg: #23362b; }
 .launch-prism { --launch-accent: #f2ca64; --launch-bg: #392e26; }
+.launch-ninja { --launch-accent: #e879f9; --launch-bg: #25172e; }
 
 .launch-card::before {
     position: absolute;
@@ -2005,6 +2121,23 @@ footer a:hover {
         gap: 0.9rem;
     }
 
+    .ninja-feature {
+        grid-template-columns: 1fr;
+        margin-bottom: 1.1rem;
+    }
+
+    .ninja-feature-art { min-height: 0; aspect-ratio: 1.8; }
+
+    .ninja-feature-art::after {
+        background: linear-gradient(0deg, rgba(9, 8, 17, 0.25), transparent 60%);
+    }
+
+    .ninja-feature-copy { gap: 0.6rem; padding: 1rem; }
+
+    .ninja-feature-title { font-size: 1.55rem; }
+
+    .ninja-feature-description { font-size: 0.9rem; }
+
     .new-launches { margin-bottom: 1.1rem; }
 
     .launch-heading { align-items: flex-start; flex-direction: column; gap: 0.25rem; }
@@ -2039,6 +2172,13 @@ footer a:hover {
 
     footer a {
         margin: 0 0.45rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ninja-feature,
+    .ninja-feature-art img {
+        transition: none;
     }
 }
 

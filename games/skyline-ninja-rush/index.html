@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skyline Ninja Rush | Free Cyberpunk Arcade Game | KenitFun</title>
+    <meta name="description" content="Leap between neon skyscrapers in Skyline Ninja Rush, a free cyberpunk arcade game. Steer with touch or keyboard, collect shields, dodge drones, and beat your high score.">
+    <meta name="keywords" content="skyline ninja rush, vertical jumper, neon ninja game, arcade browser game, html5 canvas game, cyberpunk game">
+    <link rel="canonical" href="https://www.kenit.fun/games/skyline-ninja-rush/">
+    <meta property="og:title" content="Skyline Ninja Rush | KenitFun">
+    <meta property="og:description" content="Leap between neon skyscrapers, collect shield platforms, dodge rogue drones, and beat your high score in this free arcade game.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.kenit.fun/games/skyline-ninja-rush/">
+    <meta property="og:image" content="https://www.kenit.fun/assets/ninja-rush.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Skyline Ninja Rush | KenitFun">
+    <meta name="twitter:description" content="Leap between neon skyscrapers, collect shields, dodge rogue drones, and beat your high score.">
+    <meta name="twitter:image" content="https://www.kenit.fun/assets/ninja-rush.png">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cyber: {
+                            bg: '#09090b',
+                            card: '#18181b',
+                            cyan: '#06b6d4',
+                            pink: '#ec4899',
+                            yellow: '#eab308',
+                            purple: '#a855f7'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .glow-purple {
+            text-shadow: 0 0 10px rgba(168, 85, 247, 0.7), 0 0 20px rgba(168, 85, 247, 0.5);
+        }
+        .glow-cyan {
+            text-shadow: 0 0 10px rgba(6, 182, 212, 0.7), 0 0 20px rgba(6, 182, 212, 0.5);
+        }
+        .glow-pink {
+            text-shadow: 0 0 10px rgba(236, 72, 153, 0.7), 0 0 20px rgba(236, 72, 153, 0.5);
+        }
+        .box-glow-purple {
+            box-shadow: 0 0 25px rgba(168, 85, 247, 0.3);
+        }
+        .box-glow-cyan {
+            box-shadow: 0 0 25px rgba(6, 182, 212, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-cyber-bg text-zinc-100 min-h-screen flex flex-col justify-between overflow-x-hidden selection:bg-purple-500 selection:text-white">
+
+    <header class="w-full border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md sticky top-0 z-50 px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-purple-500 via-cyan-400 to-pink-500 flex items-center justify-center box-glow-purple">
+                <span class="text-zinc-950 font-black text-lg">SNR</span>
+            </div>
+            <div>
+                <h1 class="font-extrabold text-lg tracking-wider bg-gradient-to-r from-purple-400 via-cyan-400 to-pink-400 bg-clip-text text-transparent">SKYLINE NINJA RUSH</h1>
+                <p class="text-xs text-zinc-400 font-medium">CYBERPUNK VERTICAL ASCENT v1.0</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-2">
+            <button id="audioToggleBtn" aria-label="Toggle game sounds" class="p-2 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-purple-500/50 text-zinc-300 transition-all flex items-center space-x-1 text-xs font-semibold">
+                <svg id="soundIcon" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                </svg>
+                <span class="hidden sm:inline" id="soundText">Sound: ON</span>
+            </button>
+            <button onclick="openInfoModal()" class="p-2 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-cyan-500/50 text-zinc-300 transition-all flex items-center space-x-1 text-xs font-semibold">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-cyan-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="hidden sm:inline">How to Play</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center justify-center p-3 sm:p-6 max-w-4xl mx-auto w-full">
+        
+        <!-- Score & Powerup Status Bar -->
+        <div class="w-full max-w-[480px] flex items-center justify-between mb-3 px-2">
+            <div class="flex items-center space-x-2 bg-zinc-900/90 border border-zinc-800 px-4 py-2 rounded-xl backdrop-blur-sm box-glow-purple">
+                <span class="text-xs uppercase tracking-widest text-zinc-400 font-semibold">Height</span>
+                <span id="currentScore" class="text-xl font-black text-purple-400 font-mono">0m</span>
+            </div>
+            <div id="powerupStatus" class="hidden items-center space-x-2 bg-cyan-950/80 border border-cyan-500/50 px-3 py-1.5 rounded-xl text-xs text-cyan-300 font-bold animate-pulse">
+                <span>⚡ SHIELD ACTIVE</span>
+            </div>
+            <div class="flex items-center space-x-2 bg-zinc-900/90 border border-zinc-800 px-4 py-2 rounded-xl backdrop-blur-sm">
+                <span class="text-xs uppercase tracking-widest text-zinc-400 font-semibold">Best</span>
+                <span id="highScore" class="text-xl font-black text-cyan-400 font-mono">0m</span>
+            </div>
+        </div>
+
+        <!-- Canvas Frame -->
+        <div class="relative w-full max-w-[480px] aspect-[3/4] bg-zinc-950 rounded-2xl border-2 border-zinc-800/80 overflow-hidden shadow-2xl flex items-center justify-center">
+            
+            <canvas id="gameCanvas" class="w-full h-full block cursor-pointer touch-none"></canvas>
+
+            <!-- Start Menu Overlay -->
+            <div id="startScreen" class="absolute inset-0 bg-zinc-950/90 backdrop-blur-md flex flex-col items-center justify-center p-6 text-center z-20 transition-all duration-300">
+                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-purple-500 via-cyan-400 to-pink-500 flex items-center justify-center mb-4 animate-bounce box-glow-purple">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-zinc-950" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                    </svg>
+                </div>
+                <h2 class="text-3xl sm:text-4xl font-black tracking-wider mb-2 glow-purple">SKYLINE NINJA</h2>
+                <p class="text-zinc-400 text-sm sm:text-base max-w-xs mb-6 leading-relaxed">
+                    Leap across neon skyscrapers! Tap <span class="text-purple-400 font-bold">Left / Right</span> or use arrow keys to steer your cyber ninja upwards.
+                </p>
+                <button onclick="startGame()" class="px-8 py-4 rounded-xl bg-gradient-to-r from-purple-500 to-cyan-500 text-zinc-950 font-black text-lg tracking-wider hover:opacity-90 transform hover:scale-105 transition-all shadow-lg box-glow-purple cursor-pointer">
+                    START ASCENT
+                </button>
+                <div class="mt-6 flex items-center space-x-6 text-xs text-zinc-500 font-medium">
+                    <span class="flex items-center space-x-1">
+                        <kbd class="px-2 py-1 bg-zinc-900 border border-zinc-800 rounded text-zinc-300">A / D or ← / →</kbd>
+                        <span>Steer</span>
+                    </span>
+                    <span class="flex items-center space-x-1">
+                        <kbd class="px-2 py-1 bg-zinc-900 border border-zinc-800 rounded text-zinc-300">Touch Left/Right</kbd>
+                        <span>Mobile Steer</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Game Over Overlay -->
+            <div id="gameOverScreen" class="absolute inset-0 bg-zinc-950/95 backdrop-blur-lg flex flex-col items-center justify-center p-6 text-center z-20 hidden transition-all duration-300">
+                <div class="w-14 h-14 rounded-2xl bg-purple-500/20 border border-purple-500/50 flex items-center justify-center mb-3 box-glow-purple">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                </div>
+                <h3 class="text-2xl sm:text-3xl font-black text-purple-400 mb-1 glow-purple">SYSTEM OFFLINE</h3>
+                <p class="text-zinc-400 text-sm mb-6">Your ninja fell into the neon abyss!</p>
+                
+                <div class="bg-zinc-900/90 border border-zinc-800 rounded-2xl p-4 w-full max-w-xs mb-6 flex justify-around">
+                    <div>
+                        <div class="text-xs text-zinc-500 uppercase font-semibold">Final Height</div>
+                        <div id="finalScore" class="text-2xl font-black text-purple-400 font-mono">0m</div>
+                    </div>
+                    <div class="w-px bg-zinc-800"></div>
+                    <div>
+                        <div class="text-xs text-zinc-500 uppercase font-semibold">Best Height</div>
+                        <div id="finalHighScore" class="text-2xl font-black text-cyan-400 font-mono">0m</div>
+                    </div>
+                </div>
+
+                <button onclick="startGame()" class="px-8 py-4 rounded-xl bg-gradient-to-r from-purple-500 to-cyan-400 text-zinc-950 font-black text-lg tracking-wider hover:opacity-90 transform hover:scale-105 transition-all shadow-lg box-glow-purple cursor-pointer">
+                    TRY AGAIN
+                </button>
+            </div>
+
+            <!-- Touch Controls Indicator for Mobile -->
+            <div class="absolute bottom-3 left-3 right-3 flex justify-between pointer-events-none z-10 sm:hidden">
+                <div class="px-3 py-1.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 backdrop-blur-sm text-[11px] font-semibold text-zinc-400">
+                    Tap Left / Right sides to steer
+                </div>
+            </div>
+
+        </div>
+
+        <!-- SEO Footer Cards -->
+        <div class="w-full max-w-[480px] mt-4 grid grid-cols-3 gap-2">
+            <div class="bg-zinc-900/50 border border-zinc-800/80 rounded-xl p-2 text-center">
+                <div class="text-purple-400 font-bold text-xs mb-1">🌆 Infinite Skyscraper</div>
+                <div class="text-[10px] text-zinc-400">Ascend higher into cyber city zones.</div>
+            </div>
+            <div class="bg-zinc-900/50 border border-zinc-800/80 rounded-xl p-2 text-center">
+                <div class="text-cyan-400 font-bold text-xs mb-1">⚡ Energy Shields</div>
+                <div class="text-[10px] text-zinc-400">Collect shields to survive rogue drones.</div>
+            </div>
+            <div class="bg-zinc-900/50 border border-zinc-800/80 rounded-xl p-2 text-center">
+                <div class="text-pink-400 font-bold text-xs mb-1">🕹️ Smooth 60fps</div>
+                <div class="text-[10px] text-zinc-400">Optimized touch & keyboard action.</div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Info Modal -->
+    <div id="infoModal" class="fixed inset-0 bg-zinc-950/80 backdrop-blur-md hidden items-center justify-center p-4 z-50" role="dialog" aria-modal="true" aria-labelledby="infoModalTitle">
+        <div class="bg-zinc-900 border border-zinc-800 rounded-2xl max-w-md w-full p-6 relative box-glow-purple">
+            <h3 class="text-xl font-bold text-purple-400 mb-3 flex items-center justify-between">
+                <span id="infoModalTitle">How to Play</span>
+                <button onclick="closeInfoModal()" aria-label="Close instructions" class="text-zinc-400 hover:text-white text-lg">&times;</button>
+            </h3>
+            <ul class="space-y-3 text-sm text-zinc-300 mb-6">
+                <li class="flex items-start space-x-2">
+                    <span class="text-purple-400 font-bold">1.</span>
+                    <span>Your cyber ninja automatically jumps upon touching holographic platforms.</span>
+                </li>
+                <li class="flex items-start space-x-2">
+                    <span class="text-cyan-400 font-bold">2.</span>
+                    <span>Press A/D, arrow keys, or touch the left/right sides of the screen to steer mid-air.</span>
+                </li>
+                <li class="flex items-start space-x-2">
+                    <span class="text-pink-400 font-bold">3.</span>
+                    <span>Avoid red security drones or collect glowing shields to blast through them!</span>
+                </li>
+            </ul>
+            <button onclick="closeInfoModal()" class="w-full py-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-bold transition-all">
+                Got It!
+            </button>
+        </div>
+    </div>
+
+    <footer class="w-full border-t border-zinc-900 bg-zinc-950 py-4 px-4 text-center text-xs text-zinc-500">
+        <p>&copy; 2026 Skyline Ninja Rush. Built for high traffic browser gaming. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // --- Game Audio Synthesizer (Web Audio API) ---
+        let audioCtx = null;
+        let soundEnabled = Boolean(window.AudioContext || window.webkitAudioContext);
+        const audioToggleBtn = document.getElementById('audioToggleBtn');
+        const soundText = document.getElementById('soundText');
+        const soundIcon = document.getElementById('soundIcon');
+
+        function initAudio() {
+            const AudioContextConstructor = window.AudioContext || window.webkitAudioContext;
+            if (!AudioContextConstructor) {
+                soundEnabled = false;
+                updateAudioToggle();
+                return;
+            }
+            try {
+                if (!audioCtx) audioCtx = new AudioContextConstructor();
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume().catch(error => console.warn('Game audio could not resume.', error));
+                }
+            } catch (error) {
+                console.warn('Game audio is unavailable.', error);
+                soundEnabled = false;
+                updateAudioToggle();
+            }
+        }
+
+        function updateAudioToggle() {
+            audioToggleBtn.disabled = !window.AudioContext && !window.webkitAudioContext;
+            soundText.textContent = soundEnabled ? 'Sound: ON' : 'Sound: OFF';
+            audioToggleBtn.setAttribute('aria-pressed', String(soundEnabled));
+        }
+
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                initAudio();
+                if (!audioCtx) return;
+                const osc = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+                osc.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'jump') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(250, now);
+                    osc.frequency.exponentialRampToValueAtTime(600, now + 0.12);
+                    gainNode.gain.setValueAtTime(0.15, now);
+                    gainNode.gain.linearRampToValueAtTime(0.01, now + 0.12);
+                    osc.start(now);
+                    osc.stop(now + 0.12);
+                } else if (type === 'shield') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.exponentialRampToValueAtTime(880, now + 0.2);
+                    gainNode.gain.setValueAtTime(0.2, now);
+                    gainNode.gain.linearRampToValueAtTime(0.01, now + 0.2);
+                    osc.start(now);
+                    osc.stop(now + 0.2);
+                } else if (type === 'fall') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.exponentialRampToValueAtTime(60, now + 0.4);
+                    gainNode.gain.setValueAtTime(0.25, now);
+                    gainNode.gain.linearRampToValueAtTime(0.01, now + 0.4);
+                    osc.start(now);
+                    osc.stop(now + 0.4);
+                }
+            } catch (error) {
+                console.warn('A game sound could not be played.', error);
+            }
+        }
+
+        // Toggle Sound
+        audioToggleBtn.addEventListener('click', () => {
+            soundEnabled = !soundEnabled;
+            if (soundEnabled) {
+                soundText.textContent = 'Sound: ON';
+                soundIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />';
+            } else {
+                soundText.textContent = 'Sound: OFF';
+                soundIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15zM17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />';
+            }
+        });
+        updateAudioToggle();
+
+        // Modal Controls
+        let stateBeforeInfo = null;
+        function openInfoModal() {
+            const modal = document.getElementById('infoModal');
+            if (!modal.classList.contains('hidden')) return;
+            stateBeforeInfo = gameState;
+            if (gameState === 'PLAYING') gameState = 'PAUSED';
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            modal.querySelector('button[aria-label="Close instructions"]').focus();
+        }
+        function closeInfoModal() {
+            const modal = document.getElementById('infoModal');
+            if (modal.classList.contains('hidden')) return;
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            if (gameState === 'PAUSED') gameState = stateBeforeInfo || 'PLAYING';
+            stateBeforeInfo = null;
+            document.querySelector('button[onclick="openInfoModal()"]').focus();
+        }
+        document.getElementById('infoModal').addEventListener('click', event => {
+            if (event.target === event.currentTarget) closeInfoModal();
+        });
+
+        // --- Canvas & Game Engine Setup ---
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let gameState = 'START'; // START, PLAYING, PAUSED, GAMEOVER
+        let highScore = 0;
+        try {
+            const savedHighScore = Number(localStorage.getItem('skyline_highscore'));
+            if (Number.isSafeInteger(savedHighScore) && savedHighScore > 0) highScore = savedHighScore;
+        } catch (error) {
+            console.warn('The game could not read the saved high score.', error);
+        }
+        document.getElementById('highScore').textContent = highScore + 'm';
+
+        let cameraY = 0;
+        let maxCameraY = 0;
+
+        let ninja = {
+            x: 240,
+            y: 400,
+            vx: 0,
+            vy: 0,
+            radius: 14,
+            facing: 1,
+            shieldTimer: 0
+        };
+
+        let platforms = [];
+        let drones = [];
+        let particles = [];
+        let starfield = [];
+        let keys = { left: false, right: false };
+        let touchLeft = false;
+        let touchRight = false;
+        let canvasPixelRatio = 1;
+        let lastFrameTime = 0;
+
+        // Resize Canvas dynamically
+        function resizeCanvas() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvasPixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+            canvas.width = Math.round(rect.width * canvasPixelRatio);
+            canvas.height = Math.round(rect.height * canvasPixelRatio);
+            ctx.setTransform(canvasPixelRatio, 0, 0, canvasPixelRatio, 0, 0);
+            lastFrameTime = 0;
+            initStarfield();
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Initialize Starfield
+        function initStarfield() {
+            starfield = [];
+            const w = canvas.width / canvasPixelRatio;
+            const h = canvas.height / canvasPixelRatio;
+            for (let i = 0; i < 40; i++) {
+                starfield.push({
+                    x: Math.random() * w,
+                    y: Math.random() * h,
+                    size: Math.random() * 2 + 1,
+                    speed: Math.random() * 0.5 + 0.2
+                });
+            }
+        }
+        // --- Input Listeners ---
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Escape' && !document.getElementById('infoModal').classList.contains('hidden')) {
+                closeInfoModal();
+                return;
+            }
+            if (e.code === 'ArrowLeft' || e.code === 'ArrowRight' || e.code === 'Space') e.preventDefault();
+            if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = true;
+            if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = true;
+            if ((e.code === 'Space' || e.code === 'Enter') &&
+                (gameState === 'START' || gameState === 'GAMEOVER') &&
+                document.getElementById('infoModal').classList.contains('hidden')) {
+                startGame();
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = false;
+            if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = false;
+        });
+
+        canvas.addEventListener('pointerdown', (e) => {
+            e.preventDefault();
+            if (typeof canvas.setPointerCapture === 'function') canvas.setPointerCapture(e.pointerId);
+            const rect = canvas.getBoundingClientRect();
+            const clickX = e.clientX - rect.left;
+            const width = rect.width;
+            if (clickX < width / 2) {
+                touchLeft = true;
+                touchRight = false;
+            } else {
+                touchLeft = false;
+                touchRight = true;
+            }
+        });
+
+        function releaseTouchControls() {
+            touchLeft = false;
+            touchRight = false;
+        }
+
+        canvas.addEventListener('pointerup', releaseTouchControls);
+        canvas.addEventListener('pointercancel', releaseTouchControls);
+        canvas.addEventListener('lostpointercapture', releaseTouchControls);
+        document.addEventListener('visibilitychange', () => {
+            lastFrameTime = 0;
+            releaseTouchControls();
+            keys.left = false;
+            keys.right = false;
+        });
+
+        // --- Start & Reset Game ---
+        function startGame() {
+            initAudio();
+            closeInfoModal();
+            lastFrameTime = 0;
+            gameState = 'PLAYING';
+            cameraY = 0;
+            maxCameraY = 0;
+            
+            const w = canvas.width / canvasPixelRatio;
+            const h = canvas.height / canvasPixelRatio;
+
+            ninja.x = w / 2;
+            ninja.y = h - 120;
+            ninja.vx = 0;
+            ninja.vy = -12;
+            ninja.shieldTimer = 0;
+
+            platforms = [];
+            drones = [];
+            particles = [];
+
+            // Starting platform under ninja
+            platforms.push({
+                x: w / 2 - 50,
+                y: h - 80,
+                width: 100,
+                height: 14,
+                type: 'normal'
+            });
+
+            // Generate initial platforms upwards
+            let currentY = h - 150;
+            while (currentY > -h) {
+                spawnPlatformRow(currentY, w);
+                currentY -= Math.random() * 50 + 55;
+            }
+
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('gameOverScreen').classList.add('hidden');
+            document.getElementById('currentScore').textContent = '0m';
+            document.getElementById('powerupStatus').classList.add('hidden');
+        }
+
+        function spawnPlatformRow(y, canvasWidth) {
+            const width = Math.random() * 30 + 70; // 70 to 100
+            const x = Math.random() * (canvasWidth - width);
+            
+            let type = 'normal';
+            const rand = Math.random();
+            if (rand < 0.18) type = 'moving';
+            else if (rand < 0.28) type = 'fragile';
+            else if (rand < 0.38) type = 'shield';
+
+            platforms.push({
+                x: x,
+                y: y,
+                width: width,
+                height: 14,
+                type: type,
+                dir: Math.random() < 0.5 ? 1 : -1,
+                broken: false
+            });
+
+            // Occasionally spawn a drone hazard near upper platforms
+            if (Math.random() < 0.25 && y < canvasWidth) {
+                drones.push({
+                    x: Math.random() * (canvasWidth - 40),
+                    y: y - 30,
+                    width: 32,
+                    height: 16,
+                    speed: (Math.random() * 2 + 1.5) * (Math.random() < 0.5 ? 1 : -1)
+                });
+            }
+        }
+
+        function gameOver() {
+            if (gameState === 'GAMEOVER') return;
+            gameState = 'GAMEOVER';
+            playSound('fall');
+
+            const finalMeters = Math.floor(maxCameraY);
+            if (finalMeters > highScore) {
+                highScore = finalMeters;
+                try {
+                    localStorage.setItem('skyline_highscore', String(highScore));
+                } catch (error) {
+                    console.warn('The game could not save the high score.', error);
+                }
+                document.getElementById('highScore').textContent = highScore + 'm';
+            }
+
+            document.getElementById('finalScore').textContent = finalMeters + 'm';
+            document.getElementById('finalHighScore').textContent = highScore + 'm';
+            document.getElementById('gameOverScreen').classList.remove('hidden');
+            document.getElementById('powerupStatus').classList.add('hidden');
+        }
+
+        // --- Main Game Loop ---
+        function update(step) {
+            const w = canvas.width / canvasPixelRatio;
+            const h = canvas.height / canvasPixelRatio;
+
+            if (gameState === 'PLAYING') {
+                // Horizontal movement via keys or touch
+                if (keys.left || touchLeft) {
+                    ninja.vx = -6;
+                    ninja.facing = -1;
+                } else if (keys.right || touchRight) {
+                    ninja.vx = 6;
+                    ninja.facing = 1;
+                } else {
+                    ninja.vx *= Math.pow(0.8, step); // friction
+                }
+
+                ninja.x += ninja.vx * step;
+
+                // Screen wrapping horizontally
+                if (ninja.x < -ninja.radius) ninja.x = w + ninja.radius;
+                if (ninja.x > w + ninja.radius) ninja.x = -ninja.radius;
+
+                // Gravity & Vertical physics
+                const previousY = ninja.y;
+                ninja.vy += 0.45 * step; // gravity
+                ninja.y += ninja.vy * step;
+
+                // Shield timer decay
+                if (ninja.shieldTimer > 0) {
+                    ninja.shieldTimer = Math.max(0, ninja.shieldTimer - step);
+                    if (ninja.shieldTimer === 0) {
+                        document.getElementById('powerupStatus').classList.add('hidden');
+                        document.getElementById('powerupStatus').classList.remove('flex');
+                    }
+                }
+
+                // Camera tracking upwards
+                const targetCameraY = h * 0.5 - ninja.y;
+                if (targetCameraY > cameraY) {
+                    cameraY = targetCameraY;
+                    if (-ninja.y > maxCameraY) {
+                        maxCameraY = -ninja.y;
+                        document.getElementById('currentScore').textContent = Math.floor(maxCameraY) + 'm';
+                    }
+                }
+
+                // Platform collisions (only when falling down)
+                if (ninja.vy > 0) {
+                    for (const p of platforms) {
+                        if (!p.broken &&
+                            ninja.x >= p.x - 5 &&
+                            ninja.x <= p.x + p.width + 5 &&
+                            previousY + ninja.radius <= p.y &&
+                            ninja.y + ninja.radius >= p.y) {
+                            ninja.y = p.y - ninja.radius;
+                            ninja.vy = -12.5; // bounce jump
+                            if (p.type === 'fragile') p.broken = true;
+                            playSound('jump');
+
+                            if (p.type === 'shield') {
+                                ninja.shieldTimer = 350; // frames of shield
+                                p.type = 'normal';
+                                playSound('shield');
+                                document.getElementById('powerupStatus').classList.remove('hidden');
+                                document.getElementById('powerupStatus').classList.add('flex');
+                            }
+
+                            for (let i = 0; i < 6; i++) {
+                                particles.push({
+                                    x: ninja.x,
+                                    y: p.y,
+                                    vx: (Math.random() - 0.5) * 4,
+                                    vy: Math.random() * -3,
+                                    color: '#a855f7',
+                                    life: 1.0,
+                                    decay: 0.05
+                                });
+                            }
+                            break;
+                        }
+                    }
+                }
+
+                // Update Platforms movement & generation
+                platforms.forEach(p => {
+                    if (p.type === 'moving') {
+                        p.x += p.dir * 1.8 * step;
+                        if (p.x < 0 || p.x + p.width > w) p.dir *= -1;
+                    }
+                });
+
+                // Update Drones & collision
+                for (let idx = drones.length - 1; idx >= 0; idx--) {
+                    const d = drones[idx];
+                    d.x += d.speed * step;
+                    if (d.x < 0 || d.x + d.width > w) d.speed *= -1;
+
+                    // Hitbox check with ninja
+                    const dx = ninja.x - (d.x + d.width / 2);
+                    const dy = ninja.y - (d.y + d.height / 2);
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < ninja.radius + 12) {
+                        if (ninja.shieldTimer > 0) {
+                            // Destroy drone with shield
+                            drones.splice(idx, 1);
+                            playSound('shield');
+                        } else {
+                            gameOver();
+                            break;
+                        }
+                    }
+                }
+
+                // Spawn new platforms above as camera moves up
+                const highestPlatformY = platforms.reduce((min, p) => p.y < min ? p.y : min, Infinity);
+                if (highestPlatformY > -cameraY - h * 1.5) {
+                    spawnPlatformRow(-cameraY - h - 50, w);
+                }
+
+                // Remove offscreen platforms & drones below camera view
+                platforms = platforms.filter(p => p.y < -cameraY + h + 100);
+                drones = drones.filter(d => d.y < -cameraY + h + 100);
+
+                // Fall out of bounds check
+                if (ninja.y + cameraY > h + 50) {
+                    gameOver();
+                }
+            }
+
+            // Update Starfield
+            starfield.forEach(star => {
+                star.y += (star.speed + (gameState === 'PLAYING' ? (ninja.vy < 0 ? -ninja.vy * 0.1 : 0.2) : 0)) * step;
+                if (star.y > h) {
+                    star.y = 0;
+                    star.x = Math.random() * w;
+                }
+            });
+
+            // Update Particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let pt = particles[i];
+                pt.x += pt.vx * step;
+                pt.y += pt.vy * step;
+                pt.life -= pt.decay * step;
+                if (pt.life <= 0) particles.splice(i, 1);
+            }
+        }
+
+        function render() {
+            const w = canvas.width / canvasPixelRatio;
+            const h = canvas.height / canvasPixelRatio;
+
+            ctx.clearRect(0, 0, w, h);
+
+            ctx.save();
+            ctx.translate(0, cameraY);
+
+            // Draw Starfield
+            starfield.forEach(star => {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+                ctx.fillRect(star.x, star.y - cameraY * 0.2 % h, star.size, star.size);
+            });
+
+            // Draw Platforms
+            platforms.forEach(p => {
+                if (p.broken) return;
+                ctx.save();
+                if (p.type === 'shield') {
+                    ctx.shadowColor = '#06b6d4';
+                    ctx.shadowBlur = 15;
+                    ctx.fillStyle = '#06b6d4';
+                } else if (p.type === 'moving') {
+                    ctx.shadowColor = '#ec4899';
+                    ctx.shadowBlur = 12;
+                    ctx.fillStyle = '#ec4899';
+                } else if (p.type === 'fragile') {
+                    ctx.shadowColor = '#eab308';
+                    ctx.shadowBlur = 10;
+                    ctx.fillStyle = '#eab308';
+                } else {
+                    ctx.shadowColor = '#a855f7';
+                    ctx.shadowBlur = 12;
+                    ctx.fillStyle = '#a855f7';
+                }
+
+                ctx.beginPath();
+                ctx.roundRect(p.x, p.y, p.width, p.height, 6);
+                ctx.fill();
+
+                // Platform holographic line
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(p.x + 4, p.y + 4, p.width - 8, 2);
+
+                ctx.restore();
+            });
+
+            // Draw Drones
+            drones.forEach(d => {
+                ctx.save();
+                ctx.shadowColor = '#ef4444';
+                ctx.shadowBlur = 15;
+                ctx.fillStyle = '#ef4444';
+                ctx.beginPath();
+                ctx.roundRect(d.x, d.y, d.width, d.height, 4);
+                ctx.fill();
+
+                // Drone blinking eye
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(d.x + d.width / 2 - 4, d.y + 4, 8, 4);
+                ctx.restore();
+            });
+
+            // Draw Particles
+            particles.forEach(pt => {
+                ctx.save();
+                ctx.globalAlpha = pt.life;
+                ctx.fillStyle = pt.color;
+                ctx.shadowColor = pt.color;
+                ctx.shadowBlur = 8;
+                ctx.beginPath();
+                ctx.arc(pt.x, pt.y, 3, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            });
+
+            // Draw Ninja Player
+            if (gameState === 'PLAYING' || gameState === 'START') {
+                ctx.save();
+                ctx.shadowColor = ninja.shieldTimer > 0 ? '#06b6d4' : '#a855f7';
+                ctx.shadowBlur = 20;
+
+                // Shield Aura
+                if (ninja.shieldTimer > 0) {
+                    ctx.strokeStyle = '#06b6d4';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.arc(ninja.x, ninja.y, ninja.radius + 8, 0, Math.PI * 2);
+                    ctx.stroke();
+                }
+
+                // Ninja Head / Body
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(ninja.x, ninja.y, ninja.radius, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Cyber headband visor
+                ctx.fillStyle = ninja.shieldTimer > 0 ? '#06b6d4' : '#ec4899';
+                ctx.fillRect(ninja.facing > 0 ? ninja.x : ninja.x - 10, ninja.y - 4, 10, 5);
+
+                ctx.restore();
+            }
+
+            ctx.restore();
+        }
+
+        function gameLoop(timestamp) {
+            const step = lastFrameTime === 0 ? 1 : Math.min((timestamp - lastFrameTime) / (1000 / 60), 2);
+            lastFrameTime = timestamp;
+            update(step);
+            render();
+            requestAnimationFrame(gameLoop);
+        }
+
+        requestAnimationFrame(gameLoop);
+    </script>
+</body>
+</html>
