@@ -355,6 +355,8 @@
 
         let cameraY = 0;
         let maxCameraY = 0;
+        let nextPlatformY = 0;
+        let lastPlatformCenter = 0;
 
         let ninja = {
             x: 240,
@@ -485,12 +487,13 @@
                 height: 14,
                 type: 'normal'
             });
+            lastPlatformCenter = w / 2;
 
             // Generate initial platforms upwards
-            let currentY = h - 150;
-            while (currentY > -h) {
-                spawnPlatformRow(currentY, w);
-                currentY -= Math.random() * 50 + 55;
+            nextPlatformY = h - 150;
+            while (nextPlatformY > -h) {
+                spawnPlatformRow(nextPlatformY, w);
+                nextPlatformY -= Math.random() * 20 + 80;
             }
 
             document.getElementById('startScreen').classList.add('hidden');
@@ -500,8 +503,13 @@
         }
 
         function spawnPlatformRow(y, canvasWidth) {
-            const width = Math.random() * 30 + 70; // 70 to 100
-            const x = Math.random() * (canvasWidth - width);
+            const width = Math.random() * 25 + 80;
+            const maxHorizontalShift = Math.min(canvasWidth * 0.3, 130);
+            const center = Math.max(width / 2, Math.min(
+                canvasWidth - width / 2,
+                lastPlatformCenter + (Math.random() * 2 - 1) * maxHorizontalShift
+            ));
+            const x = center - width / 2;
             
             let type = 'normal';
             const rand = Math.random();
@@ -518,9 +526,10 @@
                 dir: Math.random() < 0.5 ? 1 : -1,
                 broken: false
             });
+            lastPlatformCenter = center;
 
             // Occasionally spawn a drone hazard near upper platforms
-            if (Math.random() < 0.25 && y < canvasWidth) {
+            if (Math.random() < 0.12 && y < canvasWidth) {
                 drones.push({
                     x: Math.random() * (canvasWidth - 40),
                     y: y - 30,
@@ -669,9 +678,9 @@
                 }
 
                 // Spawn new platforms above as camera moves up
-                const highestPlatformY = platforms.reduce((min, p) => p.y < min ? p.y : min, Infinity);
-                if (highestPlatformY > -cameraY - h * 1.5) {
-                    spawnPlatformRow(-cameraY - h - 50, w);
+                while (nextPlatformY > -cameraY - h) {
+                    spawnPlatformRow(nextPlatformY, w);
+                    nextPlatformY -= Math.random() * 20 + 80;
                 }
 
                 // Remove offscreen platforms & drones below camera view
