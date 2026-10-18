@@ -42,6 +42,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../style/game-guides.css">
     <style>
         body {
             font-family: 'Outfit', sans-serif;
@@ -178,23 +179,19 @@
 
         </div>
 
-        <!-- SEO Footer Cards -->
-        <div class="w-full max-w-[480px] mt-4 grid grid-cols-3 gap-2">
-            <div class="bg-zinc-900/50 border border-zinc-800/80 rounded-xl p-2 text-center">
-                <div class="text-purple-400 font-bold text-xs mb-1">🌆 Infinite Skyscraper</div>
-                <div class="text-[10px] text-zinc-400">Ascend higher into cyber city zones.</div>
-            </div>
-            <div class="bg-zinc-900/50 border border-zinc-800/80 rounded-xl p-2 text-center">
-                <div class="text-cyan-400 font-bold text-xs mb-1">⚡ Energy Shields</div>
-                <div class="text-[10px] text-zinc-400">Collect shields to survive rogue drones.</div>
-            </div>
-            <div class="bg-zinc-900/50 border border-zinc-800/80 rounded-xl p-2 text-center">
-                <div class="text-pink-400 font-bold text-xs mb-1">🕹️ Smooth 60fps</div>
-                <div class="text-[10px] text-zinc-400">Optimized touch & keyboard action.</div>
-            </div>
-        </div>
-
     </main>
+
+    <section class="editorial-guide" aria-labelledby="skyline-guide-title">
+        <h2 id="skyline-guide-title">How to play Skyline Ninja Rush</h2>
+        <p>The ninja jumps automatically when landing on a platform, so your main job is steering during each jump. Move left or right with A and D, the arrow keys, or by touching the left or right side of the play area. The character wraps around the screen edges, which can help when a platform is on the opposite side.</p>
+        <h3>Platforms, drones, and shields</h3>
+        <ul>
+            <li>Land on platforms to keep climbing. Some platforms move or break, so watch their motion as you choose where to land.</li>
+            <li>Avoid red security drones. A collected shield can protect the ninja when hitting a drone.</li>
+            <li>Your height is the run score. The best height is saved locally in this browser; it is not an online leaderboard.</li>
+        </ul>
+        <p>Sound can be switched off with the control at the top of the game. If you are playing on a phone, use the on-screen left and right areas rather than a keyboard.</p>
+    </section>
 
     <!-- Info Modal -->
     <div id="infoModal" class="fixed inset-0 bg-zinc-950/80 backdrop-blur-md hidden items-center justify-center p-4 z-50" role="dialog" aria-modal="true" aria-labelledby="infoModalTitle">
@@ -224,7 +221,7 @@
     </div>
 
     <footer class="w-full border-t border-zinc-900 bg-zinc-950 py-4 px-4 text-center text-xs text-zinc-500">
-        <p>&copy; 2026 Skyline Ninja Rush. Built for high traffic browser gaming. All rights reserved.</p>
+        <p>&copy; 2026 KenitFun. A browser arcade game.</p>
     </footer>
 
     <script>
