@@ -34,3 +34,40 @@
     color: #145c50;
     text-underline-offset: 2px;
 }
+
+html.game-guide-page,
+body.game-guide-page {
+    width: 100%;
+    height: auto;
+    min-height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: static;
+}
+
+body.game-guide-page {
+    display: block;
+    padding: 0;
+    touch-action: pan-y;
+}
+
+body.game-guide-page .editorial-guide,
+body.game-guide-page .editorial-guide * {
+    touch-action: pan-y;
+    user-select: text;
+    -webkit-user-select: text;
+}
+
+html.game-guide-scroll-page,
+body.game-guide-scroll-page {
+    height: auto;
+    min-height: 100%;
+}
+
+html.game-guide-scroll-page {
+    overflow-y: auto;
+}
+
+body.game-guide-scroll-page {
+    overflow-y: visible;
+}

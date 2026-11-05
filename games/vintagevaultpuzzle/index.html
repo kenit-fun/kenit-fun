@@ -1,8 +1,9 @@
-<!doctypehtml>
-<html lang="en">
+<!doctype html>
+<html lang="en" class="game-guide-scroll-page">
 <head>
 <meta charset=UTF-8>
 <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" name=viewport>
+<link rel="stylesheet" href="../../style/game-guides.css">
 <title>Retro Safe Cracker - Vintage Vault Puzzle Game | KenitFun</title>
 <link rel="canonical" href="https://www.kenit.fun/games/vintagevaultpuzzle/">
 <meta name="description" content="Crack the combination in Retro Safe Cracker, a free vintage vault puzzle game with clues, hints, and mechanical feedback.">
@@ -86,7 +87,7 @@ header{display:flex;justify-content:space-between;align-items:center;width:100%;
 }
 </style>
 </head>
-<body>
+<body class="game-guide-scroll-page">
 <header>
   <a class=back-btn href=../../index.html>← KENITFUN</a>
   <h2 class=header-title>SAFE CRACKER</h2>
@@ -128,6 +129,14 @@ header{display:flex;justify-content:space-between;align-items:center;width:100%;
     <button class="action-btn close-faq-btn" id=closeFaqBtn>Close FAQ</button>
   </div>
 </div>
+
+<section class="editorial-guide" aria-labelledby="vault-guide-title">
+  <h2 id="vault-guide-title">A practical guide to Retro Safe Cracker</h2>
+  <p>The vault holds a randomly generated three-digit code from 100 to 999. Enter a whole-number guess and select <strong>UNLOCK</strong>. You have seven attempts to find the combination, and the trial log keeps the guesses and feedback from the current round visible.</p>
+  <h3>Use the feedback to narrow the range</h3>
+  <p>After each guess, the game tells you whether the secret is higher or lower. When you are within 15 numbers, it also reports that you are getting warmer. Use the direction of each result to choose a new number within the remaining interval instead of making another nearby guess at random.</p>
+  <p>Select <strong>New Code</strong> whenever you want a fresh puzzle; it resets the attempt count and generates a new combination. The code is a game puzzle, not a real security test or safe-cracking guide.</p>
+</section>
 
 <script>
 if(document.activeElement && typeof document.activeElement.blur === 'function'){
